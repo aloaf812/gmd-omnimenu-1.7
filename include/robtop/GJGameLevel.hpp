@@ -50,4 +50,5 @@ public:
     static GJGameLevel* create(cocos2d::CCDictionary dict);
     virtual bool init();
     virtual void setIsVerified(bool isVerified);
+    int getAverageDifficulty();
 };

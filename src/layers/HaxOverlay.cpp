@@ -4,6 +4,7 @@
 #include "FLAlertLayer.hpp"
 #include "HaxManager.hpp"
 #include "CCMenuItemToggler.hpp"
+#include "Utils.hpp"
 
 using namespace cocos2d;
 
@@ -62,12 +63,12 @@ bool HaxOverlay::init(CCLayer* referrer) {
     parent->addChild(menuBackground, 1000);
     menuBackground->setPosition(ccp(winSize.width / 2, winSize.height / 2));
 
-    auto omniLabel = CCLabelTTF::create(" OMNI ", "Helvetica-Oblique.ttf", 14);
+    auto omniLabel = CCLabelTTF::create(" OMNI ", "Helvetica-Oblique.ttf", scaleFontSize(14));
     parent->addChild(omniLabel, 1001);
     omniLabel->setAnchorPoint({0.5, 0});
     omniLabel->setPosition(ccp(winSize.width / 2 - 21, winSize.height / 2 + 90));
 
-    auto menuLabel = CCLabelTTF::create(" menu ", "Helvetica-Oblique.ttf", 10);
+    auto menuLabel = CCLabelTTF::create(" menu ", "Helvetica-Oblique.ttf", scaleFontSize(10));
     parent->addChild(menuLabel, 1001);
     menuLabel->setAnchorPoint({0.5, 0});
     menuLabel->setPosition(ccp(winSize.width / 2 + 21, winSize.height / 2 + 92));
@@ -80,7 +81,7 @@ bool HaxOverlay::init(CCLayer* referrer) {
     addButton(" Gameplay ", 12, 90, this, menu_selector(HaxOverlay::onGameplay));
     addButton(" Editor ", 12, 50, this, menu_selector(HaxOverlay::onEditor));
     addButton(" Bypass ", 12, 10, this, menu_selector(HaxOverlay::onBypass));
-    addButton(" Informational ", 10, -30, this, menu_selector(HaxOverlay::onInformational));
+    addButton(" Informational ", 9.5, -30, this, menu_selector(HaxOverlay::onInformational));
     addButton(" Universal ", 12, -70, this, menu_selector(HaxOverlay::onUniversal));
 
     setTouchEnabled(true);
@@ -98,7 +99,7 @@ bool HaxOverlay::init(CCLayer* referrer) {
     return true;
 }
 
-void HaxOverlay::addButton(const char* label, int fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector) {
+void HaxOverlay::addButton(const char* label, float fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector) {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
 
@@ -108,10 +109,10 @@ void HaxOverlay::addButton(const char* label, int fontSize, float yOffset, CCObj
     btn1->setAnchorPoint({0, 0.5});
     btn1->setPosition(ccp(-100-189, yOffset));
 
-    auto btn1Label = CCLabelTTF::create(label, "Helvetica-Oblique.ttf", fontSize);
+    auto btn1Label = CCLabelTTF::create(label, "Helvetica-Oblique.ttf", scaleFontSize(fontSize));
     mainParent->addChild(btn1Label, 1003);
     btn1Label->setAnchorPoint({0, 0.5});
-    btn1Label->setPosition(ccp(winSize.width / 2 - 80 - 189, winSize.height / 2 + yOffset));
+    btn1Label->setPosition(ccp(winSize.width / 2 - 85 - 189, winSize.height / 2 + yOffset));
 }
 
 void HaxOverlay::onGameplay() {
@@ -173,7 +174,7 @@ void HaxOverlay::onCategory(ModuleCategory category) {
 
         std::string labelValue = mod->name;
         labelValue += " "; // italics font gets cut off grrrr
-        auto label = CCLabelTTF::create(labelValue.c_str(), "Helvetica-Oblique.ttf", 10);
+        auto label = CCLabelTTF::create(labelValue.c_str(), "Helvetica-Oblique.ttf", scaleFontSize(10));
         categoryParent->addChild(label, 1003);
         label->setAnchorPoint({0.f, 0.5f});
         label->setPosition(ccp(winSize.width / 2 - 145, winSize.height / 2 + y));

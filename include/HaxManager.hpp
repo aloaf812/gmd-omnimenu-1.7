@@ -242,7 +242,7 @@ private:
                 "Text Length Bypass", 
                 "Allows you to write an unlimited amount of characters in any textbox.", 
                 false, ModuleCategory::Bypass, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("icon_hack", new Module(
+        modules.insert(std::pair<std::string, Module*>("unlock_icons", new Module(
                 "Unlock Icons", 
                 "Unlocks all icons and colors in the Icon Kit.", 
                 false, ModuleCategory::Bypass, [](bool _){})));
@@ -257,6 +257,12 @@ private:
                 "Level IDs in Search", 
                 "Displays level IDs in level cells.", 
                 false, ModuleCategory::Informational, [](bool _){})));
+#if GAME_VERSION < 4
+        modules.insert(std::pair<std::string, Module*>("show_difficulty", new Module(
+                "Snow Difficulty", 
+                "Displays the level's difficulty on its page.", 
+                false, ModuleCategory::Informational, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("view_level_stats", new Module(
                 "View Level Stats", 
                 "Adds a menu button that displays some information about the level, such as your attempt count on it.", 

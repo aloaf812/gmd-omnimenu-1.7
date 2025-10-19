@@ -17,7 +17,7 @@ protected:
     void registerWithTouchDispatcher();
     virtual bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
 
-    void addButton(const char* label, int fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector);
+    void addButton(const char* label, float fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector);
     void onCategory(ModuleCategory category);
     void onGameplay();
     void onEditor();

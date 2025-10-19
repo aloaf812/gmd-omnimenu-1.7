@@ -38,7 +38,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
 
         self->addChild(cloneMenu, 1000);
         cloneMenu->addChild(cloneBtn);
-        cloneMenu->setPosition(ccp(35.f, winSize.height / 2));
+        cloneMenu->setPosition(ccp(winSize.width - 535.f, winSize.height / 2));
         // cloneBtn->setPosition(ccp(0, winSize.height / 2 - 25));
     }
     if (hax.getModuleEnabled("view_level_stats")) {
@@ -52,6 +52,18 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         infoMenu->addChild(infoBtn);
         infoMenu->setPosition(ccp(25.f, 25.f));
     }
+#if GAME_VERSION < 4
+    if (hax.getModuleEnabled("show_difficulty")) {
+        CCSprite* diffSpr = CCSprite::createWithSpriteFrameName(
+            CCString::createWithFormat(
+                "difficulty_%02d_btn_001.png", 
+                level->getAverageDifficulty()
+            )->getCString()
+        );
+        self->addChild(diffSpr);
+        diffSpr->setPosition(ccp(winSize.width / 2 - 120, winSize.height / 2 + 30));
+    }
+#endif
     return true;
 }
 
