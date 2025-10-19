@@ -89,6 +89,11 @@ public:
 
     void loadSettingsFromFile() {
         FILE* fp = fopen(MENU_SETTINGS_PATH MENU_SETTINGS, "rb");
+        if (!fp) {
+            cocos2d::CCLog("unable to open settings file for reading");
+            makeDirectory();
+            return;
+        }
         char readBuffer[65536];
         rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 
@@ -106,12 +111,14 @@ public:
             }
         }
     }
-    void saveSettingsToFile() {
+    void makeDirectory() {
         int status = mkdir(MENU_SETTINGS_PATH, static_cast<mode_t>(0755));
         if (status != 0 && errno != EEXIST) {
             cocos2d::CCLog("could not make dir: %i", errno);
         }
-
+    }
+    void saveSettingsToFile() {
+        makeDirectory();
         FILE* fp = fopen(MENU_SETTINGS_PATH MENU_SETTINGS, "wb");
 
         if (!fp) {
