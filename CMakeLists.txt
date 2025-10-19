@@ -4,7 +4,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(ANDROID_ABI armeabi)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(menu)
 
@@ -26,6 +26,8 @@ target_include_directories(menu PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/cocos2d/cocos2dx/platform/android
     ${CMAKE_CURRENT_SOURCE_DIR}/include/cocos2d/cocos2dx/kazmath/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include/layers
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/robtop
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src

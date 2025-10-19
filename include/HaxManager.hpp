@@ -5,6 +5,12 @@
 #include "CCMenuItemSpriteExtra.hpp"
 #include "constants.hpp"
 #include "../version/VersionUtils.hpp"
+#include <sys/stat.h>
+#include <errno.h>
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 
 enum class CheatIndicatorColor {
     Green,
@@ -79,6 +85,55 @@ public:
 
     void setCheating(bool val) {
         hasCheated = val;
+    }
+
+    void loadSettingsFromFile() {
+        FILE* fp = fopen(MENU_SETTINGS_PATH MENU_SETTINGS, "rb");
+        char readBuffer[65536];
+        rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+        rapidjson::Document doc;
+        doc.ParseStream(is);
+
+        fclose(fp);
+
+        std::map<std::string, Module*>::iterator it;
+        for (it = modules.begin(); it != modules.end(); it++) {
+            const char* id = it->first.c_str();
+            Module* mod = it->second;
+            if (doc.HasMember(id) && doc[id].IsBool()) {
+                mod->setEnabled(doc[id].GetBool());
+            }
+        }
+    }
+    void saveSettingsToFile() {
+        int status = mkdir(MENU_SETTINGS_PATH, static_cast<mode_t>(0755));
+        if (status != 0 && errno != EEXIST) {
+            cocos2d::CCLog("could not make dir: %i", errno);
+        }
+
+        FILE* fp = fopen(MENU_SETTINGS_PATH MENU_SETTINGS, "wb");
+
+        if (!fp) {
+            cocos2d::CCLog("unable to open settings file for writing");
+            return;
+        } else {
+            std::map<std::string, Module*>::iterator it;
+            rapidjson::Document document;
+            document.SetObject();
+            rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+            for (it = modules.begin(); it != modules.end(); it++) {
+                rapidjson::Value jsonKey(it->first.c_str(), static_cast<rapidjson::SizeType>(it->first.length()), allocator);
+                document.AddMember(jsonKey, getModuleEnabled(it->first.c_str()), allocator);
+            }
+            rapidjson::StringBuffer buffer;
+            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+            document.Accept(writer);
+            const char* output = buffer.GetString();
+
+            fprintf(fp, "%s", output);
+            fclose(fp);
+        }
     }
 
     // bool setAll(bool value) {

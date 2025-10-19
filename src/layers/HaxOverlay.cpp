@@ -194,6 +194,9 @@ void HaxOverlay::keyBackClicked() {
 }
 
 void HaxOverlay::onClose(CCObject*) {
+    auto& hax = HaxManager::sharedState();
+    hax.saveSettingsToFile();
+
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     

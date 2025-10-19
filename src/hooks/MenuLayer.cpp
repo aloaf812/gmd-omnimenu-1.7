@@ -4,6 +4,7 @@
 #include "CCMenuItemSpriteExtra.hpp"
 // #include "../layers/HaxLayer.hpp"
 #include "../layers/HaxOverlay.hpp"
+#include "HaxManager.hpp"
 
 // void MenuLayer_onMoreGames(void* self) {
 //     CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, HaxLayer::scene(false)));
@@ -19,7 +20,7 @@ void MenuLayer::onMenuInfo() {
         "Game Information",
         CCString::createWithFormat(
             "<cg>OMNImenu</c> %s\n<cl>Geometry Dash</c> %s\n<cr>Special Thanks</c>: <cy>akqanile</c>, <cy>Hris69</c>, <cy>Pololak</c>, <cy>Nikolyas</c>, <cy>Capeling</c>, <cy>Cvolton</c>, <cy>dank_meme01</c>, <cy>prevter</c>, <cy>Thelazycat</c>\nWith love from <cy>AntiMatter</c> <cr><3</c>", 
-            MENU_VERSION, READABLE_GAME_VERSION)->getCString(),
+            MENU_VERSION, READABLE_GAME_VERSION_FULL)->getCString(),
         "OK",
         nullptr,
         300.f
@@ -31,6 +32,8 @@ bool MenuLayer_init(cocos2d::CCLayer* self) {
 
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
+    HaxManager& hax = HaxManager::sharedState();
+    hax.loadSettingsFromFile();
 
     CCMenu* infoMenu = CCMenu::create();
     CCSprite* infoSpr = cocos2d::CCSprite::create("GJ_infoIcon.png");

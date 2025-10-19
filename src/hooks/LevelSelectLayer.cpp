@@ -30,7 +30,15 @@ void LevelSelectLayer::onViewLevelInfo() {
             "The family-friendly Christian Geometry Dash mod menu!",
             // "Stand with <cl>Ukr</c><cy>aine</c> and <cg>Palestine</c>!" <-- i stand by this but it didn't feel right to have in a mod menu
             "NEVER INHERIT <cb>FLAlertLayer</c>, WORST MISTAKE OF MY LIFE!",
-            "it's just simple <cr>red</c> counting"
+            "it's just simple <cr>red</c> counting",
+            "i know what you did last night",
+            "Beautiful risings <cy>Pharoah</c>. My temple is calling for its <cy>Pharoah</c>.",
+            "Dude, I know this is unrelated, but I need your help right now.", 
+            std::string(CCString::createWithFormat(
+                "IS THIS A UNDERRATED %s MASTERPIECE!?",
+                READABLE_GAME_VERSION
+            )->getCString()),
+            "I'm literally older than yo Brainrot Ahhh."
         };
         int index = rand() % messages.size();
         FLAlertLayer::create(

@@ -1,10 +1,9 @@
 #include "hook.hpp"
-#include "CCTableCellLabel.hpp"
 
 void (*TRAM_CCNode_setVisible)(CCNode* self, bool toggle);
 void CCNode_setVisible(CCNode* self, bool toggle) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("force_visibility") || dynamic_cast<CCTableCellLabel*>(self) != nullptr) {
+    if (hax.getModuleEnabled("force_visibility")) {
         TRAM_CCNode_setVisible(self, true);
     } else TRAM_CCNode_setVisible(self, toggle);
 }
