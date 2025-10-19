@@ -78,31 +78,49 @@ void UILayer::createPCommand() {
 void UILayer::speedUp() {
     PlayerObject* player = getPlayer();
     addXVelocity(player, 0.5d);
+    HaxManager& hax = HaxManager::sharedState();
+    hax.pSpeedModified += 1;
+    hax.setCheating(true);
     player->logValues();
 }
 void UILayer::speedDown() {
     PlayerObject* player = getPlayer();
     addXVelocity(player, -0.5d);
+    HaxManager& hax = HaxManager::sharedState();
+    hax.pSpeedModified -= 1;
+    hax.setCheating(true);
     player->logValues();
 }
 void UILayer::gravityUp() {
     PlayerObject* player = getPlayer();
     addGravity(player, 0.5d);
+    HaxManager& hax = HaxManager::sharedState();
+    hax.pGravityModified += 1;
+    hax.setCheating(true);
     player->logValues();
 }
 void UILayer::gravityDown() {
     PlayerObject* player = getPlayer();
     addGravity(player, -0.5d);
+    HaxManager& hax = HaxManager::sharedState();
+    hax.pGravityModified -= 1;
+    hax.setCheating(true);
     player->logValues();
 }
 void UILayer::yStartUp() {
     PlayerObject* player = getPlayer();
     addYStart(player, 0.5d);
+    HaxManager& hax = HaxManager::sharedState();
+    hax.pYStartModified += 1;
+    hax.setCheating(true);
     player->logValues();
 }
 void UILayer::yStartDown() {
     PlayerObject* player = getPlayer();
     addYStart(player, -0.5d);
+    HaxManager& hax = HaxManager::sharedState();
+    hax.pYStartModified -= 1;
+    hax.setCheating(true);
     player->logValues();
 }
 bool (*TRAM_UILayer_init)(UILayer* self);
@@ -135,15 +153,9 @@ void UILayer_destructor(UILayer* self) {
     hax.pButton5 = nullptr;
     hax.pButton6 = nullptr;
     hax.pMenu = nullptr;
-    // CC_SAFE_DELETE(hax.cheatIndicatorLabel);
-    // CC_SAFE_DELETE(hax.percentageLabel);
-    // CC_SAFE_DELETE(hax.pButton1);
-    // CC_SAFE_DELETE(hax.pButton2);
-    // CC_SAFE_DELETE(hax.pButton3);
-    // CC_SAFE_DELETE(hax.pButton4);
-    // CC_SAFE_DELETE(hax.pButton5);
-    // CC_SAFE_DELETE(hax.pButton6);
-    // CC_SAFE_DELETE(hax.pMenu);
+    hax.pSpeedModified = 0;
+    hax.pGravityModified = 0;
+    hax.pYStartModified = 0;
 }
 
 

@@ -26,30 +26,6 @@ public:
         static HaxManager instance;
         return instance;
     }
-    // bool noClip;
-    // bool iconHack;
-    // bool textLengthBypass;
-    // bool charFilterBypass;
-    // bool swearBypass;
-    // bool sliderBypass;
-    // bool instantComplete;
-    // bool fastMenu;
-    // bool verifyHack;
-    // bool noMirror;
-    // bool objectLimitHack;
-    // bool levelEdit;
-    // bool freeScroll;
-    // bool zoomBypass;
-    // bool levelCopying;
-    // bool pCommand;
-    // bool restartOnly;
-    // bool upload100KbFix;
-    // bool cheatIndicator;
-    // bool showPercentage;
-    // bool viewAttempts;
-    // bool objectCounter;
-    // bool practiceMusic;
-    // bool forceVisibility;
     std::map<std::string, Module*> modules;
     cocos2d::CCLabelBMFont* cheatIndicatorLabel;
     cocos2d::CCLabelBMFont* percentageLabel;
@@ -64,6 +40,9 @@ public:
     bool hasCheated;
     bool instantComped;
     bool quitPlayLayer;
+    int pSpeedModified;
+    int pGravityModified;
+    int pYStartModified;
 
     Module* getModule(const char* id) {
         return modules.at(std::string(id));
@@ -75,9 +54,9 @@ public:
     CheatIndicatorColor getCheatIndicatorColor() {
         if (getModuleEnabled("noclip") || 
         getModuleEnabled("instant_complete") || 
-        getModuleEnabled("no_mirror") || 
-        getModuleEnabled("pcommand") || 
-        getModuleEnabled("force_visibility")) return CheatIndicatorColor::Red;
+        // getModuleEnabled("pcommand") || 
+        getModuleEnabled("force_visibility") || 
+        pSpeedModified != 0 || pGravityModified != 0 || pYStartModified != 0) return CheatIndicatorColor::Red;
         if (hasCheated) return CheatIndicatorColor::Orange;
         if (getModuleEnabled("level_edit")) return CheatIndicatorColor::Yellow;
         return CheatIndicatorColor::Green;
@@ -143,7 +122,15 @@ public:
         }
     }
     bool isSafeMode() {
-        return getModuleEnabled("safe_mode");
+        if (getModuleEnabled("safe_mode")) return true;
+#ifndef FORCE_AUTO_SAFE_MODE
+        if (!getModuleEnabled("auto_safe_mode")) return false;
+#endif
+        CheatIndicatorColor color = getCheatIndicatorColor();
+        if (color == CheatIndicatorColor::Red || color == CheatIndicatorColor::Orange)
+            return true;
+        
+        return false;
     }
 
     // bool setAll(bool value) {
@@ -181,8 +168,8 @@ private:
                 "pCommand", 
                 "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (Note: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 
                 false, ModuleCategory::Gameplay, [](bool _){
-                    HaxManager& hax = HaxManager::sharedState();
-                    if (_) hax.setCheating(true);
+                    // HaxManager& hax = HaxManager::sharedState();
+                    // if (_) hax.setCheating(true);
                 })));
         modules.insert(std::pair<std::string, Module*>("practice_music", new Module(
                 "Practice Music Hack", 
@@ -220,10 +207,12 @@ private:
                     else
                         setObjectLimit(OBJECT_LIMIT);
                 })));
+#ifndef FORCE_AUTO_SAFE_MODE
         modules.insert(std::pair<std::string, Module*>("verify_bypass", new Module(
                 "Verify Bypass", 
                 "Allows you to upload any level without verifying it.", 
                 false, ModuleCategory::Editor, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("zoom_bypass", new Module(
                 "Zoom Bypass", 
                 "Removes editor zoom restrictions.", 
@@ -277,6 +266,12 @@ private:
                 "100 KB Fix", 
                 "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload.", 
                 true, ModuleCategory::Universal, [](bool _){})));
+#ifndef FORCE_AUTO_SAFE_MODE
+        modules.insert(std::pair<std::string, Module*>("auto_safe_mode", new Module(
+                "Auto Safe Mode",
+                "Prevents any progress on any level from being saved if you have cheats enabled.", 
+                false, ModuleCategory::Universal, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("fast_menu", new Module(
                 "Fast Menu", 
                 "Makes fade transitions instant.", 
@@ -290,7 +285,12 @@ private:
                 })));
         modules.insert(std::pair<std::string, Module*>("safe_mode", new Module(
                 "Safe Mode",
+#ifndef FORCE_AUTO_SAFE_MODE
                 "Prevents any progress on any level from being saved.", 
+#else
+                "Prevents any progress on any level from being saved. (Note: this build has Auto Safe Mode enabled forcibly, which means the effects of this module are automatically applied if you are using any cheats)",
+#endif 
+
                 false, ModuleCategory::Universal, [](bool _){})));
 
         lastCategory = ModuleCategory::Gameplay;
@@ -305,6 +305,10 @@ private:
         pButton4 = nullptr;
         pButton5 = nullptr;
         pButton6 = nullptr;
+
+        pSpeedModified = 0;
+        pGravityModified = 0;
+        pYStartModified = 0;
     }
 
     HaxManager(const HaxManager&) = delete;
