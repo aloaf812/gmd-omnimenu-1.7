@@ -263,3 +263,9 @@ CCLayer* getCellMainLayer(CCNode* cell) {
 int getCommentID(CCNode* comment) {
     return MEMBER_BY_OFFSET(int, comment, GJComment__m_commentID);
 }
+std::string getLevelString(GJGameLevel* level) {
+    return MEMBER_BY_OFFSET(std::string, level, GJGameLevel__m_levelString);
+}
+GJGameLevel* getEditLayerLevel(CCLayer* editLayer) {
+    return MEMBER_BY_OFFSET(GJGameLevel*, editLayer, EditLevelLayer__m_level);
+}

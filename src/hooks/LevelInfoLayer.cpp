@@ -3,18 +3,23 @@
 #include "GJGameLevel.hpp"
 #include "FLAlertLayer.hpp"
 #include "CCMenuItemSpriteExtra.hpp"
+#include <algorithm>
 
 void LevelInfoLayer::onViewLevelInfo() {
     GJGameLevel* level = getInfoLayerLevel(this);
+    std::string s = getLevelString(level);
+    std::string::difference_type count = std::count(s.begin(), s.end(), ';');
+    int objectCount = std::max(0, static_cast<int>(count) - 1);
     CCString* flAlertInsides = CCString::createWithFormat(
-        "<cy>%s</c> by <cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cl>Level ID</c>: %i\n<cb>User ID</c>: %i",
+        "<cy>%s</c> by <cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cl>Level ID</c>: %i\n<cb>User ID</c>: %i\n<cz>Object Count</c>: %i",
         getLevelName(level).c_str(),
         getLevelUsername(level).c_str(),
         getLevelAttempts(level),
         getLevelNormalPercent(level),
         getLevelPracticePercent(level),
         getLevelID(level),
-        getLevelUserID(level)
+        getLevelUserID(level),
+        objectCount
     );
     FLAlertLayer::create(
         nullptr,
@@ -38,7 +43,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
 
         self->addChild(cloneMenu, 1000);
         cloneMenu->addChild(cloneBtn);
-        cloneMenu->setPosition(ccp(winSize.width - 535.f, winSize.height / 2));
+        cloneMenu->setPosition(ccp(winSize.width - 565.f, winSize.height / 2));
         // cloneBtn->setPosition(ccp(0, winSize.height / 2 - 25));
     }
     if (hax.getModuleEnabled("view_level_stats")) {

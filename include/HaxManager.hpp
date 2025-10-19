@@ -259,7 +259,7 @@ private:
                 false, ModuleCategory::Informational, [](bool _){})));
 #if GAME_VERSION < 4
         modules.insert(std::pair<std::string, Module*>("show_difficulty", new Module(
-                "Snow Difficulty", 
+                "Show Difficulty", 
                 "Displays the level's difficulty on its page.", 
                 false, ModuleCategory::Informational, [](bool _){})));
 #endif

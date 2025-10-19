@@ -86,3 +86,5 @@ LevelEditorLayer* getUIEditorLayer(EditorUI* uiLayer);
 GJGameLevel* getCellLevel(CCNode* cell);
 CCLayer* getCellMainLayer(CCNode* cell);
 int getCommentID(CCNode* comment);
+std::string getLevelString(GJGameLevel* level);
+GJGameLevel* getEditLayerLevel(CCLayer* editLayer);
