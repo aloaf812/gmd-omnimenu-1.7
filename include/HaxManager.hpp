@@ -142,6 +142,9 @@ public:
             fclose(fp);
         }
     }
+    bool isSafeMode() {
+        return getModuleEnabled("safe_mode");
+    }
 
     // bool setAll(bool value) {
         
@@ -285,6 +288,10 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+        modules.insert(std::pair<std::string, Module*>("safe_mode", new Module(
+                "Safe Mode",
+                "Prevents any progress on any level from being saved.", 
+                false, ModuleCategory::Universal, [](bool _){})));
 
         lastCategory = ModuleCategory::Gameplay;
         hasCheated = false;

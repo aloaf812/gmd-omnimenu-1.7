@@ -15,6 +15,8 @@
 #include "hooks/LevelSelectLayer.cpp"
 #include "hooks/LevelCell.cpp"
 #include "hooks/CommentCell.cpp"
+#include "hooks/GJGameLevel.cpp"
+#include "hooks/GameStatsManager.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -34,4 +36,6 @@ void initialize_hooks() {
     LevelSelectLayer_om();
     LevelCell_om();
     CommentCell_om();
+    GJGameLevel_om();
+    GameStatsManager_om();
 }
