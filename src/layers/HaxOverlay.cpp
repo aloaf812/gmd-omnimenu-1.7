@@ -180,9 +180,14 @@ void HaxOverlay::onCategory(ModuleCategory category) {
     std::map<std::string, Module*>::iterator it;
 
     int y = 80;
+    int x = 0;
 
     for (it = hax.modules.begin(); it != hax.modules.end(); it++)
     {
+        if (y < -100) {
+            y = 80;
+            x += 155;
+        }
         std::string* key = new std::string; // heap allocation
         *key = it->first;
         Module* mod = it->second;
@@ -193,7 +198,7 @@ void HaxOverlay::onCategory(ModuleCategory category) {
 
         auto checkbox = CCMenuItemToggler::create(toggleOn, toggleOff, this, menu_selector(HaxOverlay::toggler));
         checkbox->toggle(!mod->enabled);
-        checkbox->setPosition(ccp(-159, y));
+        checkbox->setPosition(ccp(-159 + x, y));
         checkbox->setScale(0.6f);
         checkbox->setUserData(key);
         categoryMenu->addChild(checkbox, 1003);
@@ -203,7 +208,7 @@ void HaxOverlay::onCategory(ModuleCategory category) {
         auto label = CCLabelTTF::create(labelValue.c_str(), "Helvetica-Oblique.ttf", scaleFontSize(10));
         categoryParent->addChild(label, 1003);
         label->setAnchorPoint({0.f, 0.5f});
-        label->setPosition(ccp(winSize.width / 2 - 145, winSize.height / 2 + y));
+        label->setPosition(ccp(winSize.width / 2 - 145 + x, winSize.height / 2 + y));
         y -= 20;
     }
 }

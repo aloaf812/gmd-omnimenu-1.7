@@ -60,7 +60,20 @@ void GameManager_reportAchievementWithID(void* self, const char* ach, int percen
         !strcmp(ach, "geometry.ach.level13b") || 
         !strcmp(ach, "geometry.ach.level14b") || 
         !strcmp(ach, "geometry.ach.level15b") || 
-        !strcmp(ach, "geometry.ach.level16b")
+        !strcmp(ach, "geometry.ach.level16b") || 
+        !strcmp(ach, "geometry.ach.demon01") || 
+        !strcmp(ach, "geometry.ach.demon02") || 
+        !strcmp(ach, "geometry.ach.demon03") || 
+        !strcmp(ach, "geometry.ach.demon04") || 
+        !strcmp(ach, "geometry.ach.demon05") || 
+        !strcmp(ach, "geometry.ach.stars01") || 
+        !strcmp(ach, "geometry.ach.stars02") || 
+        !strcmp(ach, "geometry.ach.stars03") || 
+        !strcmp(ach, "geometry.ach.stars04") || 
+        !strcmp(ach, "geometry.ach.stars05") || 
+        !strcmp(ach, "geometry.ach.stars06") || 
+        !strcmp(ach, "geometry.ach.custom01") || 
+        !strcmp(ach, "geometry.ach.custom02")
     )) {
         return;
     }

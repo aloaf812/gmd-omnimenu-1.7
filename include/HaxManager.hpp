@@ -159,7 +159,7 @@ private:
                 })));
         modules.insert(std::pair<std::string, Module*>("no_glow", new Module(
                 "No Glow", 
-                "Disables object glow.", 
+                "Disables object glow. (Note: Will only apply after re-entering the level)", 
                 false, ModuleCategory::Gameplay, [](bool _){ })));
         modules.insert(std::pair<std::string, Module*>("no_mirror", new Module(
                 "No Mirror", 
@@ -171,11 +171,19 @@ private:
         modules.insert(std::pair<std::string, Module*>("no_particles", new Module(
                 "No Particles", 
                 "Disables every particle system in the game.", 
-                false, ModuleCategory::Gameplay, [](bool _){ })));
+                false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_rotation", new Module(
+                "No Rotation", 
+                "Prevents the player from rotating.", 
+                false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_shake", new Module(
+                "No Shake", 
+                "Disables camera shake when completing a level.", 
+                false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("no_trail", new Module(
                 "No Trail", 
                 "Disables the player's trail at all times.", 
-                false, ModuleCategory::Gameplay, [](bool _){ })));
+                false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("pcommand", new Module(
                 "pCommand", 
                 "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (Note: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 

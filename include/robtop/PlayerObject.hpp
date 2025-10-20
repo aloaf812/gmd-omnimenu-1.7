@@ -17,6 +17,7 @@ public:
     void logValues();
 
     void deactivateParticle();
+    void flipMod();
     virtual CCLayer* getGameLayer() const;
     virtual EndPortalObject* getPortalObject();
 };
