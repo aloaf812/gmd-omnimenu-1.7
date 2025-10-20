@@ -1,6 +1,7 @@
 #include "hook.hpp"
 #include "EditLevelLayer.hpp"
 #include <algorithm>
+#include "Utils.hpp"
 
 void EditLevelLayer::onViewLevelInfo() {
     GJGameLevel* level = getEditLayerLevel(this);
@@ -27,12 +28,14 @@ void EditLevelLayer::onViewLevelInfo() {
 bool (*TRAM_EditLevelLayer_init)(EditLevelLayer* self, GJGameLevel* level);
 bool EditLevelLayer_init(EditLevelLayer* self, GJGameLevel* level) {
     HaxManager& hax = HaxManager::sharedState();
+#ifndef FORCE_AUTO_SAFE_MODE
     if (hax.getModuleEnabled("verify_bypass")) {
         setLevelVerified(level, true);
     }
+#endif
     if (hax.getModuleEnabled("view_level_stats")) {
         CCMenu* infoMenu = CCMenu::create();
-        CCSprite* infoSpr = cocos2d::CCSprite::create("GJ_infoIcon.png");
+        CCSprite* infoSpr = createInfoSprite();
         CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, self, menu_selector(EditLevelLayer::onViewLevelInfo));
 
         infoBtn->setSizeMult(1.5f);

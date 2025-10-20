@@ -27,10 +27,13 @@ protected:
 
     void toggler(CCObject*);
     float getDuration();
+    void setColorAtIndex(int index);
 
     CCNode* mainParent;
     CCNode* categoryParent;
     CCLayer* referrer;
     CCMenu* btnMenu;
     CCMenu* categoryMenu;
+    CCArray* buttons;
+    CCArray* labels;
 };

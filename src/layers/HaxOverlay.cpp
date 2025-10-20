@@ -4,6 +4,7 @@
 #include "FLAlertLayer.hpp"
 #include "HaxManager.hpp"
 #include "CCMenuItemToggler.hpp"
+#include "CCMenuItemSpriteExtra.hpp"
 #include "Utils.hpp"
 
 using namespace cocos2d;
@@ -30,6 +31,8 @@ float HaxOverlay::getDuration() {
     if (hax.getModuleEnabled("fast_menu")) return 0.f;
     return 0.25f;
 }
+
+ccColor3B color = ccc3(127, 255, 255);
 
 bool HaxOverlay::init(CCLayer* referrer) {
     if (!CCLayerColor::initWithColor(ccc4(0, 0, 0, 180)))
@@ -74,9 +77,19 @@ bool HaxOverlay::init(CCLayer* referrer) {
     menuLabel->setPosition(ccp(winSize.width / 2 + 21, winSize.height / 2 + 92));
 
     auto btnMenu = CCMenu::create();
+    auto closeSpr = CCSprite::create("closebtn.png");
+    closeSpr->setScale(0.75f);
+    auto closeBtn = CCMenuItemSpriteExtra::create(closeSpr, closeSpr, this, menu_selector(HaxOverlay::onClose));
+    closeBtn->setPosition(ccp(winSize.width / 2 - 300 + 185, winSize.height / 2 - 225 + 185));
+    btnMenu->addChild(closeBtn);
     parent->addChild(btnMenu, 1002);
     btnMenu->setPosition(ccp(winSize.width / 2, winSize.height / 2));
     this->btnMenu = btnMenu;
+
+    this->buttons = CCArray::create();
+    this->labels = CCArray::create();
+    this->buttons->retain();
+    this->labels->retain();
 
     addButton(" Gameplay ", 12, 90, this, menu_selector(HaxOverlay::onGameplay));
     addButton(" Editor ", 12, 50, this, menu_selector(HaxOverlay::onEditor));
@@ -105,35 +118,48 @@ void HaxOverlay::addButton(const char* label, float fontSize, float yOffset, CCO
 
     auto btn1Sprite = CCSprite::create("menubtn.png");
     auto btn1 = CCMenuItemSprite::create(btn1Sprite, btn1Sprite, btn1Sprite, target, selector);
-    btnMenu->addChild(btn1);
+    this->buttons->addObject(btn1);
+    btnMenu->addChild(btn1, 999);
     btn1->setAnchorPoint({0, 0.5});
-    btn1->setPosition(ccp(-100-189, yOffset));
+    btn1->setPosition(ccp(-105-189, yOffset));
 
     auto btn1Label = CCLabelTTF::create(label, "Helvetica-Oblique.ttf", scaleFontSize(fontSize));
+    this->labels->addObject(btn1Label);
     mainParent->addChild(btn1Label, 1003);
     btn1Label->setAnchorPoint({0, 0.5});
-    btn1Label->setPosition(ccp(winSize.width / 2 - 85 - 189, winSize.height / 2 + yOffset));
+    btn1Label->setPosition(ccp(winSize.width / 2 - 90 - 189, winSize.height / 2 + yOffset));
 }
 
+void HaxOverlay::setColorAtIndex(int index) {
+    static_cast<CCMenuItemSprite*>(this->buttons->objectAtIndex(index))->setColor(color);
+    static_cast<CCLabelTTF*>(this->labels->objectAtIndex(index))->setColor(color);
+    for (int i = 0; i < this->buttons->count(); i++) {
+        if (i == index) continue;
+        static_cast<CCMenuItemSprite*>(this->buttons->objectAtIndex(i))->setColor(ccWHITE);
+        static_cast<CCLabelTTF*>(this->labels->objectAtIndex(i))->setColor(ccWHITE);
+    }
+}
 void HaxOverlay::onGameplay() {
     onCategory(ModuleCategory::Gameplay);
 }
 void HaxOverlay::onEditor() {
     onCategory(ModuleCategory::Editor);
 }
-void HaxOverlay::onUniversal() {
-    onCategory(ModuleCategory::Universal);
+void HaxOverlay::onBypass() {
+    onCategory(ModuleCategory::Bypass);
 }
 void HaxOverlay::onInformational() {
     onCategory(ModuleCategory::Informational);
 }
-void HaxOverlay::onBypass() {
-    onCategory(ModuleCategory::Bypass);
+void HaxOverlay::onUniversal() {
+    onCategory(ModuleCategory::Universal);
 }
 
 void HaxOverlay::onCategory(ModuleCategory category) {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
+
+    setColorAtIndex(static_cast<int>(category));
 
     while (categoryParent->getChildrenCount() > 0) {
         CCNode* node = static_cast<CCNode*>(categoryParent->getChildren()->objectAtIndex(0));
@@ -186,15 +212,14 @@ void HaxOverlay::toggler(CCObject* sender) {
     CCMenuItem* menuItem = (CCMenuItem *)(sender);
     std::string* userData = static_cast<std::string*>(menuItem->getUserData());
     auto& hax = HaxManager::sharedState();
-    cocos2d::CCLog(userData->c_str());
     hax.getModule(userData->c_str())->toggle();
 }
 
 void HaxOverlay::keyBackClicked() {
-    HaxOverlay::onClose(nullptr);
+    onClose(nullptr);
 }
 
-void HaxOverlay::onClose(CCObject*) {
+void HaxOverlay::onClose(CCObject* sender) {
     auto& hax = HaxManager::sharedState();
     hax.saveSettingsToFile();
 
@@ -202,16 +227,19 @@ void HaxOverlay::onClose(CCObject*) {
     CCSize winSize = director->getWinSize();
     
     this->setKeypadEnabled(false);
+    this->setTouchEnabled(false);
     //referrer->setTouchEnabled(true);
     cocos2d::CCDirector::sharedDirector()->getTouchDispatcher()->removeDelegate(this);
 
     mainParent->runAction(CCEaseIn::create(
         CCMoveTo::create(getDuration(), ccp(winSize.width, 0.0f)), 3
     ));
-    runAction(CCSequence::create(CCArray::create(
+    if (sender) this->retain();
+    this->runAction(CCSequence::create(
         CCDelayTime::create(getDuration()),
-        CCCallFunc::create(this, callfunc_selector(CCNode::removeFromParentAndCleanup)) // CCRemoveSelf does not exist in old cocos
-    )));
+        CCCallFunc::create(this, callfunc_selector(CCNode::removeFromParentAndCleanup)), // CCRemoveSelf does not exist in old cocos
+        nullptr
+    ));
 }
 
 bool HaxOverlay::ccTouchBegan(cocos2d::CCTouch* t, cocos2d::CCEvent*)

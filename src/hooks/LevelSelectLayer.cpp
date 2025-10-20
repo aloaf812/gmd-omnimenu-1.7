@@ -5,6 +5,7 @@
 #include "LevelSelectLayer.hpp"
 #include "LevelTools.hpp"
 #include "GameLevelManager.hpp"
+#include "Utils.hpp"
 
 void LevelSelectLayer::onViewLevelInfo() {
     // GJGameLevel* level = getInfoLayerLevel(this);
@@ -35,10 +36,11 @@ void LevelSelectLayer::onViewLevelInfo() {
             "Beautiful risings <cy>Pharoah</c>. My temple is calling for its <cy>Pharoah</c>.",
             "Dude, I know this is unrelated, but I need your help right now.", 
             std::string(CCString::createWithFormat(
-                "IS THIS A UNDERRATED %s MASTERPIECE!?",
+                "IS THIS A UNDERRATED <cy>%s</c> MASTERPIECE!?",
                 READABLE_GAME_VERSION
             )->getCString()),
-            "I'm literally older than yo Brainrot Ahhh."
+            "I'm literally older than yo Brainrot Ahhh.",
+            "#KillSereneNecrosis"
         };
         int index = rand() % messages.size();
         FLAlertLayer::create(
@@ -79,7 +81,7 @@ bool LevelSelectLayer_init(LevelSelectLayer* self, int a) {
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();
         CCMenu* infoMenu = CCMenu::create();
-        CCSprite* infoSpr = cocos2d::CCSprite::create("GJ_infoIcon.png");
+        CCSprite* infoSpr = createInfoSprite();
         CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, self, menu_selector(LevelSelectLayer::onViewLevelInfo));
 
         infoBtn->setSizeMult(1.5f);

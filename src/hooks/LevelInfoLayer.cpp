@@ -4,6 +4,7 @@
 #include "FLAlertLayer.hpp"
 #include "CCMenuItemSpriteExtra.hpp"
 #include <algorithm>
+#include "Utils.hpp"
 
 void LevelInfoLayer::onViewLevelInfo() {
     GJGameLevel* level = getInfoLayerLevel(this);
@@ -48,7 +49,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
     }
     if (hax.getModuleEnabled("view_level_stats")) {
         CCMenu* infoMenu = CCMenu::create();
-        CCSprite* infoSpr = cocos2d::CCSprite::create("GJ_infoIcon.png");
+        CCSprite* infoSpr = createInfoSprite();
         CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, self, menu_selector(LevelInfoLayer::onViewLevelInfo));
 
         infoBtn->setSizeMult(1.5f);

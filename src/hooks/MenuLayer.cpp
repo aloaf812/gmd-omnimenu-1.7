@@ -5,6 +5,7 @@
 // #include "../layers/HaxLayer.hpp"
 #include "../layers/HaxOverlay.hpp"
 #include "HaxManager.hpp"
+#include "Utils.hpp"
 
 // void MenuLayer_onMoreGames(void* self) {
 //     CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, HaxLayer::scene(false)));
@@ -36,7 +37,7 @@ bool MenuLayer_init(cocos2d::CCLayer* self) {
     hax.loadSettingsFromFile();
 
     CCMenu* infoMenu = CCMenu::create();
-    CCSprite* infoSpr = cocos2d::CCSprite::create("GJ_infoIcon.png");
+    CCSprite* infoSpr = createInfoSprite();
     CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, self, menu_selector(MenuLayer::onMenuInfo));
     infoBtn->setSizeMult(1.5f);
 
