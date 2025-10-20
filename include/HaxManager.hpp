@@ -157,6 +157,10 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+        modules.insert(std::pair<std::string, Module*>("no_glow", new Module(
+                "No Glow", 
+                "Disables object glow.", 
+                false, ModuleCategory::Gameplay, [](bool _){ })));
         modules.insert(std::pair<std::string, Module*>("no_mirror", new Module(
                 "No Mirror", 
                 "Disables mirror portals.", 
@@ -164,6 +168,14 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+        modules.insert(std::pair<std::string, Module*>("no_particles", new Module(
+                "No Particles", 
+                "Disables every particle system in the game.", 
+                false, ModuleCategory::Gameplay, [](bool _){ })));
+        modules.insert(std::pair<std::string, Module*>("no_trail", new Module(
+                "No Trail", 
+                "Disables the player's trail at all times.", 
+                false, ModuleCategory::Gameplay, [](bool _){ })));
         modules.insert(std::pair<std::string, Module*>("pcommand", new Module(
                 "pCommand", 
                 "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (Note: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 

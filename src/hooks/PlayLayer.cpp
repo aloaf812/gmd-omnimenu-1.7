@@ -210,6 +210,9 @@ void PlayLayer_update(PlayLayer* self, float dt) {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
     UILayer* uiLayer = getUILayer(self);
+    if (hax.getModuleEnabled("no_particles")) {
+        getPlayer(self)->deactivateParticle();
+    }
     if (hax.getModuleEnabled("cheat_indicator")) {
         if (!hax.cheatIndicatorLabel || hax.cheatIndicatorLabel == nullptr) {
             uiLayer->createCheatIndicator();
@@ -272,6 +275,14 @@ void PlayLayer_init(PlayLayer* self) {
     hax.quitPlayLayer = false;
 }
 
+// CCParticleSystemQuad* (*TRAM_PlayLayer_createParticle)(void* self, int a1, const char* a2, int a3, tCCPositionType type);
+// CCParticleSystemQuad* PlayLayer_createParticle(void* self, int a1, const char* a2, int a3, tCCPositionType type) {
+//     CCParticleSystemQuad* particles = TRAM_PlayLayer_createParticle(self, a1, a2, a3, type);
+//     HaxManager& hax = HaxManager::sharedState();
+//     if (hax.getModuleEnabled("no_particles")) particles->setVisible(false);
+//     return particles;
+// }
+
 void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer13destroyPlayerEv", 
         reinterpret_cast<void*>(PlayLayer_destroyPlayer),
@@ -296,4 +307,7 @@ void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer4initEP11GJGameLevel",
         reinterpret_cast<void*>(PlayLayer_init),
         reinterpret_cast<void**>(&TRAM_PlayLayer_init));
+    // Omni::hook("_ZN9PlayLayer14createParticleEiPKciN7cocos2d15tCCPositionTypeE",
+    //     reinterpret_cast<void*>(PlayLayer_createParticle),
+    //     reinterpret_cast<void**>(&TRAM_PlayLayer_createParticle));
 }

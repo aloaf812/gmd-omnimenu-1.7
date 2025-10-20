@@ -16,6 +16,7 @@ public:
     void yStartUp();
     void logValues();
 
+    void deactivateParticle();
     virtual CCLayer* getGameLayer() const;
     virtual EndPortalObject* getPortalObject();
 };

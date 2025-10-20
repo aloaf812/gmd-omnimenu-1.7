@@ -17,6 +17,9 @@
 #include "hooks/CommentCell.cpp"
 #include "hooks/GJGameLevel.cpp"
 #include "hooks/GameStatsManager.cpp"
+#include "hooks/PlayerObject.cpp"
+#include "hooks/CCParticleSystem.cpp"
+#include "hooks/GameObject.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -38,4 +41,7 @@ void initialize_hooks() {
     CommentCell_om();
     GJGameLevel_om();
     GameStatsManager_om();
+    PlayerObject_om();
+    CCParticleSystem_om();
+    GameObject_om();
 }

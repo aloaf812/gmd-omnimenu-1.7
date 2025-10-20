@@ -29,39 +29,41 @@ void (*TRAM_GameManager_reportAchievementWithID)(void* self, const char* ach, in
 void GameManager_reportAchievementWithID(void* self, const char* ach, int percent) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.isSafeMode() && (
-        ach == "geometry.ach.level01a" || 
-        ach == "geometry.ach.level02a" || 
-        ach == "geometry.ach.level03a" || 
-        ach == "geometry.ach.level04a" || 
-        ach == "geometry.ach.level05a" || 
-        ach == "geometry.ach.level06a" || 
-        ach == "geometry.ach.level07a" || 
-        ach == "geometry.ach.level08a" || 
-        ach == "geometry.ach.level09a" || 
-        ach == "geometry.ach.level10a" || 
-        ach == "geometry.ach.level11a" || 
-        ach == "geometry.ach.level12a" || 
-        ach == "geometry.ach.level13a" || 
-        ach == "geometry.ach.level14a" || 
-        ach == "geometry.ach.level15a" || 
-        ach == "geometry.ach.level16a" || 
-        ach == "geometry.ach.level01b" || 
-        ach == "geometry.ach.level02b" || 
-        ach == "geometry.ach.level03b" || 
-        ach == "geometry.ach.level04b" || 
-        ach == "geometry.ach.level05b" || 
-        ach == "geometry.ach.level06b" || 
-        ach == "geometry.ach.level07b" || 
-        ach == "geometry.ach.level08b" || 
-        ach == "geometry.ach.level09b" || 
-        ach == "geometry.ach.level10b" || 
-        ach == "geometry.ach.level11b" || 
-        ach == "geometry.ach.level12b" || 
-        ach == "geometry.ach.level13b" || 
-        ach == "geometry.ach.level14b" || 
-        ach == "geometry.ach.level15b" || 
-        ach == "geometry.ach.level16b"
-    )) return;
+        !strcmp(ach, "geometry.ach.level01a") || 
+        !strcmp(ach, "geometry.ach.level02a") || 
+        !strcmp(ach, "geometry.ach.level03a") || 
+        !strcmp(ach, "geometry.ach.level04a") || 
+        !strcmp(ach, "geometry.ach.level05a") || 
+        !strcmp(ach, "geometry.ach.level06a") || 
+        !strcmp(ach, "geometry.ach.level07a") || 
+        !strcmp(ach, "geometry.ach.level08a") || 
+        !strcmp(ach, "geometry.ach.level09a") || 
+        !strcmp(ach, "geometry.ach.level10a") || 
+        !strcmp(ach, "geometry.ach.level11a") || 
+        !strcmp(ach, "geometry.ach.level12a") || 
+        !strcmp(ach, "geometry.ach.level13a") || 
+        !strcmp(ach, "geometry.ach.level14a") || 
+        !strcmp(ach, "geometry.ach.level15a") || 
+        !strcmp(ach, "geometry.ach.level16a") || 
+        !strcmp(ach, "geometry.ach.level01b") || 
+        !strcmp(ach, "geometry.ach.level02b") || 
+        !strcmp(ach, "geometry.ach.level03b") || 
+        !strcmp(ach, "geometry.ach.level04b") || 
+        !strcmp(ach, "geometry.ach.level05b") || 
+        !strcmp(ach, "geometry.ach.level06b") || 
+        !strcmp(ach, "geometry.ach.level07b") || 
+        !strcmp(ach, "geometry.ach.level08b") || 
+        !strcmp(ach, "geometry.ach.level09b") || 
+        !strcmp(ach, "geometry.ach.level10b") || 
+        !strcmp(ach, "geometry.ach.level11b") || 
+        !strcmp(ach, "geometry.ach.level12b") || 
+        !strcmp(ach, "geometry.ach.level13b") || 
+        !strcmp(ach, "geometry.ach.level14b") || 
+        !strcmp(ach, "geometry.ach.level15b") || 
+        !strcmp(ach, "geometry.ach.level16b")
+    )) {
+        return;
+    }
     TRAM_GameManager_reportAchievementWithID(self, ach, percent);
 }
 
