@@ -6,6 +6,7 @@
 #include "CCMenuItemToggler.hpp"
 #include "CCMenuItemSpriteExtra.hpp"
 #include "Utils.hpp"
+#include "GameSoundManager.hpp"
 
 using namespace cocos2d;
 
@@ -218,6 +219,29 @@ void HaxOverlay::toggler(CCObject* sender) {
     std::string* userData = static_cast<std::string*>(menuItem->getUserData());
     auto& hax = HaxManager::sharedState();
     hax.getModule(userData->c_str())->toggle();
+    if (!strcmp(userData->c_str(), "ping_spoofing")) {
+        GameSoundManager::sharedManager()->playUniqueEffect("pih.mp3");
+        hax.getModule(userData->c_str())->toggle();
+        static_cast<CCMenuItemToggler*>(sender)->toggle(true);
+        this->runAction(CCSequence::create(
+            CCDelayTime::create(0.2f),
+            CCCallFunc::create(this, callfunc_selector(HaxOverlay::onPih)),
+            nullptr
+        ));
+    }
+}
+void HaxOverlay::onPih(CCObject* sender) {
+    CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
+    CCSprite* pih = CCSprite::create("pih.png");
+    addChild(pih, 1010);
+    pih->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+    pih->setScale(2.f);
+    pih->runAction(CCSequence::create(
+        CCFadeOut::create(1.0f),
+        CCCallFunc::create(pih, callfunc_selector(CCNode::removeFromParentAndCleanup)),
+        nullptr
+    ));
 }
 
 void HaxOverlay::keyBackClicked() {

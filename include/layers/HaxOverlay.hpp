@@ -28,6 +28,7 @@ protected:
     void toggler(CCObject*);
     float getDuration();
     void setColorAtIndex(int index);
+    void onPih(CCObject*);
 
     CCNode* mainParent;
     CCNode* categoryParent;

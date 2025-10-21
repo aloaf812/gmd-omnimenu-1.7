@@ -303,6 +303,10 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+        modules.insert(std::pair<std::string, Module*>("ping_spoofing", new Module(
+                "Pig Spoofing", 
+                "Self-explanatory.", 
+                false, ModuleCategory::Universal, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("safe_mode", new Module(
                 "Safe Mode",
 #ifndef FORCE_AUTO_SAFE_MODE

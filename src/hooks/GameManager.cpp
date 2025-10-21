@@ -28,52 +28,14 @@ bool GameManager_isIconUnlocked(GameManager* self, int idx) {
 void (*TRAM_GameManager_reportAchievementWithID)(void* self, const char* ach, int percent);
 void GameManager_reportAchievementWithID(void* self, const char* ach, int percent) {
     HaxManager& hax = HaxManager::sharedState();
+    std::string s = std::string(ach);
     if (hax.isSafeMode() && (
-        !strcmp(ach, "geometry.ach.level01a") || 
-        !strcmp(ach, "geometry.ach.level02a") || 
-        !strcmp(ach, "geometry.ach.level03a") || 
-        !strcmp(ach, "geometry.ach.level04a") || 
-        !strcmp(ach, "geometry.ach.level05a") || 
-        !strcmp(ach, "geometry.ach.level06a") || 
-        !strcmp(ach, "geometry.ach.level07a") || 
-        !strcmp(ach, "geometry.ach.level08a") || 
-        !strcmp(ach, "geometry.ach.level09a") || 
-        !strcmp(ach, "geometry.ach.level10a") || 
-        !strcmp(ach, "geometry.ach.level11a") || 
-        !strcmp(ach, "geometry.ach.level12a") || 
-        !strcmp(ach, "geometry.ach.level13a") || 
-        !strcmp(ach, "geometry.ach.level14a") || 
-        !strcmp(ach, "geometry.ach.level15a") || 
-        !strcmp(ach, "geometry.ach.level16a") || 
-        !strcmp(ach, "geometry.ach.level01b") || 
-        !strcmp(ach, "geometry.ach.level02b") || 
-        !strcmp(ach, "geometry.ach.level03b") || 
-        !strcmp(ach, "geometry.ach.level04b") || 
-        !strcmp(ach, "geometry.ach.level05b") || 
-        !strcmp(ach, "geometry.ach.level06b") || 
-        !strcmp(ach, "geometry.ach.level07b") || 
-        !strcmp(ach, "geometry.ach.level08b") || 
-        !strcmp(ach, "geometry.ach.level09b") || 
-        !strcmp(ach, "geometry.ach.level10b") || 
-        !strcmp(ach, "geometry.ach.level11b") || 
-        !strcmp(ach, "geometry.ach.level12b") || 
-        !strcmp(ach, "geometry.ach.level13b") || 
-        !strcmp(ach, "geometry.ach.level14b") || 
-        !strcmp(ach, "geometry.ach.level15b") || 
-        !strcmp(ach, "geometry.ach.level16b") || 
-        !strcmp(ach, "geometry.ach.demon01") || 
-        !strcmp(ach, "geometry.ach.demon02") || 
-        !strcmp(ach, "geometry.ach.demon03") || 
-        !strcmp(ach, "geometry.ach.demon04") || 
-        !strcmp(ach, "geometry.ach.demon05") || 
-        !strcmp(ach, "geometry.ach.stars01") || 
-        !strcmp(ach, "geometry.ach.stars02") || 
-        !strcmp(ach, "geometry.ach.stars03") || 
-        !strcmp(ach, "geometry.ach.stars04") || 
-        !strcmp(ach, "geometry.ach.stars05") || 
-        !strcmp(ach, "geometry.ach.stars06") || 
-        !strcmp(ach, "geometry.ach.custom01") || 
-        !strcmp(ach, "geometry.ach.custom02")
+        s.rfind("geometry.ach.level", 0) == 0 ||
+        s.rfind("geometry.ach.demon", 0) == 0 ||
+        s.rfind("geometry.ach.stars", 0) == 0 ||
+        s.rfind("geometry.ach.coins", 0) == 0 ||
+        s.rfind("geometry.ach.custom", 0) == 0 ||
+        !strcmp(ach, "geometry.ach.special01")
     )) {
         return;
     }
