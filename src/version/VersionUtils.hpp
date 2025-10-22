@@ -88,3 +88,12 @@ CCLayer* getCellMainLayer(CCNode* cell);
 int getCommentID(CCNode* comment);
 std::string getLevelString(GJGameLevel* level);
 GJGameLevel* getEditLayerLevel(CCLayer* editLayer);
+
+CCParticleSystem* getShipLiftParticles(PlayerObject* player);
+CCParticleSystem* getShipGroundParticles(PlayerObject* player);
+CCParticleSystem* getGroundParticles(PlayerObject* player);
+CCParticleSystem* getLandingParticles(PlayerObject* player);
+CCParticleSystem* getLandingParticles2(PlayerObject* player);
+CCParticleSystem* getShipFireParticles(PlayerObject* player);
+CCParticleSystem* getBGParticles(PlayLayer* playLayer);
+CCParticleSystem* getObjectParticles(void* object);

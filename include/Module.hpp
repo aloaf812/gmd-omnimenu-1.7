@@ -5,7 +5,8 @@ enum class ModuleCategory {
     Editor = 1,
     Bypass = 2,
     Informational = 3,
-    Universal = 4
+    Universal = 4,
+    Particles = 5
 };
 
 class Module {

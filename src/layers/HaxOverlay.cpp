@@ -92,11 +92,13 @@ bool HaxOverlay::init(CCLayer* referrer) {
     this->buttons->retain();
     this->labels->retain();
 
-    addButton(" Gameplay ", 12, 90, this, menu_selector(HaxOverlay::onGameplay));
-    addButton(" Editor ", 12, 50, this, menu_selector(HaxOverlay::onEditor));
-    addButton(" Bypass ", 12, 10, this, menu_selector(HaxOverlay::onBypass));
-    addButton(" Informational ", 9.5, -30, this, menu_selector(HaxOverlay::onInformational));
-    addButton(" Universal ", 12, -70, this, menu_selector(HaxOverlay::onUniversal));
+    addButton(" Gameplay ", 12, 80, this, menu_selector(HaxOverlay::onGameplay));
+    addButton(" Editor ", 12, 40, this, menu_selector(HaxOverlay::onEditor));
+    addButton(" Bypass ", 12, 0, this, menu_selector(HaxOverlay::onBypass));
+    addButton(" Informational ", 9.5, -40, this, menu_selector(HaxOverlay::onInformational));
+    addButton(" Universal ", 12, -80, this, menu_selector(HaxOverlay::onUniversal));
+
+    addButtonRight(" Particles ", 12, 80, this, menu_selector(HaxOverlay::onParticles));
 
     setTouchEnabled(true);
     setKeypadEnabled(true);
@@ -130,6 +132,24 @@ void HaxOverlay::addButton(const char* label, float fontSize, float yOffset, CCO
     btn1Label->setAnchorPoint({0, 0.5});
     btn1Label->setPosition(ccp(winSize.width / 2 - 90 - 189, winSize.height / 2 + yOffset));
 }
+void HaxOverlay::addButtonRight(const char* label, float fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector) {
+    CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
+
+    auto btn1Sprite = CCSprite::create("menubtn.png");
+    auto btn1 = CCMenuItemSprite::create(btn1Sprite, btn1Sprite, btn1Sprite, target, selector);
+    this->buttons->addObject(btn1);
+    btnMenu->addChild(btn1, 999);
+    btn1->setAnchorPoint({0, 0.5});
+    btn1->setScaleX(-1);
+    btn1->setPosition(ccp(105+189, yOffset));
+
+    auto btn1Label = CCLabelTTF::create(label, "Helvetica-Oblique.ttf", scaleFontSize(fontSize));
+    this->labels->addObject(btn1Label);
+    mainParent->addChild(btn1Label, 1003);
+    btn1Label->setAnchorPoint({1, 0.5});
+    btn1Label->setPosition(ccp(winSize.width / 2 + 90 + 189, winSize.height / 2 + yOffset));
+}
 
 void HaxOverlay::setColorAtIndex(int index) {
     static_cast<CCMenuItemSprite*>(this->buttons->objectAtIndex(index))->setColor(color);
@@ -154,6 +174,9 @@ void HaxOverlay::onInformational() {
 }
 void HaxOverlay::onUniversal() {
     onCategory(ModuleCategory::Universal);
+}
+void HaxOverlay::onParticles() {
+    onCategory(ModuleCategory::Particles);
 }
 
 void HaxOverlay::onCategory(ModuleCategory category) {

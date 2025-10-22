@@ -18,7 +18,7 @@
 #include "hooks/GJGameLevel.cpp"
 #include "hooks/GameStatsManager.cpp"
 #include "hooks/PlayerObject.cpp"
-#include "hooks/CCParticleSystem.cpp"
+#include "hooks/CCParticleSystemQuad.cpp"
 #include "hooks/GameObject.cpp"
 
 void initialize_hooks() {
@@ -42,6 +42,6 @@ void initialize_hooks() {
     GJGameLevel_om();
     GameStatsManager_om();
     PlayerObject_om();
-    CCParticleSystem_om();
+    CCParticleSystemQuad_om();
     GameObject_om();
 }

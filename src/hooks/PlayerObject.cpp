@@ -25,6 +25,38 @@ void PlayerObject_runBallRotation2(PlayerObject* self) {
     if (hax.getModuleEnabled("no_rotation")) return;
     TRAM_PlayerObject_runBallRotation2(self);
 }
+void (*TRAM_PlayerObject_update)(PlayerObject* self, float dt);
+void PlayerObject_update(PlayerObject* self, float dt) {
+    TRAM_PlayerObject_update(self, dt);
+    HaxManager& hax = HaxManager::sharedState();
+    if (!hax.getModuleEnabled("particle_ship_ground")) {
+        auto p = getShipGroundParticles(self);
+        if (p && p != nullptr) p->stopSystem();
+    }
+    if (!hax.getModuleEnabled("particle_ship_lift")) {
+        auto p = getShipLiftParticles(self);
+        if (p && p != nullptr) p->stopSystem();
+    }
+    if (!hax.getModuleEnabled("particle_ship_fire")) {
+        auto p = getShipFireParticles(self);
+        if (p && p != nullptr) p->stopSystem();
+    }
+    if (!hax.getModuleEnabled("particle_ground")) {
+        auto p = getGroundParticles(self);
+        if (p && p != nullptr) p->stopSystem();
+    }
+}
+void (*TRAM_PlayerObject_hitGround)(PlayerObject* self, bool b1);
+void PlayerObject_hitGround(PlayerObject* self, bool b1) {
+    TRAM_PlayerObject_hitGround(self, b1);
+    HaxManager& hax = HaxManager::sharedState();
+    if (!hax.getModuleEnabled("particle_landing")) {
+        auto l2 = getLandingParticles2(self);
+        if (l2 && l2 != nullptr) l2->stopSystem();
+        auto l1 = getLandingParticles(self);
+        if (l1 && l1 != nullptr) l1->stopSystem();
+    }
+}
 
 void PlayerObject_om() {
     Omni::hook("_ZN12PlayerObject14activateStreakEv",
@@ -39,4 +71,10 @@ void PlayerObject_om() {
     Omni::hook("_ZN12PlayerObject16runBallRotation2Ev",
         reinterpret_cast<void*>(PlayerObject_runBallRotation2),
         reinterpret_cast<void**>(&TRAM_PlayerObject_runBallRotation2));
+    Omni::hook("_ZN12PlayerObject6updateEf",
+        reinterpret_cast<void*>(PlayerObject_update),
+        reinterpret_cast<void**>(&TRAM_PlayerObject_update));
+    Omni::hook("_ZN12PlayerObject9hitGroundEb",
+        reinterpret_cast<void*>(PlayerObject_hitGround),
+        reinterpret_cast<void**>(&TRAM_PlayerObject_hitGround));
 }

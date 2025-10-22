@@ -264,6 +264,10 @@ void PlayLayer_update(PlayLayer* self, float dt) {
     if (hax.getModuleEnabled("instant_complete") && !hax.instantComped) {
         instantComplete(self);
     }
+    if (!hax.getModuleEnabled("particle_background")) {
+        auto p = getBGParticles(self);
+        if (p && p != nullptr) p->stopSystem();
+    }
 }
 void (*TRAM_PlayLayer_init)(PlayLayer* self);
 void PlayLayer_init(PlayLayer* self) {
@@ -277,6 +281,21 @@ void PlayLayer_shakeCamera(PlayLayer* self, float duration) {
     if (hax.getModuleEnabled("no_shake")) return;
     TRAM_PlayLayer_shakeCamera(self, duration);
 }
+// CCParticleSystemQuad* (*TRAM_PlayLayer_createParticle)(void* self, int a1, int a2, const char* file, int a4, tCCPositionType a5);
+// CCParticleSystemQuad* PlayLayer_createParticle(void* self, int a1, int a2, const char* file, int a4, tCCPositionType a5) {
+//     auto particle = TRAM_PlayLayer_createParticle(self, a1, a2, file, a4, a5);
+//     HaxManager& hax = HaxManager::sharedState();
+//     if (!hax.getModuleEnabled("particle_end_wall") && !strcmp(file, "endEffectPortal.plist")) {
+//         particle->setVisible(false);
+//     }
+//     return particle;
+// }
+// void (*TRAM_PlayLayer_toggleGlitter)(PlayLayer* self, bool toggle);
+// void PlayLayer_toggleGlitter(PlayLayer* self, bool toggle) {
+//     HaxManager& hax = HaxManager::sharedState();
+//     if (hax.getModuleEnabled("particle_background")) return TRAM_PlayLayer_toggleGlitter(self, false);
+//     TRAM_PlayLayer_toggleGlitter(self, toggle);
+// }
 
 // CCParticleSystemQuad* (*TRAM_PlayLayer_createParticle)(void* self, int a1, const char* a2, int a3, tCCPositionType type);
 // CCParticleSystemQuad* PlayLayer_createParticle(void* self, int a1, const char* a2, int a3, tCCPositionType type) {
@@ -316,4 +335,7 @@ void PlayLayer_om() {
     // Omni::hook("_ZN9PlayLayer14createParticleEiPKciN7cocos2d15tCCPositionTypeE",
     //     reinterpret_cast<void*>(PlayLayer_createParticle),
     //     reinterpret_cast<void**>(&TRAM_PlayLayer_createParticle));
+    // Omni::hook("_ZN9PlayLayer13toggleGlitterEb",
+    //     reinterpret_cast<void*>(PlayLayer_toggleGlitter),
+    //     reinterpret_cast<void**>(&TRAM_PlayLayer_toggleGlitter));
 }

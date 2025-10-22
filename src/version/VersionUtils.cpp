@@ -269,3 +269,28 @@ std::string getLevelString(GJGameLevel* level) {
 GJGameLevel* getEditLayerLevel(CCLayer* editLayer) {
     return MEMBER_BY_OFFSET(GJGameLevel*, editLayer, EditLevelLayer__m_level);
 }
+
+CCParticleSystem* getShipLiftParticles(PlayerObject* player) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, player, PlayerObject__m_pShipLift);
+}
+CCParticleSystem* getShipGroundParticles(PlayerObject* player) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, player, PlayerObject__m_pShipGround);
+}
+CCParticleSystem* getGroundParticles(PlayerObject* player) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, player, PlayerObject__m_pGround);
+}
+CCParticleSystem* getLandingParticles(PlayerObject* player) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, player, PlayerObject__m_pLanding);
+}
+CCParticleSystem* getLandingParticles2(PlayerObject* player) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, player, PlayerObject__m_pLanding2);
+}
+CCParticleSystem* getShipFireParticles(PlayerObject* player) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, player, PlayerObject__m_pShipFire);
+}
+CCParticleSystem* getBGParticles(PlayLayer* playLayer) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, playLayer, PlayLayer__m_pGlitter);
+}
+CCParticleSystem* getObjectParticles(void* object) {
+    return MEMBER_BY_OFFSET(CCParticleSystem*, object, GameObject__m_particles);
+}

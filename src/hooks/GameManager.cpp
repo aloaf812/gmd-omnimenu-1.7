@@ -23,7 +23,7 @@ bool GameManager_isIconUnlocked(GameManager* self, int idx) {
 //     TRAM_GameManager_reportPercentageForLevel(self, level, percentage, practice);
 // }
 
-// Safe Mode: main level %
+// Safe Mode: achievements (+ main level %)
 // GameManager::reportPercentageForLevel is unhookable due to some bug in Dobby
 void (*TRAM_GameManager_reportAchievementWithID)(void* self, const char* ach, int percent);
 void GameManager_reportAchievementWithID(void* self, const char* ach, int percent) {
@@ -41,7 +41,14 @@ void GameManager_reportAchievementWithID(void* self, const char* ach, int percen
     }
     TRAM_GameManager_reportAchievementWithID(self, ach, percent);
 }
-
+// void (*TRAM_GameManager_createAndAddParticle)(void* self, int a1, const char* file, int a2, tCCPositionType a3);
+// void GameManager_createAndAddParticle(void* self, int a1, const char* file, int a2, tCCPositionType a3) { 
+//     HaxManager& hax = HaxManager::sharedState();
+//     if (!hax.getModuleEnabled("particle_end_wall") && !strcmp(file, "endEffectPortal.plist")) {
+//         return;
+//     }
+//     TRAM_GameManager_createAndAddParticle(self, a1, file, a2, a3);
+// }
 void GameManager_om() {
     Omni::hook("_ZN11GameManager15isColorUnlockedEib",
         reinterpret_cast<void*>(GameManager_isColorUnlocked),
@@ -52,4 +59,7 @@ void GameManager_om() {
     Omni::hook("_ZN11GameManager23reportAchievementWithIDEPKci",
         reinterpret_cast<void*>(GameManager_reportAchievementWithID),
         reinterpret_cast<void**>(&TRAM_GameManager_reportAchievementWithID));
+    // Omni::hook("_ZN10GameObject20createAndAddParticleEiPKciN7cocos2d15tCCPositionTypeE",
+    //     reinterpret_cast<void*>(GameManager_createAndAddParticle),
+    //     reinterpret_cast<void**>(&TRAM_GameManager_createAndAddParticle));
 }

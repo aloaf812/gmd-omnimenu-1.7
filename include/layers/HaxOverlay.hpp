@@ -18,12 +18,14 @@ protected:
     virtual bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
 
     void addButton(const char* label, float fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector);
+    void addButtonRight(const char* label, float fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector);
     void onCategory(ModuleCategory category);
     void onGameplay();
     void onEditor();
     void onBypass();
     void onInformational();
     void onUniversal();
+    void onParticles();
 
     void toggler(CCObject*);
     float getDuration();

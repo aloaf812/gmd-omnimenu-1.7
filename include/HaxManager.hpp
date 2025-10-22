@@ -168,10 +168,10 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
-        modules.insert(std::pair<std::string, Module*>("no_particles", new Module(
-                "No Particles", 
-                "Disables every particle system in the game.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
+        // modules.insert(std::pair<std::string, Module*>("no_particles", new Module(
+        //         "No Particles", 
+        //         "Disables every particle system in the game.", 
+        //         false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("no_rotation", new Module(
                 "No Rotation", 
                 "Prevents the player from rotating.", 
@@ -303,10 +303,12 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+#ifdef PING_SPOOFING
         modules.insert(std::pair<std::string, Module*>("ping_spoofing", new Module(
                 "Pig Spoofing", 
                 "Self-explanatory.", 
                 false, ModuleCategory::Universal, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("safe_mode", new Module(
                 "Safe Mode",
 #ifndef FORCE_AUTO_SAFE_MODE
@@ -316,6 +318,53 @@ private:
 #endif 
 
                 false, ModuleCategory::Universal, [](bool _){})));
+
+
+
+        modules.insert(std::pair<std::string, Module*>("particle_background", new Module(
+                "Background",
+                "Toggles the visibility of the particles that appear all over the background in the ship or UFO gamemode.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_death_effect", new Module(
+                "Death Effect",
+                "Toggles the visibility of the particles that appear when the player dies.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        // modules.insert(std::pair<std::string, Module*>("particle_end_wall", new Module(
+        //         "End Wall",
+        //         "Toggles the visibility of the particles that are emitted by the end wall.", 
+        //         true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_fireworks", new Module(
+                "Fireworks",
+                "Toggles the visibility of the particles that are emitted by the fireworks during the level completion animation.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_level_completion", new Module(
+                "Level Completion",
+                "Toggles the visibility of the particles that are emitted during the level completion animation.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_ground", new Module(
+                "Ground",
+                "Toggles the visibility of the particles that appear when the cube or ball is dragging across the ground.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_landing", new Module(
+                "Landing",
+                "Toggles the visibility of the particles that appear when the cube or ball lands on the ground.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_objects", new Module(
+                "Objects",
+                "Toggles the visibility of the particles that are emitted by objects, such as portals, pads and orbs.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_ship_fire", new Module(
+                "Ship Fire",
+                "Toggles the visibility of the particles that appear behind the ship.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_ship_ground", new Module(
+                "Ship Ground",
+                "Toggles the visibility of the particles that appear when the ship is dragging across the ground.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("particle_ship_lift", new Module(
+                "Ship Lift",
+                "Toggles the visibility of the particles that appear when the ship is flying.", 
+                true, ModuleCategory::Particles, [](bool _){})));
 
         lastCategory = ModuleCategory::Gameplay;
         hasCheated = false;

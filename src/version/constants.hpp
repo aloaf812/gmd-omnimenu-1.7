@@ -1,7 +1,10 @@
 #define GAME_VERSION 3
-#define MENU_VERSION "0.67"
+#define MENU_VERSION "0.68"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
+
+// #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
+// #define PING_SPOOFING // Uncomment this to enable a joke feature
 
 #if GAME_VERSION == 1
     #define GAME_VER_PATH 1.0

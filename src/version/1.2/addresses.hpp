@@ -15,6 +15,7 @@
 /**/ #define GameManager__m_playLayer         0x150 /**/
 /**/ #define GameManager__m_playerName        0x168 /**/
 /**/ #define GameManager__m_playerUDID        0x164 /**/
+/**/ #define GameObject__m_particles          0x280 /**/
 /**/ #define GJComment__m_commentID           0x130 /**/
 /**/ #define GJGameLevel__m_attempts          0x164 /**/
 /**/ #define GJGameLevel__m_isVerified        0x159 /**/
@@ -36,11 +37,18 @@
 /**/ #define PlayLayer__m_isPractice          0x255 /**/
 /**/ #define PlayLayer__m_lastX               0x1d8 /**/
 /**/ #define PlayLayer__m_level               0x230 /**/
+/**/ #define PlayLayer__m_pGlitter            0x1a0 /**/
 /**/ #define PlayLayer__m_playerObject        0x22c /**/
 /**/ #define PlayLayer__m_startPos            0x2c8 /**/
 /**/ #define PlayLayer__m_uiLayer             0x228 /**/
 /**/ #define PlayLayer__m_unkPrac             0x267 /**/
 /**/ #define PlayerObject__m_gravity          0x350 /**/
+/**/ #define PlayerObject__m_pGround          0x3bc /**/
+/**/ #define PlayerObject__m_pShipGround      0x3c8 /**/
+/**/ #define PlayerObject__m_pShipFire        0x3c0 /**/
+/**/ #define PlayerObject__m_pShipLift        0x3c4 /**/
+/**/ #define PlayerObject__m_pLanding         0x3d0 /**/
+/**/ #define PlayerObject__m_pLanding2        0x3d4 /**/
 /**/ #define PlayerObject__m_xVelocity        0x340 /**/
 /**/ #define PlayerObject__m_yStart           0x348 /**/
 /******************************************************/
