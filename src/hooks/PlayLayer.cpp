@@ -1,23 +1,7 @@
 #include "hook.hpp"
-#include <jni.h>
 #include "PlayLayer.hpp"
 #include "UILayer.hpp"
-#include "platform/android/jni/JniHelper.h"
-
-JNIEnv* getEnv() {
-    JNIEnv* env;
-
-    if (cocos2d::JniHelper::getJavaVM()->GetEnv((void**)&env, JNI_VERSION_1_4) != JNI_OK) {
-        cocos2d::CCLog("Failed to get the environment using GetEnv()");
-        return nullptr;
-    }
-    if (static_cast<int>(cocos2d::JniHelper::getJavaVM()->AttachCurrentThread(&env, 0)) < 0) {
-        cocos2d::CCLog("Failed to get the environment using AttachCurrentThread()");
-        return nullptr;
-    }
-
-    return env;
-}
+#include "Utils.hpp"
 
 void seekBackgroundMusicTo(int ms) {
     JNIEnv* env = getEnv();

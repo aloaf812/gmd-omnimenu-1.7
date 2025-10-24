@@ -7,6 +7,7 @@
 #include <dlfcn.h>  // dlsym, RTLD_NOW
 #include <dobby.h>  // DobbyHook
 #include "EditorUI.hpp"
+#include "LocalLevelManager.hpp"
 
 #define MEMBER_BY_OFFSET(type, var, offset) \
     (*reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(var) + static_cast<uintptr_t>(offset)))
@@ -52,6 +53,7 @@ void setLevelAttempts(GJGameLevel* level, int attempts);
 GJGameLevel* getInfoLayerLevel(LevelInfoLayer* infoLayer);
 
 int getLevelID(GJGameLevel* level);
+void setLevelID(GJGameLevel* level, int levelID);
 std::string getLevelName(GJGameLevel* level);
 std::string getLevelUsername(GJGameLevel* level);
 int getLevelUserID(GJGameLevel* level);
@@ -97,3 +99,5 @@ CCParticleSystem* getLandingParticles2(PlayerObject* player);
 CCParticleSystem* getShipFireParticles(PlayerObject* player);
 CCParticleSystem* getBGParticles(PlayLayer* playLayer);
 CCParticleSystem* getObjectParticles(void* object);
+CCArray* getLocalLevels(LocalLevelManager* lolman);
+CCArray* getLocalLevels();

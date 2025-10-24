@@ -75,3 +75,13 @@
 //     #define READABLE_GAME_VERSION_FULL "1.811"
 //     #define OBJECT_LIMIT 11999
 // #endif
+
+#define GDSHARE_FL(errorMsg) \
+    FLAlertLayer::create(\
+        nullptr,\
+        "GDShare",\
+        errorMsg,\
+        "OK",\
+        nullptr,\
+        300.f\
+    )->show();

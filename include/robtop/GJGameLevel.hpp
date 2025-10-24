@@ -1,14 +1,8 @@
-/*
-
-CLASS(ES): GJGameLevel, GJLevelType
-VERSION: 1.22
-
-*/
-
 #pragma once
 
 #include <cocos2d.h>
 #include "PlayerObject.hpp"
+#include "DS_Dictionary.hpp"
 
 typedef enum {
     Local = 1,
@@ -16,7 +10,7 @@ typedef enum {
     Saved = 3 
 } GJLevelType;
 
-class GJGameLevel : cocos2d::CCNode {
+class GJGameLevel : public cocos2d::CCNode {
 public:
     int m_nLevelID; // 0x128
     std::string m_sLevelName; // 0x12c
@@ -48,6 +42,7 @@ public:
 
     static GJGameLevel* create();
     static GJGameLevel* create(cocos2d::CCDictionary dict);
+    static GJGameLevel* createWithCoder(DS_Dictionary* dict);
     virtual bool init();
     virtual void setIsVerified(bool isVerified);
     int getAverageDifficulty();

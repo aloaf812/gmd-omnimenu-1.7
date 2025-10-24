@@ -20,6 +20,7 @@
 #include "hooks/PlayerObject.cpp"
 #include "hooks/CCParticleSystemQuad.cpp"
 #include "hooks/GameObject.cpp"
+#include "hooks/MyLevelsLayer.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -44,4 +45,5 @@ void initialize_hooks() {
     PlayerObject_om();
     CCParticleSystemQuad_om();
     GameObject_om();
+    MyLevelsLayer_om();
 }

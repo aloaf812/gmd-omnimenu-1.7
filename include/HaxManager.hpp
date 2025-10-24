@@ -11,6 +11,9 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include <jni.h>
+#include "GJGameLevel.hpp"
+#include "MyLevelsLayer.hpp"
 
 enum class CheatIndicatorColor {
     Green,
@@ -43,6 +46,9 @@ public:
     int pSpeedModified;
     int pGravityModified;
     int pYStartModified;
+    jobject activity;
+    GJGameLevel* gdShareLevel;
+    MyLevelsLayer* myLevelsLayer;
 
     Module* getModule(const char* id) {
         return modules.at(std::string(id));
@@ -281,11 +287,15 @@ private:
                 false, ModuleCategory::Informational, [](bool _){})));
 
 
-
         modules.insert(std::pair<std::string, Module*>("100_kb_fix", new Module(
                 "100 KB Fix", 
-                "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload.", 
-                true, ModuleCategory::Universal, [](bool _){})));
+                "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload (for versions before 1.5), as well as potentially increasing performance.", 
+#if GAME_VERSION < 6
+                true, 
+#else
+                false,
+#endif
+                ModuleCategory::Universal, [](bool _){})));
 #ifndef FORCE_AUTO_SAFE_MODE
         modules.insert(std::pair<std::string, Module*>("auto_safe_mode", new Module(
                 "Auto Safe Mode",
@@ -303,6 +313,10 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+        modules.insert(std::pair<std::string, Module*>("gdshare", new Module(
+                "GDShare", 
+                "Adds buttons to convert a level to a .gmd file and vice-versa.", 
+                false, ModuleCategory::Universal, [](bool _){})));
 #ifdef PING_SPOOFING
         modules.insert(std::pair<std::string, Module*>("ping_spoofing", new Module(
                 "Pig Spoofing", 

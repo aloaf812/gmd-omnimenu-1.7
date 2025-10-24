@@ -6,5 +6,6 @@
 class EditLevelLayer : public cocos2d::CCLayer {
 public:
     static EditLevelLayer* create(GJGameLevel*);
+    static CCScene* scene(GJGameLevel*);
     void onViewLevelInfo();
 };

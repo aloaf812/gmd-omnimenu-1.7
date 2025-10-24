@@ -93,7 +93,7 @@ void UILayer::speedDown() {
 }
 void UILayer::gravityUp() {
     PlayerObject* player = getPlayer();
-    addGravity(player, 0.5d);
+    addGravity(player, 0.25d);
     HaxManager& hax = HaxManager::sharedState();
     hax.pGravityModified += 1;
     hax.setCheating(true);
@@ -101,7 +101,7 @@ void UILayer::gravityUp() {
 }
 void UILayer::gravityDown() {
     PlayerObject* player = getPlayer();
-    addGravity(player, -0.5d);
+    addGravity(player, -0.25d);
     HaxManager& hax = HaxManager::sharedState();
     hax.pGravityModified -= 1;
     hax.setCheating(true);

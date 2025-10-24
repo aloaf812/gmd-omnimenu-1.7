@@ -7,6 +7,7 @@
 #include <dlfcn.h>  // dlsym, RTLD_NOW
 #include <dobby.h>  // DobbyHook
 #include "EditorUI.hpp"
+#include "LocalLevelManager.hpp"
 
 #define ARM_NOP {0x00, 0xbf}
     
@@ -125,6 +126,9 @@ GJGameLevel* getInfoLayerLevel(LevelInfoLayer* infoLayer) {
 
 int getLevelID(GJGameLevel* level) {
     return MEMBER_BY_OFFSET(int, level, GJGameLevel__m_levelID);
+}
+void setLevelID(GJGameLevel* level, int levelID) {
+    MEMBER_BY_OFFSET(int, level, GJGameLevel__m_levelID) = levelID;
 }
 std::string getLevelName(GJGameLevel* level) {
     return MEMBER_BY_OFFSET(std::string, level, GJGameLevel__m_levelName);
@@ -293,4 +297,10 @@ CCParticleSystem* getBGParticles(PlayLayer* playLayer) {
 }
 CCParticleSystem* getObjectParticles(void* object) {
     return MEMBER_BY_OFFSET(CCParticleSystem*, object, GameObject__m_particles);
+}
+CCArray* getLocalLevels(LocalLevelManager* lolman) {
+    return MEMBER_BY_OFFSET(CCArray*, lolman, LocalLevelManager__m_localLevels);
+}
+CCArray* getLocalLevels() {
+    return getLocalLevels(LocalLevelManager::sharedState());
 }

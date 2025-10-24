@@ -4,7 +4,6 @@
 #include "FLAlertLayer.hpp"
 #include "CCMenuItemSpriteExtra.hpp"
 #include <algorithm>
-#include "Utils.hpp"
 
 void LevelInfoLayer::onViewLevelInfo() {
     GJGameLevel* level = getInfoLayerLevel(this);
@@ -31,6 +30,31 @@ void LevelInfoLayer::onViewLevelInfo() {
         300.f
     )->show();
 }
+void LevelInfoLayer::onExport() {
+    GJGameLevel* level = getInfoLayerLevel(this);
+    std::string name = getLevelName(level);
+    name += ".gmd";
+    JNIEnv* env = getEnv();
+    if (!env || env == nullptr) {
+        GDSHARE_FL("Error: could not get JNI Environment");
+        return;
+    }
+    HaxManager& hax = HaxManager::sharedState();
+    hax.gdShareLevel = level;
+    jclass activityClass = env->GetObjectClass(hax.activity);
+    if (activityClass == nullptr) {
+        GDSHARE_FL("Error: could not get the activity class");
+        return;
+    }
+    jmethodID showPicker = env->GetMethodID(activityClass, "showSaveFilePicker", "(Ljava/lang/String;)V");
+    if (showPicker == nullptr) {
+        GDSHARE_FL("Error: could not find showSaveFilePicker method. Are you sure you changed the smali?");
+        return;
+    }
+    jstring jname = env->NewStringUTF(name.c_str());
+    env->CallVoidMethod(hax.activity, showPicker, jname);
+    GDSHARE_FL("File exported successfully");
+}
 bool (*TRAM_LevelInfoLayer_init)(LevelInfoLayer* self, GJGameLevel* level);
 bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
     if (!TRAM_LevelInfoLayer_init(self, level)) return false;
@@ -46,6 +70,15 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         cloneMenu->addChild(cloneBtn);
         cloneMenu->setPosition(ccp(winSize.width - 565.f, winSize.height / 2));
         // cloneBtn->setPosition(ccp(0, winSize.height / 2 - 25));
+    }
+    if (hax.getModuleEnabled("gdshare")) {
+        CCMenu* exportMenu = CCMenu::create();
+        CCSprite* exportSpr = cocos2d::CCSprite::create("gdshare_export.png");
+        CCMenuItemSpriteExtra* exportBtn = CCMenuItemSpriteExtra::create(exportSpr, exportSpr, self, menu_selector(LevelInfoLayer::onExport));
+
+        self->addChild(exportMenu, 1000);
+        exportMenu->addChild(exportBtn);
+        exportMenu->setPosition(ccp(winSize.width - 565.f, winSize.height / 2 - 50));
     }
     if (hax.getModuleEnabled("view_level_stats")) {
         CCMenu* infoMenu = CCMenu::create();

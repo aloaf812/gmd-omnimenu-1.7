@@ -10,4 +10,5 @@ public:
     void onClone();
 
     void onViewLevelInfo();
+    void onExport();
 };
