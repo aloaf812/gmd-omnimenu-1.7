@@ -57,7 +57,7 @@ bool MyLevelsLayer_init(MyLevelsLayer* self) {
 
         self->addChild(importMenu, 1000);
         importMenu->addChild(importBtn);
-        importMenu->setPosition(ccp(winSize.width - 30.f, winSize.height - 100.f));
+        importMenu->setPosition(ccp(winSize.width - 30.f, winSize.height - 90.f));
     }
     return true;
 }

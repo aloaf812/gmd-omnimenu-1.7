@@ -56,6 +56,9 @@ public:
     bool getModuleEnabled(const char* id) {
         return getModule(id)->enabled;
     }
+    bool getLeftLILButtons() {
+        return getModuleEnabled("level_copy") || getModuleEnabled("gdshare");
+    }
 
     CheatIndicatorColor getCheatIndicatorColor() {
         if (getModuleEnabled("noclip") || 
@@ -315,7 +318,7 @@ private:
                 })));
         modules.insert(std::pair<std::string, Module*>("gdshare", new Module(
                 "GDShare", 
-                "Adds buttons to convert a level to a .gmd file and vice-versa.", 
+                "Adds buttons to convert a level to a .gmd file and vice-versa. May not work on older Android versions.", 
                 false, ModuleCategory::Universal, [](bool _){})));
 #ifdef PING_SPOOFING
         modules.insert(std::pair<std::string, Module*>("ping_spoofing", new Module(

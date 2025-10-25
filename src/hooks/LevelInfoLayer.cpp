@@ -61,24 +61,24 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
     HaxManager& hax = HaxManager::sharedState();
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
-    if (hax.getModuleEnabled("level_copy")) {
-        CCMenu* cloneMenu = CCMenu::create();
-        CCSprite* cloneSpr = cocos2d::CCSprite::create("GJ_duplicateBtn.png");
-        CCMenuItemSpriteExtra* cloneBtn = CCMenuItemSpriteExtra::create(cloneSpr, cloneSpr, self, menu_selector(LevelInfoLayer::onClone));
+    if (hax.getLeftLILButtons()) {
+        CCMenu* leftMenu = CCMenu::create();
+        self->addChild(leftMenu, 1000);
+        leftMenu->setPosition(ccp(30.f, winSize.height / 2));
+        if (hax.getModuleEnabled("level_copy")) {
+            CCSprite* cloneSpr = cocos2d::CCSprite::create("GJ_duplicateBtn.png");
+            CCMenuItemSpriteExtra* cloneBtn = CCMenuItemSpriteExtra::create(cloneSpr, cloneSpr, self, menu_selector(LevelInfoLayer::onClone));
 
-        self->addChild(cloneMenu, 1000);
-        cloneMenu->addChild(cloneBtn);
-        cloneMenu->setPosition(ccp(winSize.width - 565.f, winSize.height / 2));
-        // cloneBtn->setPosition(ccp(0, winSize.height / 2 - 25));
-    }
-    if (hax.getModuleEnabled("gdshare")) {
-        CCMenu* exportMenu = CCMenu::create();
-        CCSprite* exportSpr = cocos2d::CCSprite::create("gdshare_export.png");
-        CCMenuItemSpriteExtra* exportBtn = CCMenuItemSpriteExtra::create(exportSpr, exportSpr, self, menu_selector(LevelInfoLayer::onExport));
+            leftMenu->addChild(cloneBtn);
+            cloneBtn->setPosition(ccp(0.f, 25.f));
+        }
+        if (hax.getModuleEnabled("gdshare")) {
+            CCSprite* exportSpr = cocos2d::CCSprite::create("gdshare_export.png");
+            CCMenuItemSpriteExtra* exportBtn = CCMenuItemSpriteExtra::create(exportSpr, exportSpr, self, menu_selector(LevelInfoLayer::onExport));
 
-        self->addChild(exportMenu, 1000);
-        exportMenu->addChild(exportBtn);
-        exportMenu->setPosition(ccp(winSize.width - 565.f, winSize.height / 2 - 50));
+            leftMenu->addChild(exportBtn);
+            exportBtn->setPosition(ccp(0.f, -25.f));
+        }
     }
     if (hax.getModuleEnabled("view_level_stats")) {
         CCMenu* infoMenu = CCMenu::create();
