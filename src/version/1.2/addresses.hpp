@@ -16,6 +16,7 @@
 /**/ #define GameManager__m_playerName        0x168 /**/
 /**/ #define GameManager__m_playerUDID        0x164 /**/
 /**/ #define GameObject__m_particles          0x280 /**/
+/**/ #define GameObject__m_useAudioScale      0x2ef /**/
 /**/ #define GJComment__m_commentID           0x130 /**/
 /**/ #define GJGameLevel__m_attempts          0x164 /**/
 /**/ #define GJGameLevel__m_isVerified        0x159 /**/
@@ -56,7 +57,14 @@
 /*/                    ADDRESSES                     /*/
 /******************************************************/
 /**/ #define basicstring_assign            0x2D45A8 /**/
+/**/ #define move_x_max                    0x150670 /**/ // 00 60 EA 46
+/**/ #define move_y_max                    0x150678 /**/ // 00 40 A1 44
+/**/ #define move_y_min                    0x150674 /**/ // 00 00 B6 42
 /**/ #define object_limit                  0x152520 /**/
+/**/ #define place_x_max                   0x15232C /**/ // 00 42 EA 46
+/**/ #define place_y_max                   0x152330 /**/ // 00 60 9F 44
+/**/ #define place_x_min                   0x152324 /**/ // 00 80 9D 43
+/**/ #define place_y_min                   0x152328 /**/ // 00 00 D2 42
 /**/ #define zoom_bypass_max_1             0x1509D0 /**/
 /**/ #define zoom_bypass_max_2             0x150B0A /**/
 /**/ #define zoom_bypass_min               0x150B18 /**/

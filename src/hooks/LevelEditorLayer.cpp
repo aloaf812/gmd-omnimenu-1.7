@@ -10,6 +10,7 @@ bool LevelEditorLayer_init(LevelEditorLayer* self, GJGameLevel* level) {
     else
         setObjectLimit(OBJECT_LIMIT);
     setZoomBypass(hax.getModuleEnabled("zoom_bypass"));
+    setFreeBuild(hax.getModuleEnabled("free_build"));
 
     return TRAM_LevelEditorLayer_init(self, level);
 }

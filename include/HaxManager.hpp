@@ -138,7 +138,7 @@ public:
         CheatIndicatorColor color = getCheatIndicatorColor();
         if (color == CheatIndicatorColor::Red || color == CheatIndicatorColor::Orange)
             return true;
-        
+
         return false;
     }
 
@@ -181,6 +181,10 @@ private:
         //         "No Particles", 
         //         "Disables every particle system in the game.", 
         //         false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_pulse", new Module(
+                "No Pulse", 
+                "Disables object pulses.", 
+                false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("no_rotation", new Module(
                 "No Rotation", 
                 "Prevents the player from rotating.", 
@@ -204,13 +208,33 @@ private:
                 "Practice Music Hack", 
                 "Plays the normal level music in practice mode.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
+#if GAME_VERSION < 3
+        modules.insert(std::pair<std::string, Module*>("rotation_bug_fix", new Module(
+                "Rotation Bug Fix", 
+                "Makes it so hitboxes rotate properly along with the object. (module by akqanile/Adelfa)", 
+                false, ModuleCategory::Gameplay, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("show_percentage", new Module(
                 "Show Percentage", 
                 "Displays the percentage the player is currently at.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("show_percentage_decimal", new Module(
+                "Decimal Percentage", 
+                "Puts 3 decimal places after the percentage if you have Show Percentage enabled.", 
+                false, ModuleCategory::Gameplay, [](bool _){})));
 
 
 
+        modules.insert(std::pair<std::string, Module*>("free_build", new Module(
+                "Free Build", 
+                "Removes the constraints for placing and moving objects in the editor.", 
+                false, ModuleCategory::Editor, [](bool _){
+                    if (_) {
+                        setFreeBuild(true);
+                    } else {
+                        setFreeBuild(false);
+                    }
+                })));
         modules.insert(std::pair<std::string, Module*>("free_scroll", new Module(
                 "Free Scroll", 
                 "Removes the constraints for camera position in the editor.", 
@@ -274,6 +298,12 @@ private:
                 "Comment IDs", 
                 "Displays comment IDs in comment cells.", 
                 false, ModuleCategory::Informational, [](bool _){})));
+#if GAME_VERSION > 3
+        modules.insert(std::pair<std::string, Module*>("demons_in_garage", new Module(
+                "Demons in Garage", 
+                "Displays your demon count in the icon kit (garage).", 
+                false, ModuleCategory::Informational, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("level_ids_in_list", new Module(
                 "Level IDs in Search", 
                 "Displays level IDs in level cells.", 
@@ -292,7 +322,7 @@ private:
 
         modules.insert(std::pair<std::string, Module*>("100_kb_fix", new Module(
                 "100 KB Fix", 
-                "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload (for versions before 1.5), as well as potentially increasing performance.", 
+                "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload (for versions before 1.5), as well as potentially increasing performance. (module by akqanile/Adelfa)", 
 #if GAME_VERSION < 6
                 true, 
 #else

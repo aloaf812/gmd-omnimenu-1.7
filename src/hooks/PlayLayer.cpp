@@ -227,7 +227,11 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         } else if (!hax.percentageLabel->isVisible()) {
             hax.percentageLabel->setVisible(true);
         }
-        hax.percentageLabel->setString(CCString::createWithFormat("%i%%", getCurrentPercentage())->getCString());
+        if (hax.getModuleEnabled("show_percentage_decimal")) {
+            hax.percentageLabel->setString(CCString::createWithFormat("%.3f%%", getCurrentPercentageF(self))->getCString());
+        } else {
+            hax.percentageLabel->setString(CCString::createWithFormat("%i%%", getCurrentPercentage(self))->getCString());
+        }
     } else {
         if (hax.percentageLabel && hax.percentageLabel != nullptr && hax.percentageLabel->isVisible())
             hax.percentageLabel->setVisible(false);

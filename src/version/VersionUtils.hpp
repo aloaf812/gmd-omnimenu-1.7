@@ -45,6 +45,8 @@ int getLevelNormalPercent(GJGameLevel* level);
 int getLevelPracticePercent(GJGameLevel* level);
 void setLevelNormalPercent(GJGameLevel* level, int percent);
 void setLevelPracticePercent(GJGameLevel* level, int percent);
+float getCurrentPercentageF(PlayLayer* playLayer);
+float getCurrentPercentageF();
 int getCurrentPercentage(PlayLayer* playLayer);
 int getCurrentPercentage();
 
@@ -101,3 +103,7 @@ CCParticleSystem* getBGParticles(PlayLayer* playLayer);
 CCParticleSystem* getObjectParticles(void* object);
 CCArray* getLocalLevels(LocalLevelManager* lolman);
 CCArray* getLocalLevels();
+
+bool getObjectUseAudioScale(void* object);
+void setObjectUseAudioScale(void* object, bool uas);
+void setFreeBuild(bool enable);

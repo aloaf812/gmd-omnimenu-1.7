@@ -14,6 +14,9 @@ void GameObject_setOpacity(void* self, GLubyte opacity) {
         auto p = getObjectParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
+    if (hax.getModuleEnabled("no_pulse")) {
+        setObjectUseAudioScale(self, false);
+    }
 }
 void GameObject_om() {
     Omni::hook("_ZN10GameObject7addGlowEv",

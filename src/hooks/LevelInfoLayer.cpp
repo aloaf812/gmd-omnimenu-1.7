@@ -53,7 +53,6 @@ void LevelInfoLayer::onExport() {
     }
     jstring jname = env->NewStringUTF(name.c_str());
     env->CallVoidMethod(hax.activity, showPicker, jname);
-    GDSHARE_FL("File exported successfully");
 }
 bool (*TRAM_LevelInfoLayer_init)(LevelInfoLayer* self, GJGameLevel* level);
 bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {

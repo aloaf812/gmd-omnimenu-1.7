@@ -102,12 +102,18 @@ void setLevelNormalPercent(GJGameLevel* level, int percent) {
 void setLevelPracticePercent(GJGameLevel* level, int percent) {
     MEMBER_BY_OFFSET(int, level, GJGameLevel__m_practicePercent) = percent;
 }
-int getCurrentPercentage(PlayLayer* playLayer) {
+float getCurrentPercentageF(PlayLayer* playLayer) {
     PlayerObject* player = getPlayer(playLayer);
-    int percent = floorf((player->getPositionX() / MEMBER_BY_OFFSET(float, playLayer, PlayLayer__m_lastX)) * 100.0); // from destroyPlayer
+    float percent = (player->getPositionX() / MEMBER_BY_OFFSET(float, playLayer, PlayLayer__m_lastX)) * 100.0; // from destroyPlayer
     if (percent < 0) return 0;
     if (percent > 100) return 100;
     return percent;
+}
+float getCurrentPercentageF() {
+    return getCurrentPercentageF(getPlayLayer());
+}
+int getCurrentPercentage(PlayLayer* playLayer) {
+    return floorf(getCurrentPercentageF(playLayer));
 }
 int getCurrentPercentage() {
     return getCurrentPercentage(getPlayLayer());
@@ -223,6 +229,69 @@ void setObjectLimit(int limit) {
         toBytesLE(limit).data(), 2
     );
 }
+void setFreeBuild(bool enable) {
+    if (!enable) {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_x_max)),
+            std::vector<uint8_t>({0x00, 0x60, 0xEA, 0x46}).data(), 4 // 30000
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_y_min)),
+            std::vector<uint8_t>({0x00, 0x00, 0xB6, 0x42}).data(), 4 // 91
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_y_max)),
+            std::vector<uint8_t>({0x00, 0x40, 0xA1, 0x44}).data(), 4 // 1290
+        );
+
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_x_max)),
+            std::vector<uint8_t>({0x00, 0x42, 0xEA, 0x46}).data(), 4 // 29985
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_x_min)),
+            std::vector<uint8_t>({0x00, 0x80, 0x9D, 0x43}).data(), 4 // 315
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_y_max)),
+            std::vector<uint8_t>({0x00, 0x60, 0x9F, 0x44}).data(), 4 // 1275
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_y_min)),
+            std::vector<uint8_t>({0x00, 0x00, 0xD2, 0x42}).data(), 4 // 105
+        );
+    } else {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_x_max)),
+            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4 // 6.7e+10 (i'm very mature) 5179982e
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_y_min)),
+            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0xd1}).data(), 4 // -6.7e+10 d179982e
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_y_max)),
+            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4
+        );
+
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_x_max)),
+            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_x_min)),
+            std::vector<uint8_t>({0x00, 0x00, 0x80, 0x3F}).data(), 4 // 1
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_y_max)),
+            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4
+        );
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(place_y_min)),
+            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0xd1}).data(), 4
+        );
+    }
+}
 void setZoomBypass(bool enable) {
     if (enable) {
         DobbyCodePatch(
@@ -303,4 +372,10 @@ CCArray* getLocalLevels(LocalLevelManager* lolman) {
 }
 CCArray* getLocalLevels() {
     return getLocalLevels(LocalLevelManager::sharedState());
+}
+bool getObjectUseAudioScale(void* object) {
+    return MEMBER_BY_OFFSET(bool, object, GameObject__m_useAudioScale);
+}
+void setObjectUseAudioScale(void* object, bool uas) {
+    MEMBER_BY_OFFSET(bool, object, GameObject__m_useAudioScale) = uas;
 }
