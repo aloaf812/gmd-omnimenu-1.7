@@ -9,6 +9,7 @@
 #include "EditorUI.hpp"
 #include "LocalLevelManager.hpp"
 #include "DrawGridLayer.hpp"
+#include "EditButtonBar.hpp"
 
 #define ARM_NOP {0x00, 0xbf}
 #define ARM_FLOAT_INF {0x00, 0x00, 0x80, 0x7f}
@@ -414,4 +415,23 @@ bool getOnGround(PlayerObject* player) {
 }
 void setOnGround(PlayerObject* player, bool onGround) {
     MEMBER_BY_OFFSET(bool, player, PlayerObject__m_onGround) = onGround;
+}
+CCArray* getCreateButtons(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(CCArray*, uiLayer, EditorUI__m_createButtons);
+}
+void setCreateButtons(EditorUI* uiLayer, CCArray* array) {
+    MEMBER_BY_OFFSET(CCArray*, uiLayer, EditorUI__m_createButtons) = array;
+}
+EditButtonBar* getCreateButtonBar(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(EditButtonBar*, uiLayer, EditorUI__m_createButtonBar);
+}
+void setCreateButtonBar(EditorUI* uiLayer, EditButtonBar* bar) {
+    MEMBER_BY_OFFSET(EditButtonBar*, uiLayer, EditorUI__m_createButtonBar) = bar;
+}
+float getScreenBottom() {
+    CCDirector* director = CCDirector::sharedDirector();
+    return MEMBER_BY_OFFSET(float, director->getOpenGLView(), CCEGLViewProtocol__m_screenBottom);
+}
+float getUnkFloat(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(float, uiLayer, EditorUI__m_unkFloat);
 }

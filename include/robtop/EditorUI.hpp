@@ -4,6 +4,9 @@
 #include <cocos2d.h>
 #include "FLAlertLayer.hpp"
 #include "GameObject.hpp"
+#include "CCMenuItemSpriteExtra.hpp"
+
+class CreateMenuItem : public CCMenuItemSpriteExtra {};
 
 class EditorUI : public cocos2d::CCLayer
 {
@@ -18,6 +21,8 @@ public:
     void deselectAll();
     void selectObject(GameObject*);
     void onDeleteSelected();
+    void updateCreateMenu();
+    CreateMenuItem* getCreateBtn(const char*, int);
 #if GAME_VERSION < GV_1_5
     void onDuplicate();
 #endif

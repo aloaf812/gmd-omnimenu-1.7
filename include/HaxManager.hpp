@@ -285,6 +285,10 @@ private:
                     else
                         setObjectLimit(OBJECT_LIMIT);
                 })));
+        modules.insert(std::pair<std::string, Module*>("unlisted_objects", new Module(
+                "Unlisted Objects", 
+                "Adds unlisted objects to the editor, allowing them to be used in levels.", 
+                false, ModuleCategory::Editor, [](bool _){})));
 #ifndef FORCE_AUTO_SAFE_MODE
         modules.insert(std::pair<std::string, Module*>("verify_bypass", new Module(
                 "Verify Bypass", 

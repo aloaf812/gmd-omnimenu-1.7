@@ -7,6 +7,7 @@
 #include "DrawGridLayer.hpp"
 #include "UndoObject.hpp"
 #include "ButtonSprite.hpp"
+#include "EditButtonBar.hpp"
 
 void (*TRAM_EditorUI_showMaxError)(void* self);
 void EditorUI_showMaxError(void* self) {
@@ -77,7 +78,6 @@ void EditorUI::onDuplicate() {
             editLayer->addToSection(newObj);
             currObj->setColor(ccWHITE);
             if (getObjectType(newObj) == 7 && getShouldSpawn(newObj)) { // trigger effect line
-                CCLog(saveString.c_str());
                 gridLayer->addToEffects(newObj);
             }
             newObj->setColor(cyan);
@@ -127,36 +127,65 @@ void EditorUI::onDeleteSelected() {
 
 void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
 void EditorUI_setupDeleteMenu(EditorUI* self) {
-    CCLog("1");
     TRAM_EditorUI_setupDeleteMenu(self);
-    CCLog("2");
     HaxManager& hax = HaxManager::sharedState();
-    CCLog("3");
     if (hax.getModuleEnabled("delete_selected")) {
-        CCLog("4");
         CCMenu* menu = getEditorUIButtonMenu(self);
-        CCLog("5");
 
-        if (!menu || menu == nullptr) {
-            CCLog("6");
+        if (!menu || menu == nullptr) { // useless failsafe but i don't like removing those
             TRAM_EditorUI_setupDeleteMenu(self);
-            CCLog("7");
             menu = getEditorUIButtonMenu(self);
-            CCLog("8");
         }
 
-        CCLog("9");
         auto delSelSpr = ButtonSprite::create("Delete Selected", 75, 0, 0.6, false, "bigFont.fnt", "GJ_button_04.png");
         // delSelSpr->setScale(0.8f);
 
-        CCLog("10");
         auto delSelBtn = CCMenuItemSpriteExtra::create(delSelSpr, delSelSpr, self, menu_selector(EditorUI::onDeleteSelected));
-        CCLog("11");
         menu->addChild(delSelBtn);
-        CCLog("12");
     }
 }
 #endif // GAME_VERSION < GV_1_5
+
+void (*TRAM_EditorUI_setupCreateMenu)(EditorUI* self);
+void EditorUI_setupCreateMenu(EditorUI* self) {
+    TRAM_EditorUI_setupCreateMenu(self);
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled("unlisted_objects")) {
+        CCArray* createBtns = getCreateButtons(self);
+        CCArray* fuckingArray = CCArray::create();
+        auto director = CCDirector::sharedDirector();
+        auto winSize = director->getWinSize();
+
+        for (int i = 0; i < createBtns->count(); i++) {
+            CCObject* btn = createBtns->objectAtIndex(i);
+            static_cast<CCNode*>(btn)->removeFromParentAndCleanup(false);
+            fuckingArray->addObject(btn);
+        }
+        CCNode* separator = CCNode::create();
+        separator->setTag(0);
+
+        EditButtonBar* bar = getCreateButtonBar(self);
+        bar->removeFromParentAndCleanup(false);
+        bar->release();
+
+        CCNode* sep1 = CCNode::create();
+        sep1->setTag(0);
+        fuckingArray->insertObject(sep1, 28);
+
+        CCNode* unlistedSeparator = CCNode::create();
+        unlistedSeparator->setTag(0);
+        fuckingArray->addObject(unlistedSeparator);
+        fuckingArray->addObject(self->getCreateBtn("edit_eLevelEndBtn_001.png", 4));
+        fuckingArray->addObject(self->getCreateBtn("edit_eBGEOn_001.png", 4));
+        fuckingArray->addObject(self->getCreateBtn("edit_eBGEOff_001.png", 4));
+
+        EditButtonBar* newBar = EditButtonBar::create(fuckingArray, ccp(winSize.width * 0.5 - 5, getScreenBottom() + getUnkFloat(self) - 6.f));
+        setCreateButtonBar(self, newBar);
+
+        self->addChild(newBar, 11);
+        self->updateCreateMenu();
+    }
+}
 
 void EditorUI_om() {
     Omni::hook("_ZN8EditorUI12showMaxErrorEv",
@@ -176,4 +205,7 @@ void EditorUI_om() {
         reinterpret_cast<void*>(EditorUI_setupDeleteMenu),
         reinterpret_cast<void**>(&TRAM_EditorUI_setupDeleteMenu));
 #endif
+    Omni::hook("_ZN8EditorUI15setupCreateMenuEv",
+        reinterpret_cast<void*>(EditorUI_setupCreateMenu),
+        reinterpret_cast<void**>(&TRAM_EditorUI_setupCreateMenu));
 }

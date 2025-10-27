@@ -10,6 +10,7 @@
 #include "LocalLevelManager.hpp"
 #include "GameObject.hpp"
 #include "DrawGridLayer.hpp"
+#include "EditButtonBar.hpp"
 
 #define MEMBER_BY_OFFSET(type, var, offset) \
     (*reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(var) + static_cast<uintptr_t>(offset)))
@@ -123,3 +124,10 @@ CCMenu* getEditorUIButtonMenu(EditorUI* uiLayer);
 
 bool getOnGround(PlayerObject* player);
 void setOnGround(PlayerObject* player, bool onGround);
+
+CCArray* getCreateButtons(EditorUI* uiLayer);
+void setCreateButtons(EditorUI* uiLayer, CCArray* array);
+EditButtonBar* getCreateButtonBar(EditorUI* uiLayer);
+void setCreateButtonBar(EditorUI* uiLayer, EditButtonBar* bar);
+float getScreenBottom();
+float getUnkFloat(EditorUI* uiLayer);
