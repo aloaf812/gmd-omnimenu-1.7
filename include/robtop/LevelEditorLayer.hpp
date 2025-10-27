@@ -13,6 +13,7 @@ public:
 
     void addToSection(GameObject* object);
     void addToUndoList(UndoObject*);
+    void removeObject(GameObject*);
 
     virtual int getObjectCount();
 };

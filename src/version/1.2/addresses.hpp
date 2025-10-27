@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////
 //                        1.2                         //
 /******************************************************/
-/*/                     MEMBERS                      /*/
+/*/                     OFFSETS                      /*/
 /******************************************************/
 /**/ #define BoomScrollLayer__m_currentScreen 0x234 /**/
 /**/ #define BoomScrollLayer__m_dynamic       0x154 /**/
@@ -11,6 +11,7 @@
 /**/ #define CheckpointObject__m_playerPos    0x12c /**/
 /**/ #define EditLevelLayer__m_level          0x148 /**/
 /**/ #define EditorPauseLayer__m_editorLayer  0x1c8 /**/
+/**/ #define EditorUI__m_buttonMenu           0x184 /**/
 /**/ #define EditorUI__m_editorLayer          0x1c4 /**/
 /**/ #define EditorUI__m_selectedObject       0x248 /**/
 /**/ #define EditorUI__m_selectedObjects      0x180 /**/
@@ -52,6 +53,7 @@
 /**/ #define PlayLayer__m_uiLayer             0x228 /**/
 /**/ #define PlayLayer__m_unkPrac             0x267 /**/
 /**/ #define PlayerObject__m_gravity          0x350 /**/
+/**/ #define PlayerObject__m_onGround         0x35e /**/
 /**/ #define PlayerObject__m_pGround          0x3bc /**/
 /**/ #define PlayerObject__m_pShipGround      0x3c8 /**/
 /**/ #define PlayerObject__m_pShipFire        0x3c0 /**/

@@ -118,3 +118,8 @@ CCArray* getRedoArray(LevelEditorLayer* editLayer);
 GameObject* getSelectedObject(EditorUI* uiLayer);
 CCSpriteBatchNode* getEditorBatchNode(LevelEditorLayer* editLayer);
 bool getShouldSpawn(GameObject* object);
+
+CCMenu* getEditorUIButtonMenu(EditorUI* uiLayer);
+
+bool getOnGround(PlayerObject* player);
+void setOnGround(PlayerObject* player, bool onGround);

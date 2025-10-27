@@ -45,6 +45,9 @@ void PlayerObject_update(PlayerObject* self, float dt) {
         auto p = getGroundParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
+    if (hax.getModuleEnabled("jump_hack")) {
+        setOnGround(self, true);
+    }
 }
 void (*TRAM_PlayerObject_hitGround)(PlayerObject* self, bool b1);
 void PlayerObject_hitGround(PlayerObject* self, bool b1) {

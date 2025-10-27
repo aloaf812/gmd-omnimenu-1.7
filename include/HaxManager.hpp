@@ -65,6 +65,7 @@ public:
         getModuleEnabled("instant_complete") || 
         // getModuleEnabled("pcommand") || 
         getModuleEnabled("force_visibility") || 
+        getModuleEnabled("jump_hack") || 
         pSpeedModified != 0 || pGravityModified != 0 || pYStartModified != 0) return CheatIndicatorColor::Red;
         if (hasCheated) return CheatIndicatorColor::Orange;
         if (getModuleEnabled("level_edit")) return CheatIndicatorColor::Yellow;
@@ -159,6 +160,13 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+        modules.insert(std::pair<std::string, Module*>("jump_hack", new Module(
+                "Jump Hack", 
+                "Allows the player to jump in the air indefinitely.", 
+                false, ModuleCategory::Gameplay, [](bool _){
+                    HaxManager& hax = HaxManager::sharedState();
+                    if (_) hax.setCheating(true);
+                })));
         modules.insert(std::pair<std::string, Module*>("noclip", new Module(
                 "NoClip", 
                 "Prevents the player from dying.", 
@@ -235,7 +243,11 @@ private:
 #if GAME_VERSION < GV_1_5
         modules.insert(std::pair<std::string, Module*>("copy_paste", new Module(
                 "Copy & Paste", 
-                "Adds a button which lets you duplicate objects.", 
+                "Adds a button that duplicates the selected objects.", 
+                false, ModuleCategory::Editor, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("delete_selected", new Module(
+                "Delete Selected", 
+                "Adds a button that removes the selected objects.", 
                 false, ModuleCategory::Editor, [](bool _){})));
 #endif
         modules.insert(std::pair<std::string, Module*>("free_build", new Module(

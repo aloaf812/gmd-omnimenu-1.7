@@ -17,6 +17,7 @@ public:
     void onPause();
     void deselectAll();
     void selectObject(GameObject*);
+    void onDeleteSelected();
 #if GAME_VERSION < GV_1_5
     void onDuplicate();
 #endif

@@ -4,6 +4,7 @@
 class ButtonSprite : public cocos2d::CCSprite {
 
 public:
+    static ButtonSprite* create(char const*, int, int, float, bool, char const*, char const*);
     static ButtonSprite* create(cocos2d::CCSprite*, int, int, float, float, bool, char const*);
     static ButtonSprite* create(char const*, float);
 

@@ -11,6 +11,8 @@
 #include "DrawGridLayer.hpp"
 
 #define ARM_NOP {0x00, 0xbf}
+#define ARM_FLOAT_INF {0x00, 0x00, 0x80, 0x7f}
+#define ARM_FLOAT_MINUS_INF {0x00, 0x00, 0x80, 0xff}
     
 uintptr_t get_address(int offset) {
     void* handle = dlopen(MAIN_LIBRARY, RTLD_NOW);
@@ -264,20 +266,20 @@ void setFreeBuild(bool enable) {
     } else {
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(move_x_max)),
-            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4 // 6.7e+10 (i'm very mature) 5179982e
+            std::vector<uint8_t>(ARM_FLOAT_INF).data(), 4
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(move_y_min)),
-            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0xd1}).data(), 4 // -6.7e+10 d179982e
+            std::vector<uint8_t>(ARM_FLOAT_MINUS_INF).data(), 4
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(move_y_max)),
-            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4
+            std::vector<uint8_t>(ARM_FLOAT_INF).data(), 4
         );
 
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(place_x_max)),
-            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4
+            std::vector<uint8_t>(ARM_FLOAT_INF).data(), 4
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(place_x_min)),
@@ -285,11 +287,11 @@ void setFreeBuild(bool enable) {
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(place_y_max)),
-            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0x51}).data(), 4
+            std::vector<uint8_t>(ARM_FLOAT_INF).data(), 4
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(place_y_min)),
-            std::vector<uint8_t>({0x2e, 0x98, 0x79, 0xd1}).data(), 4
+            std::vector<uint8_t>(ARM_FLOAT_MINUS_INF).data(), 4
         );
     }
 }
@@ -403,4 +405,13 @@ CCSpriteBatchNode* getEditorBatchNode(LevelEditorLayer* editLayer) {
 }
 bool getShouldSpawn(GameObject* object) {
     return MEMBER_BY_OFFSET(bool, object, GameObject__m_shouldSpawn);
+}
+CCMenu* getEditorUIButtonMenu(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(CCMenu*, uiLayer, EditorUI__m_buttonMenu);
+}
+bool getOnGround(PlayerObject* player) {
+    return MEMBER_BY_OFFSET(bool, player, PlayerObject__m_onGround);
+}
+void setOnGround(PlayerObject* player, bool onGround) {
+    MEMBER_BY_OFFSET(bool, player, PlayerObject__m_onGround) = onGround;
 }

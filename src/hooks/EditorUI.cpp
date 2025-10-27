@@ -6,6 +6,7 @@
 #include "GameObject.hpp"
 #include "DrawGridLayer.hpp"
 #include "UndoObject.hpp"
+#include "ButtonSprite.hpp"
 
 void (*TRAM_EditorUI_showMaxError)(void* self);
 void EditorUI_showMaxError(void* self) {
@@ -106,6 +107,55 @@ void EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
         btnMenu->addChild(copyBtn);
     }
 }
+
+void EditorUI::onDeleteSelected() {
+    GameObject* selObj = getSelectedObject(this);
+    CCArray* selectedObjects = getSelectedObjects(this);
+    LevelEditorLayer* editLayer = getUIEditorLayer(this);
+    if (selObj == nullptr && selectedObjects->count() < 0) return;
+
+    if (selObj != nullptr) {
+        editLayer->removeObject(selObj);
+    } else {
+        for (int i = 0; i < selectedObjects->count(); i++) {
+            auto currObj = static_cast<GameObject*>(selectedObjects->objectAtIndex(i));
+            editLayer->removeObject(currObj);
+        }
+        this->deselectAll();
+    }
+}
+
+void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
+void EditorUI_setupDeleteMenu(EditorUI* self) {
+    CCLog("1");
+    TRAM_EditorUI_setupDeleteMenu(self);
+    CCLog("2");
+    HaxManager& hax = HaxManager::sharedState();
+    CCLog("3");
+    if (hax.getModuleEnabled("delete_selected")) {
+        CCLog("4");
+        CCMenu* menu = getEditorUIButtonMenu(self);
+        CCLog("5");
+
+        if (!menu || menu == nullptr) {
+            CCLog("6");
+            TRAM_EditorUI_setupDeleteMenu(self);
+            CCLog("7");
+            menu = getEditorUIButtonMenu(self);
+            CCLog("8");
+        }
+
+        CCLog("9");
+        auto delSelSpr = ButtonSprite::create("Delete Selected", 75, 0, 0.6, false, "bigFont.fnt", "GJ_button_04.png");
+        // delSelSpr->setScale(0.8f);
+
+        CCLog("10");
+        auto delSelBtn = CCMenuItemSpriteExtra::create(delSelSpr, delSelSpr, self, menu_selector(EditorUI::onDeleteSelected));
+        CCLog("11");
+        menu->addChild(delSelBtn);
+        CCLog("12");
+    }
+}
 #endif // GAME_VERSION < GV_1_5
 
 void EditorUI_om() {
@@ -122,5 +172,8 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI4initEP16LevelEditorLayer",
         reinterpret_cast<void*>(EditorUI_init),
         reinterpret_cast<void**>(&TRAM_EditorUI_init));
+    Omni::hook("_ZN8EditorUI15setupDeleteMenuEv",
+        reinterpret_cast<void*>(EditorUI_setupDeleteMenu),
+        reinterpret_cast<void**>(&TRAM_EditorUI_setupDeleteMenu));
 #endif
 }
