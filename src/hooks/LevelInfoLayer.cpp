@@ -90,7 +90,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         infoMenu->addChild(infoBtn);
         infoMenu->setPosition(ccp(25.f, 25.f));
     }
-#if GAME_VERSION < 4
+#if GAME_VERSION < GV_1_3
     if (hax.getModuleEnabled("show_difficulty")) {
         CCSprite* diffSpr = CCSprite::createWithSpriteFrameName(
             CCString::createWithFormat(

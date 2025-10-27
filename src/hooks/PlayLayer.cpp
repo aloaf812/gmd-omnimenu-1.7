@@ -303,7 +303,7 @@ void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer6updateEf",
         reinterpret_cast<void*>(PlayLayer_update),
         reinterpret_cast<void**>(&TRAM_PlayLayer_update));
-#if GAME_VERSION > 1
+#if GAME_VERSION > GV_1_0
     Omni::hook("_ZN9PlayLayer13toggleFlippedEbb",
         reinterpret_cast<void*>(PlayLayer_toggleFlipped),
         reinterpret_cast<void**>(&TRAM_PlayLayer_toggleFlipped));

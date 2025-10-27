@@ -39,7 +39,9 @@ void initialize_hooks() {
     CCNode_om();
     LevelSelectLayer_om();
     LevelCell_om();
+#if GAME_VERSION > GV_1_0
     CommentCell_om();
+#endif
     GJGameLevel_om();
     GameStatsManager_om();
     PlayerObject_om();

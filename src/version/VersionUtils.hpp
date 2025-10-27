@@ -8,6 +8,8 @@
 #include <dobby.h>  // DobbyHook
 #include "EditorUI.hpp"
 #include "LocalLevelManager.hpp"
+#include "GameObject.hpp"
+#include "DrawGridLayer.hpp"
 
 #define MEMBER_BY_OFFSET(type, var, offset) \
     (*reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(var) + static_cast<uintptr_t>(offset)))
@@ -107,3 +109,12 @@ CCArray* getLocalLevels();
 bool getObjectUseAudioScale(void* object);
 void setObjectUseAudioScale(void* object, bool uas);
 void setFreeBuild(bool enable);
+
+CCArray* getSelectedObjects(EditorUI* uiLayer);
+void setSelectedObjects(EditorUI* uiLayer, CCArray* arr);
+DrawGridLayer* getGridLayer(LevelEditorLayer* editLayer);
+int getObjectType(GameObject* object);
+CCArray* getRedoArray(LevelEditorLayer* editLayer);
+GameObject* getSelectedObject(EditorUI* uiLayer);
+CCSpriteBatchNode* getEditorBatchNode(LevelEditorLayer* editLayer);
+bool getShouldSpawn(GameObject* object);

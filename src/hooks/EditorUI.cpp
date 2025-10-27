@@ -1,6 +1,11 @@
 #include "hook.hpp"
 #include "EditorUI.hpp"
 #include "FLAlertLayer.hpp"
+#include "LevelEditorLayer.hpp"
+#include "CCMenuItemSpriteExtra.hpp"
+#include "GameObject.hpp"
+#include "DrawGridLayer.hpp"
+#include "UndoObject.hpp"
 
 void (*TRAM_EditorUI_showMaxError)(void* self);
 void EditorUI_showMaxError(void* self) {
@@ -36,6 +41,73 @@ void EditorUI_zoomOut(EditorUI* self) {
     }
 }
 
+#if GAME_VERSION < GV_1_5
+void EditorUI::onDuplicate() {
+    GameObject* selObj = getSelectedObject(this);
+    CCArray* selectedObjects = getSelectedObjects(this);
+    LevelEditorLayer* editLayer = getUIEditorLayer(this);
+    DrawGridLayer* gridLayer = getGridLayer(editLayer);
+    CCSpriteBatchNode* batchNode = getEditorBatchNode(editLayer);
+    if (selObj == nullptr && selectedObjects->count() < 0) return;
+
+    void* getSaveString = DobbySymbolResolver(MAIN_LIBRARY, "_ZN10GameObject13getSaveStringEv");
+    getRedoArray(editLayer)->removeAllObjects();
+
+    auto cyan = ccc3(0, 255, 255);
+
+    if (selObj != nullptr) {
+        std::string saveString = ((std::string(*)(GameObject*))getSaveString)(selObj);
+        GameObject* newObj = GameObject::objectFromString(saveString);
+        selObj->setColor(ccWHITE);
+        editLayer->addToSection(newObj);
+        if (getObjectType(newObj) == 7 && getShouldSpawn(newObj)) { // trigger
+            gridLayer->addToEffects(newObj);
+        }
+        batchNode->addChild(newObj);
+        this->selectObject(newObj);
+        newObj->setColor(cyan);
+        UndoObject* undo = UndoObject::create(newObj, UndoCommand::Placement);
+        editLayer->addToUndoList(undo);
+    } else {
+        for (int i = 0; i < selectedObjects->count(); i++) {
+            auto currObj = static_cast<GameObject*>(selectedObjects->objectAtIndex(i));
+            std::string saveString = ((std::string(*)(GameObject*))getSaveString)(currObj);
+            GameObject* newObj = GameObject::objectFromString(saveString);
+            editLayer->addToSection(newObj);
+            currObj->setColor(ccWHITE);
+            if (getObjectType(newObj) == 7 && getShouldSpawn(newObj)) { // trigger effect line
+                CCLog(saveString.c_str());
+                gridLayer->addToEffects(newObj);
+            }
+            newObj->setColor(cyan);
+            batchNode->addChild(newObj);
+            selectedObjects->replaceObjectAtIndex(i, newObj, false);
+            UndoObject* undo = UndoObject::create(newObj, UndoCommand::Placement);
+            editLayer->addToUndoList(undo);
+        }
+    }
+}
+
+void (*TRAM_EditorUI_init)(EditorUI* self, LevelEditorLayer* lel);
+void EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
+    TRAM_EditorUI_init(self, lel);
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled("copy_paste")) {
+        auto director = CCDirector::sharedDirector();
+        auto winSize = director->getWinSize();
+
+        CCMenu* btnMenu = CCMenu::create();
+        self->addChild(btnMenu);
+
+        btnMenu->setPosition(ccp(winSize.width - 30, winSize.height - 70));
+        CCSprite* copySpr = CCSprite::create("GJ_copyBtn.png");
+        CCMenuItemSpriteExtra* copyBtn = CCMenuItemSpriteExtra::create(copySpr, copySpr, self, menu_selector(EditorUI::onDuplicate));
+
+        btnMenu->addChild(copyBtn);
+    }
+}
+#endif // GAME_VERSION < GV_1_5
+
 void EditorUI_om() {
     Omni::hook("_ZN8EditorUI12showMaxErrorEv",
         reinterpret_cast<void*>(EditorUI_showMaxError),
@@ -46,4 +118,9 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI7zoomOutEv",
         reinterpret_cast<void*>(EditorUI_zoomOut),
         reinterpret_cast<void**>(&TRAM_EditorUI_zoomOut));
+#if GAME_VERSION < GV_1_5
+    Omni::hook("_ZN8EditorUI4initEP16LevelEditorLayer",
+        reinterpret_cast<void*>(EditorUI_init),
+        reinterpret_cast<void**>(&TRAM_EditorUI_init));
+#endif
 }

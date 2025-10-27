@@ -1,28 +1,30 @@
-#define GAME_VERSION 3
-#define MENU_VERSION "0.71"
+#include "versions.hpp"
+
+#define GAME_VERSION GV_1_2
+#define MENU_VERSION "0.72"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 
 // #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
 // #define PING_SPOOFING // Uncomment this to enable a joke feature
 
-#if GAME_VERSION == 1
+#if GAME_VERSION == GV_1_0
     #define GAME_VER_PATH 1.0
-#elif GAME_VERSION == 2
+#elif GAME_VERSION == GV_1_1
     #define GAME_VER_PATH 1.1
-#elif GAME_VERSION == 3
+#elif GAME_VERSION == GV_1_2
     #define GAME_VER_PATH 1.2
-#elif GAME_VERSION == 4
+#elif GAME_VERSION == GV_1_3
     #define GAME_VER_PATH 1.3
-#elif GAME_VERSION == 5
+#elif GAME_VERSION == GV_1_4
     #define GAME_VER_PATH 1.4
-#elif GAME_VERSION == 6
+#elif GAME_VERSION == GV_1_5
     #define GAME_VER_PATH 1.5
-#elif GAME_VERSION == 7
+#elif GAME_VERSION == GV_1_6
     #define GAME_VER_PATH 1.6
-#elif GAME_VERSION == 10
+#elif GAME_VERSION == GV_1_7
     #define GAME_VER_PATH 1.7
-#elif GAME_VERSION == 18
+#elif GAME_VERSION == GV_1_8
     #define GAME_VER_PATH 1.8
 #else
     #error "Unsupported GAME_VERSION"

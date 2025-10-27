@@ -12,10 +12,14 @@
 /**/ #define EditLevelLayer__m_level          0x148 /**/
 /**/ #define EditorPauseLayer__m_editorLayer  0x1c8 /**/
 /**/ #define EditorUI__m_editorLayer          0x1c4 /**/
+/**/ #define EditorUI__m_selectedObject       0x248 /**/
+/**/ #define EditorUI__m_selectedObjects      0x180 /**/
 /**/ #define GameManager__m_playLayer         0x150 /**/
 /**/ #define GameManager__m_playerName        0x168 /**/
 /**/ #define GameManager__m_playerUDID        0x164 /**/
 /**/ #define GameObject__m_particles          0x280 /**/
+/**/ #define GameObject__m_shouldSpawn        0x2c4 /**/
+/**/ #define GameObject__m_type               0x2bc /**/
 /**/ #define GameObject__m_useAudioScale      0x2ef /**/
 /**/ #define GJComment__m_commentID           0x130 /**/
 /**/ #define GJGameLevel__m_attempts          0x164 /**/
@@ -29,8 +33,11 @@
 /**/ #define GJGameLevel__m_userID            0x13c /**/
 /**/ #define GJGameLevel__m_username          0x138 /**/
 /**/ #define LevelCell__m_level               0x180 /**/
+/**/ #define LevelEditorLayer__m_batchNode    0x140 /**/
 /**/ #define LevelEditorLayer__m_gameLayer    0x158 /**/
+/**/ #define LevelEditorLayer__m_gridLayer    0x150 /**/
 /**/ #define LevelEditorLayer__m_objectCount  0x154 /**/
+/**/ #define LevelEditorLayer__m_redoArray    0x14c /**/
 /**/ #define LevelInfoLayer__m_level          0x154 /**/
 /**/ #define LevelSelectLayer__m_scrollLayer  0x14C /**/
 /**/ #define LocalLevelManager__m_localLevels 0x130 /**/

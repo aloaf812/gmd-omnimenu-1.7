@@ -150,7 +150,7 @@ private:
     HaxManager() {
         modules.insert(std::pair<std::string, Module*>("cheat_indicator", new Module(
                 "Cheat Indicator", 
-                "Adds a dot that indicates whether you're using any unfair hacks.", 
+                "Adds a dot that indicates whether any unfair hacks are currently enabled.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("instant_complete", new Module(
                 "Instant Complete", 
@@ -170,6 +170,7 @@ private:
                 "No Glow", 
                 "Disables object glow. (Note: Will only apply after re-entering the level)", 
                 false, ModuleCategory::Gameplay, [](bool _){ })));
+#if GAME_VERSION > GV_1_0
         modules.insert(std::pair<std::string, Module*>("no_mirror", new Module(
                 "No Mirror", 
                 "Disables mirror portals.", 
@@ -177,6 +178,7 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+#endif
         // modules.insert(std::pair<std::string, Module*>("no_particles", new Module(
         //         "No Particles", 
         //         "Disables every particle system in the game.", 
@@ -208,7 +210,7 @@ private:
                 "Practice Music Hack", 
                 "Plays the normal level music in practice mode.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
-#if GAME_VERSION < 3
+#if GAME_VERSION < GV_1_2
         modules.insert(std::pair<std::string, Module*>("rotation_bug_fix", new Module(
                 "Rotation Bug Fix", 
                 "Makes it so hitboxes rotate properly along with the object. (module by akqanile/Adelfa)", 
@@ -224,7 +226,18 @@ private:
                 false, ModuleCategory::Gameplay, [](bool _){})));
 
 
-
+// #if GAME_VERSION < GV_1_6
+//         modules.insert(std::pair<std::string, Module*>("back_button_pause", new Module(
+//                 "Back Button Pause", 
+//                 "Opens the editor pause menu when pressing the back button on the keypad.", 
+//                 false, ModuleCategory::Editor, [](bool _){})));
+// #endif
+#if GAME_VERSION < GV_1_5
+        modules.insert(std::pair<std::string, Module*>("copy_paste", new Module(
+                "Copy & Paste", 
+                "Adds a button which lets you duplicate objects.", 
+                false, ModuleCategory::Editor, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("free_build", new Module(
                 "Free Build", 
                 "Removes the constraints for placing and moving objects in the editor.", 
@@ -294,11 +307,13 @@ private:
 
 
 
+#if GAME_VERSION > GV_1_0
         modules.insert(std::pair<std::string, Module*>("comment_ids", new Module(
                 "Comment IDs", 
                 "Displays comment IDs in comment cells.", 
                 false, ModuleCategory::Informational, [](bool _){})));
-#if GAME_VERSION > 3
+#endif
+#if GAME_VERSION > GV_1_2
         modules.insert(std::pair<std::string, Module*>("demons_in_garage", new Module(
                 "Demons in Garage", 
                 "Displays your demon count in the icon kit (garage).", 
@@ -308,7 +323,7 @@ private:
                 "Level IDs in Search", 
                 "Displays level IDs in level cells.", 
                 false, ModuleCategory::Informational, [](bool _){})));
-#if GAME_VERSION < 4
+#if GAME_VERSION < GV_1_3
         modules.insert(std::pair<std::string, Module*>("show_difficulty", new Module(
                 "Show Difficulty", 
                 "Displays the level's difficulty on its page.", 

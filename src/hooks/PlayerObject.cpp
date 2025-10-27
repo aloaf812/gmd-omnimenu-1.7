@@ -68,9 +68,11 @@ void PlayerObject_om() {
     Omni::hook("_ZN12PlayerObject15runRotateActionEv",
         reinterpret_cast<void*>(PlayerObject_runRotateAction),
         reinterpret_cast<void**>(&TRAM_PlayerObject_runRotateAction));
+#if GAME_VERSION > GV_1_1
     Omni::hook("_ZN12PlayerObject16runBallRotation2Ev",
         reinterpret_cast<void*>(PlayerObject_runBallRotation2),
         reinterpret_cast<void**>(&TRAM_PlayerObject_runBallRotation2));
+#endif
     Omni::hook("_ZN12PlayerObject6updateEf",
         reinterpret_cast<void*>(PlayerObject_update),
         reinterpret_cast<void**>(&TRAM_PlayerObject_update));

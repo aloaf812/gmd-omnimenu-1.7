@@ -8,6 +8,7 @@
 #include <dobby.h>  // DobbyHook
 #include "EditorUI.hpp"
 #include "LocalLevelManager.hpp"
+#include "DrawGridLayer.hpp"
 
 #define ARM_NOP {0x00, 0xbf}
     
@@ -378,4 +379,28 @@ bool getObjectUseAudioScale(void* object) {
 }
 void setObjectUseAudioScale(void* object, bool uas) {
     MEMBER_BY_OFFSET(bool, object, GameObject__m_useAudioScale) = uas;
+}
+CCArray* getSelectedObjects(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(CCArray*, uiLayer, EditorUI__m_selectedObjects);
+}
+void setSelectedObjects(EditorUI* uiLayer, CCArray* arr) {
+    MEMBER_BY_OFFSET(CCArray*, uiLayer, EditorUI__m_selectedObjects) = arr;
+}
+DrawGridLayer* getGridLayer(LevelEditorLayer* editLayer) {
+    return MEMBER_BY_OFFSET(DrawGridLayer*, editLayer, LevelEditorLayer__m_gridLayer);
+}
+int getObjectType(GameObject* object) {
+    return MEMBER_BY_OFFSET(int, object, GameObject__m_type);
+}
+GameObject* getSelectedObject(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(GameObject*, uiLayer, EditorUI__m_selectedObject);
+}
+CCArray* getRedoArray(LevelEditorLayer* editLayer) {
+    return MEMBER_BY_OFFSET(CCArray*, editLayer, LevelEditorLayer__m_redoArray);
+}
+CCSpriteBatchNode* getEditorBatchNode(LevelEditorLayer* editLayer) {
+    return MEMBER_BY_OFFSET(CCSpriteBatchNode*, editLayer, LevelEditorLayer__m_batchNode);
+}
+bool getShouldSpawn(GameObject* object) {
+    return MEMBER_BY_OFFSET(bool, object, GameObject__m_shouldSpawn);
 }
