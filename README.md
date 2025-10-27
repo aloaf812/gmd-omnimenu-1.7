@@ -7,6 +7,7 @@ Currently being tested on version 1.22.
 ## Special Thanks
 - [**akqanile (Adelfa)**](https://github.com/cierra-kb) - 100 KB fix, font size calculator, lots of help with issues. He is regarded as the god of tradmodding for a reason.
 - Eclipse Mod Menu team - many hack implementations
+- Hris69 - betatested on Android 4.4. Also got me started with tradmodding in general. Without him, this mod menu wouldn't exist.
 - Nikolyas, Caster, Tabbi - betatesters
 
 ## Build Instructions
