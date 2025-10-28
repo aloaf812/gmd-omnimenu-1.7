@@ -21,6 +21,7 @@
 #include "hooks/CCParticleSystemQuad.cpp"
 #include "hooks/GameObject.cpp"
 #include "hooks/MyLevelsLayer.cpp"
+#include "hooks/CCLabelBMFont.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -48,4 +49,5 @@ void initialize_hooks() {
     CCParticleSystemQuad_om();
     GameObject_om();
     MyLevelsLayer_om();
+    CCLabelBMFont_om();
 }

@@ -294,6 +294,9 @@ public:
     void setContentScaleFactor(CCFloat scaleFactor);
     CCFloat getContentScaleFactor(void);
 
+    // ROBTOP ADDITION
+    CCFloat getContentScaleFactorHD(void);
+
     typedef void(*WatcherCallbackFun)(void *pSender);
     void setWatcherCallbackFun(void *pSender, WatcherCallbackFun fun);
 

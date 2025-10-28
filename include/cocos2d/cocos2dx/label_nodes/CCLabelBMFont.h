@@ -53,7 +53,6 @@ enum {
 };
 
 struct _KerningHashElement;
-struct _FontDefHashElement;
 
 /**
 @struct ccBMFontDef
@@ -71,6 +70,13 @@ typedef struct _BMFontDef {
     //! The amount to move the current position after drawing the character (in pixels)
     short xAdvance;
 } ccBMFontDef;
+
+typedef struct _FontDefHashElement
+{
+    unsigned int    key;        // key. Font Unicode value
+    ccBMFontDef        fontDef;    // font definition
+    UT_hash_handle    hh;
+} tFontDefHashElement;
 
 /** @struct ccBMFontPadding
 BMFont padding
@@ -174,7 +180,7 @@ class CC_DLL CCLabelBMFont : public CCSpriteBatchNode, public CCLabelProtocol, p
     bool m_bIsOpacityModifyRGB;
     bool isOpacityModifyRGB();
     void setOpacityModifyRGB(bool isOpacityModifyRGB);
-protected:
+public:
     // string to render
     unsigned short* m_sString;
     
@@ -193,7 +199,7 @@ protected:
     bool m_bLineBreakWithoutSpaces;
     // offset of the texture atlas
     CCPoint    m_tImageOffset;
-public:
+
     CCLabelBMFont();
 
     virtual ~CCLabelBMFont();

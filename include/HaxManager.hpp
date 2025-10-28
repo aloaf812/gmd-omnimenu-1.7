@@ -354,12 +354,7 @@ private:
         modules.insert(std::pair<std::string, Module*>("100_kb_fix", new Module(
                 "100 KB Fix", 
                 "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload (for versions before 1.5), as well as potentially increasing performance. (module by akqanile/Adelfa)", 
-#if GAME_VERSION < 6
-                true, 
-#else
-                false,
-#endif
-                ModuleCategory::Universal, [](bool _){})));
+                true, ModuleCategory::Universal, [](bool _){})));
 #ifndef FORCE_AUTO_SAFE_MODE
         modules.insert(std::pair<std::string, Module*>("auto_safe_mode", new Module(
                 "Auto Safe Mode",
@@ -370,6 +365,12 @@ private:
                 "Fast Menu", 
                 "Makes fade transitions instant.", 
                 false, ModuleCategory::Universal, [](bool _){})));
+#if GAME_VERSION < GV_1_5
+        modules.insert(std::pair<std::string, Module*>("font_offset_fix", new Module(
+                "Font Offset Fix", 
+                "Fixes a pre-1.5 bug where text labels get offset further downwards the higher your resolution is.", 
+                true, ModuleCategory::Universal, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("force_visibility", new Module(
                 "Force Visibility", 
                 "Makes all existing nodes visible.", 
