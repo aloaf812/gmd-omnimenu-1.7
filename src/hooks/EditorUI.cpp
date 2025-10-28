@@ -89,9 +89,9 @@ void EditorUI::onDuplicate() {
     }
 }
 
-void (*TRAM_EditorUI_init)(EditorUI* self, LevelEditorLayer* lel);
-void EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
-    TRAM_EditorUI_init(self, lel);
+bool (*TRAM_EditorUI_init)(EditorUI* self, LevelEditorLayer* lel);
+bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
+    if (!TRAM_EditorUI_init(self, lel)) return false;
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("copy_paste")) {
         auto director = CCDirector::sharedDirector();
@@ -106,6 +106,7 @@ void EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
 
         btnMenu->addChild(copyBtn);
     }
+    return true;
 }
 
 void EditorUI::onDeleteSelected() {
