@@ -22,6 +22,7 @@
 #include "hooks/GameObject.cpp"
 #include "hooks/MyLevelsLayer.cpp"
 #include "hooks/CCLabelBMFont.cpp"
+#include "hooks/CCLabelTTF.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -50,4 +51,5 @@ void initialize_hooks() {
     GameObject_om();
     MyLevelsLayer_om();
     CCLabelBMFont_om();
+    CCLabelTTF_om();
 }

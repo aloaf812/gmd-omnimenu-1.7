@@ -345,7 +345,7 @@ protected:
     virtual void updateBlendFunc(void);
     virtual void setReorderChildDirtyRecursively(void);
 
-protected:
+public:
     //
     // Data used when the sprite is rendered using a CCSpriteSheet
     //

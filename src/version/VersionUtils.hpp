@@ -131,3 +131,6 @@ EditButtonBar* getCreateButtonBar(EditorUI* uiLayer);
 void setCreateButtonBar(EditorUI* uiLayer, EditButtonBar* bar);
 float getScreenBottom();
 float getUnkFloat(EditorUI* uiLayer);
+
+CCArray* getEditorSections(LevelEditorLayer* editLayer);
+int getObjectKey(GameObject* obj);

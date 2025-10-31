@@ -93,9 +93,19 @@ bool (*TRAM_EditorUI_init)(EditorUI* self, LevelEditorLayer* lel);
 bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
     if (!TRAM_EditorUI_init(self, lel)) return false;
     HaxManager& hax = HaxManager::sharedState();
+    auto director = CCDirector::sharedDirector();
+    auto winSize = director->getWinSize();
+    if (hax.getModuleEnabled("delete_selected")) {
+        CCMenu* delMenu = CCMenu::create();
+        self->addChild(delMenu);
+
+        delMenu->setPosition(ccp(125, winSize.height - 20));
+        CCSprite* delSelSpr = CCSprite::create("GJ_trashBtn.png");
+        CCMenuItemSpriteExtra* delSelBtn = CCMenuItemSpriteExtra::create(delSelSpr, delSelSpr, self, menu_selector(EditorUI::onDeleteSelected));
+
+        delMenu->addChild(delSelBtn);
+    }
     if (hax.getModuleEnabled("copy_paste")) {
-        auto director = CCDirector::sharedDirector();
-        auto winSize = director->getWinSize();
 
         CCMenu* btnMenu = CCMenu::create();
         self->addChild(btnMenu);
@@ -125,27 +135,44 @@ void EditorUI::onDeleteSelected() {
         this->deselectAll();
     }
 }
-
-void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
-void EditorUI_setupDeleteMenu(EditorUI* self) {
-    TRAM_EditorUI_setupDeleteMenu(self);
-    HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("delete_selected")) {
-        CCMenu* menu = getEditorUIButtonMenu(self);
-
-        if (!menu || menu == nullptr) { // useless failsafe but i don't like removing those
-            TRAM_EditorUI_setupDeleteMenu(self);
-            menu = getEditorUIButtonMenu(self);
-        }
-
-        auto delSelSpr = ButtonSprite::create("Delete Selected", 75, 0, 0.6, false, "bigFont.fnt", "GJ_button_04.png");
-        // delSelSpr->setScale(0.8f);
-
-        auto delSelBtn = CCMenuItemSpriteExtra::create(delSelSpr, delSelSpr, self, menu_selector(EditorUI::onDeleteSelected));
-        menu->addChild(delSelBtn);
-    }
-}
 #endif // GAME_VERSION < GV_1_5
+
+#if GAME_VERSION < GV_1_6
+    void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
+    void EditorUI_setupDeleteMenu(EditorUI* self) {
+        TRAM_EditorUI_setupDeleteMenu(self);
+        HaxManager& hax = HaxManager::sharedState();
+        if (hax.getModuleEnabled("delete_start_pos")) {
+            CCMenu* menu = getEditorUIButtonMenu(self);
+
+            if (!menu || menu == nullptr) { // useless failsafe but i don't like removing those
+                TRAM_EditorUI_setupDeleteMenu(self);
+                menu = getEditorUIButtonMenu(self);
+            }
+
+            auto delSPSpr = ButtonSprite::create("Delete Start Pos", 85, 0, 0.6, false, "bigFont.fnt", "GJ_button_04.png");
+            // delSelSpr->setScale(0.8f);
+
+            auto delSPBtn = CCMenuItemSpriteExtra::create(delSPSpr, delSPSpr, self, menu_selector(EditorUI::onDeleteStartPos));
+            menu->addChild(delSPBtn);
+        }
+    }
+    void EditorUI::onDeleteStartPos() {
+        LevelEditorLayer* editLayer = getUIEditorLayer(this);
+        CCArray* sections = getEditorSections(editLayer);
+        for (int i = 0; i < sections->count(); i++) {
+            auto section = static_cast<CCArray*>(sections->objectAtIndex(i));
+            for (int j = 0; j < section->count(); j++) {
+                auto currObj = static_cast<GameObject*>(section->objectAtIndex(j));
+                CCLog("sidx: %i, idx: %i, id: %i", i, j, getObjectKey(currObj));
+                if (getObjectKey(currObj) == 31) {// start position object ID
+                    editLayer->removeObject(currObj);
+                    j--;
+                }
+            }
+        }
+    }
+#endif
 
 void (*TRAM_EditorUI_setupCreateMenu)(EditorUI* self);
 void EditorUI_setupCreateMenu(EditorUI* self) {
@@ -171,14 +198,56 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
 
         CCNode* sep1 = CCNode::create();
         sep1->setTag(0);
+#if GAME_VERSION > GV_1_2
+        CCNode* sep2 = CCNode::create();
+        sep2->setTag(0);
+#endif
+#if GAME_VERSION == GV_1_0
+        fuckingArray->insertObject(sep1, 25);
+#elif GAME_VERSION == GV_1_1
+        fuckingArray->insertObject(sep1, 27);
+#elif GAME_VERSION == GV_1_2
         fuckingArray->insertObject(sep1, 28);
+#elif GAME_VERSION == GV_1_3
+        fuckingArray->insertObject(sep1, 51);
+        fuckingArray->insertObject(sep2, 63);
+#elif GAME_VERSION == GV_1_4
+        fuckingArray->insertObject(sep1, 74);
+        fuckingArray->insertObject(sep2, 86);
+#endif
 
         CCNode* unlistedSeparator = CCNode::create();
         unlistedSeparator->setTag(0);
         fuckingArray->addObject(unlistedSeparator);
-        fuckingArray->addObject(self->getCreateBtn("edit_eLevelEndBtn_001.png", 4));
-        fuckingArray->addObject(self->getCreateBtn("edit_eBGEOn_001.png", 4));
-        fuckingArray->addObject(self->getCreateBtn("edit_eBGEOff_001.png", 4));
+#if GAME_VERSION < GV_1_3
+        fuckingArray->addObject(self->getCreateBtn("edit_eeSDBtn_001.png", 4)); // a transition trigger that only got listed in 1.3
+#endif
+        fuckingArray->addObject(self->getCreateBtn("edit_eLevelEndBtn_001.png", 4)); // level end
+        fuckingArray->addObject(self->getCreateBtn("edit_eBGEOn_001.png", 4)); // bg effect on
+        fuckingArray->addObject(self->getCreateBtn("edit_eBGEOff_001.png", 4)); // bg effect off
+#if GAME_VERSION == GV_1_0 // 1.02 ONLY!
+        fuckingArray->addObject(self->getCreateBtn("portal_05_front_001.png", 4)); // orange mirror portal
+        fuckingArray->addObject(self->getCreateBtn("portal_06_front_001.png", 4)); // blue mirror portal
+#elif GAME_VERSION == GV_1_1 // 1.11 ONLY!
+        fuckingArray->addObject(self->getCreateBtn("portal_07_front_001.png", 4)); // ball portal
+#elif GAME-VERSION >= GV_1_3
+        fuckingArray->addObject(self->getCreateBtn("edit_eeFABtn_001.png", 4)); // scatter transition trigger
+    #if GAME_VERSION < GV_1_6 // they are removed in 1.6 and reintroduced in 1.8
+        fuckingArray->addObject(self->getCreateBtn("square_b_02_001.png", 4)); // wavy slab outer corner thing
+        fuckingArray->addObject(self->getCreateBtn("square_b_03_001.png", 4)); // wavy slab inner corner thing
+    #endif
+    #if GAME_VERSION == GV_1_3
+        fuckingArray->addObject(self->getCreateBtn("square_d_01_001.png", 4)); // x blocks
+        fuckingArray->addObject(self->getCreateBtn("square_d_02_001.png", 4));
+        fuckingArray->addObject(self->getCreateBtn("square_d_03_001.png", 4));
+        fuckingArray->addObject(self->getCreateBtn("square_d_04_001.png", 4)); // this one will crash on 1.4+
+        fuckingArray->addObject(self->getCreateBtn("square_d_05_001.png", 4));
+        fuckingArray->addObject(self->getCreateBtn("square_d_06_001.png", 4));
+        fuckingArray->addObject(self->getCreateBtn("square_d_07_001.png", 4));
+    #elif GAME_VERSION == GV_1_4
+        fuckingArray->addObject(self->getCreateBtn("edit_eTintObjBtn_001.png", 4)); // obj trigger
+    #endif
+#endif
 
         EditButtonBar* newBar = EditButtonBar::create(fuckingArray, ccp(winSize.width * 0.5 - 5, getScreenBottom() + getUnkFloat(self) - 6.f));
         setCreateButtonBar(self, newBar);
@@ -202,6 +271,8 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI4initEP16LevelEditorLayer",
         reinterpret_cast<void*>(EditorUI_init),
         reinterpret_cast<void**>(&TRAM_EditorUI_init));
+#endif
+#if GAME_VERSION < GV_1_6
     Omni::hook("_ZN8EditorUI15setupDeleteMenuEv",
         reinterpret_cast<void*>(EditorUI_setupDeleteMenu),
         reinterpret_cast<void**>(&TRAM_EditorUI_setupDeleteMenu));

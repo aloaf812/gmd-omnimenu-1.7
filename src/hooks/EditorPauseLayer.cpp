@@ -2,7 +2,7 @@
 #include "EditorPauseLayer.hpp"
 
 void EditorPauseLayer::onOpenMenu() {
-    auto haxOverlay = HaxOverlay::create(this);
+    auto haxOverlay = HaxMenu::create(this);
     this->addChild(haxOverlay, 1000);
     this->setTouchEnabled(false);
 }

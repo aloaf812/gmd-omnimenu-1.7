@@ -124,7 +124,7 @@ public:
 
 private:
     void updateTexture();
-protected:
+public:
     /** Dimensions of the label in Points */
     CCSize m_tDimensions;
     /** The alignment of the label */

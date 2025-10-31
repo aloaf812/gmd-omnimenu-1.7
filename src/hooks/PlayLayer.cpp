@@ -257,11 +257,12 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         if (p && p != nullptr) p->stopSystem();
     }
 }
-void (*TRAM_PlayLayer_init)(PlayLayer* self);
-void PlayLayer_init(PlayLayer* self) {
-    TRAM_PlayLayer_init(self);
+bool (*TRAM_PlayLayer_init)(PlayLayer* self, GJGameLevel* level);
+bool PlayLayer_init(PlayLayer* self, GJGameLevel* level) {
+    if (!TRAM_PlayLayer_init(self, level)) return false;
     HaxManager& hax = HaxManager::sharedState();
     hax.quitPlayLayer = false;
+    return true;
 }
 void (*TRAM_PlayLayer_shakeCamera)(PlayLayer* self, float duration);
 void PlayLayer_shakeCamera(PlayLayer* self, float duration) {

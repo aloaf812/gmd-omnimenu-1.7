@@ -3,7 +3,8 @@
 #include "FLAlertLayer.hpp"
 #include "CCMenuItemSpriteExtra.hpp"
 // #include "../layers/HaxLayer.hpp"
-#include "../layers/HaxOverlay.hpp"
+// #include "../layers/HaxOverlay.hpp"
+#include "../layers/HaxMenu.hpp"
 #include "HaxManager.hpp"
 #include "Utils.hpp"
 
@@ -11,7 +12,7 @@
 //     CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, HaxLayer::scene(false)));
 // }
 void MenuLayer::onOpenMenu() {
-    auto haxOverlay = HaxOverlay::create(this);
+    auto haxOverlay = HaxMenu::create(this); //HaxOverlay::create(this);
     this->addChild(haxOverlay, 1000);
     this->setTouchEnabled(false);
 }
@@ -36,6 +37,8 @@ bool MenuLayer_init(cocos2d::CCLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
     hax.loadSettingsFromFile();
 
+    CCMenu* bottomMenu = static_cast<CCMenu*>(self->getChildren()->objectAtIndex(self->getChildrenCount() - 3));
+
     CCMenu* infoMenu = CCMenu::create();
     CCSprite* infoSpr = createInfoSprite();
     CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, self, menu_selector(MenuLayer::onMenuInfo));
@@ -47,8 +50,9 @@ bool MenuLayer_init(cocos2d::CCLayer* self) {
 
     CCSprite* menuSpr = CCSprite::create("OMNImenu_btn.png");
     CCMenuItemSpriteExtra* menuBtn = CCMenuItemSpriteExtra::create(menuSpr, menuSpr, self, menu_selector(MenuLayer::onOpenMenu));
-    infoMenu->addChild(menuBtn);
-    menuBtn->setPosition(ccp(-130, -winSize.height + 70.f));
+    bottomMenu->addChild(menuBtn);
+    // menuBtn->setPosition(ccp(-130, -winSize.height + 70.f));
+    bottomMenu->alignItemsHorizontallyWithPadding(5.0f);
 
     return true;
 }

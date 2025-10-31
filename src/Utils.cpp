@@ -16,7 +16,7 @@ float getPixelsInCocosUnit(int width, int height) {
     return std::min(scaleW, scaleH);
 }
 
-static float standardDefinition = getPixelsInCocosUnit(1600, 900); // my waydroid resolution
+static float standardDefinition = getPixelsInCocosUnit(1920, 1080);
 
 // Credit to akqanile/Adelfa
 float scaleFontSize(float fontSize) {

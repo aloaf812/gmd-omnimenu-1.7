@@ -31,7 +31,7 @@ void MyLevelsLayer::loadLevel(GJGameLevel* level) {
     setLevelID(level, 0);
     setLevelType(level, GJLevelType::Editor);
     getLocalLevels()->addObject(level);
-    // this delay is necessary. TODO come up with a better solution
+    // this delay is necessary. TODO come up with a better solution?
     runAction(CCSequence::create(
         CCDelayTime::create(0.2f),
         CCCallFunc::create(this, callfunc_selector(MyLevelsLayer::reload)),

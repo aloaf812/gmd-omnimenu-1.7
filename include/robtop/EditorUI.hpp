@@ -26,4 +26,7 @@ public:
 #if GAME_VERSION < GV_1_5
     void onDuplicate();
 #endif
+#if GAME_VERSION < GV_1_6
+    void onDeleteStartPos();
+#endif
 };

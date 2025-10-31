@@ -22,6 +22,7 @@
 /**/ #define GameManager__m_playLayer          0x150 /**/
 /**/ #define GameManager__m_playerName         0x168 /**/
 /**/ #define GameManager__m_playerUDID         0x164 /**/
+/**/ #define GameObject__m_objectKey           0x314 /**/
 /**/ #define GameObject__m_particles           0x280 /**/
 /**/ #define GameObject__m_shouldSpawn         0x2c4 /**/
 /**/ #define GameObject__m_type                0x2bc /**/
@@ -42,9 +43,10 @@
 /**/ #define LevelEditorLayer__m_gameLayer     0x158 /**/
 /**/ #define LevelEditorLayer__m_gridLayer     0x150 /**/
 /**/ #define LevelEditorLayer__m_objectCount   0x154 /**/
+/**/ #define LevelEditorLayer__m_sections      0x144 /**/
 /**/ #define LevelEditorLayer__m_redoArray     0x14c /**/
 /**/ #define LevelInfoLayer__m_level           0x154 /**/
-/**/ #define LevelSelectLayer__m_scrollLayer   0x14C /**/
+/**/ #define LevelSelectLayer__m_scrollLayer   0x14c /**/
 /**/ #define LocalLevelManager__m_localLevels  0x130 /**/
 /**/ #define PlayLayer__m_checkpoints          0x154 /**/
 /**/ #define PlayLayer__m_hazards              0x188 /**/

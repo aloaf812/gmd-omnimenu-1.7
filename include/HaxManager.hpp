@@ -245,9 +245,20 @@ private:
                 "Copy & Paste", 
                 "Adds a button that duplicates the selected objects.", 
                 false, ModuleCategory::Editor, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("delete_selected", new Module(
+#if GAME_VERSION < GV_1_5
                 "Delete Selected", 
                 "Adds a button that removes the selected objects.", 
+#else
+                "2.0 Delete Selected",
+                "Moves Delete Selected next to the Undo/Redo buttons.",
+#endif
+                false, ModuleCategory::Editor, [](bool _){})));
+#if GAME_VERSION < GV_1_6
+        modules.insert(std::pair<std::string, Module*>("delete_start_pos", new Module(
+                "Delete Start Pos", 
+                "Adds a button that removes all start positions in the level.", 
                 false, ModuleCategory::Editor, [](bool _){})));
 #endif
         modules.insert(std::pair<std::string, Module*>("free_build", new Module(

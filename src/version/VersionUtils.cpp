@@ -435,3 +435,9 @@ float getScreenBottom() {
 float getUnkFloat(EditorUI* uiLayer) {
     return MEMBER_BY_OFFSET(float, uiLayer, EditorUI__m_unkFloat);
 }
+CCArray* getEditorSections(LevelEditorLayer* editLayer) {
+    return MEMBER_BY_OFFSET(CCArray*, editLayer, LevelEditorLayer__m_sections);
+}
+int getObjectKey(GameObject* obj) {
+    return MEMBER_BY_OFFSET(int, obj, GameObject__m_objectKey);
+}
