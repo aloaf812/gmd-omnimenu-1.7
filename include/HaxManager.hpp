@@ -40,6 +40,7 @@ public:
     CCMenuItemSpriteExtra* pButton4;
     CCMenuItemSpriteExtra* pButton5;
     CCMenuItemSpriteExtra* pButton6;
+    CCLabelBMFont* uiLabel;
     bool hasCheated;
     bool instantComped;
     bool quitPlayLayer;
@@ -49,6 +50,14 @@ public:
     jobject activity;
     GJGameLevel* gdShareLevel;
     MyLevelsLayer* myLevelsLayer;
+    float bestRun;
+    int frames;
+    int fps;
+    float fpsCounter;
+    int clicks;
+    int deaths;
+    int frameCount;
+    int lastDeadFrame;
 
     Module* getModule(const char* id) {
         return modules.at(std::string(id));
@@ -70,6 +79,24 @@ public:
         if (hasCheated) return CheatIndicatorColor::Orange;
         if (getModuleEnabled("level_edit")) return CheatIndicatorColor::Yellow;
         return CheatIndicatorColor::Green;
+    }
+
+    bool getShowLabel() {
+        if (
+            getModuleEnabled("label_attempts_session") ||
+            getModuleEnabled("label_attempts_total") ||
+            getModuleEnabled("label_best_run") ||
+            getModuleEnabled("label_clicks") ||
+            getModuleEnabled("label_clock") ||
+            getModuleEnabled("label_frames") ||
+            getModuleEnabled("label_fps") ||
+            getModuleEnabled("label_jumps") ||
+            getModuleEnabled("label_noclip_deaths") ||
+            getModuleEnabled("label_pcommand") ||
+            getModuleEnabled("label_player_position") |
+            getModuleEnabled("label_time_spent")
+        ) return true;
+        return false;
     }
 
     void setCheating(bool val) {
@@ -372,6 +399,10 @@ private:
                 "Prevents any progress on any level from being saved if you have cheats enabled.", 
                 false, ModuleCategory::Universal, [](bool _){})));
 #endif
+        // modules.insert(std::pair<std::string, Module*>("eeffoc", new Module(
+        //         "Eeffoc",
+        //         "!ynnuf si hcihW", 
+        //         false, ModuleCategory::Universal, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("fast_menu", new Module(
                 "Fast Menu", 
                 "Makes fade transitions instant.", 
@@ -408,6 +439,57 @@ private:
 #endif 
 
                 false, ModuleCategory::Universal, [](bool _){})));
+
+
+
+        modules.insert(std::pair<std::string, Module*>("label_attempts_session", new Module(
+                "Attempt Count (Session)", 
+                "Displays the current attempt count.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_attempts_total", new Module(
+                "Attempt Count (Total)", 
+                "Displays the total attempt count.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_best_run", new Module(
+                "Best Run (Session)", 
+                "Displays the best percentage achieved this session.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_clicks", new Module(
+                "Clicks", 
+                "Displays the amount of clicks this attempt.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_clock", new Module(
+                "Clock", 
+                "Displays the current time.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_fps", new Module(
+                "FPS", 
+                "Displays the current frames per second.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_frames", new Module(
+                "Frames", 
+                "Displays the amount of frames that have passed since the start of the attempt.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_jumps", new Module(
+                "Jumps", 
+                "Displays the current jump count.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_noclip_deaths", new Module(
+                "NoClip Deaths", 
+                "If NoClip is enabled, displays the amount of times you would have died.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_pcommand", new Module(
+                "pCommand", 
+                "Displays the pCommand values.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_player_position", new Module(
+                "Player Position", 
+                "Displays the player's X and Y coordinates.", 
+                false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_time_spent", new Module(
+                "Time Spent", 
+                "Displays the amount of time spent this session.", 
+                false, ModuleCategory::Label, [](bool _){})));
 
 
 
@@ -468,10 +550,22 @@ private:
         pButton4 = nullptr;
         pButton5 = nullptr;
         pButton6 = nullptr;
+        uiLabel = nullptr;
 
         pSpeedModified = 0;
         pGravityModified = 0;
         pYStartModified = 0;
+
+        bestRun = 0;
+
+        frames = 0;
+        fps = 0;
+        fpsCounter = 0;
+
+        clicks = 0;
+        deaths = 0;
+        frameCount = 0;
+        lastDeadFrame = -1;
     }
 
     HaxManager(const HaxManager&) = delete;

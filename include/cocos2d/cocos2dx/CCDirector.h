@@ -340,7 +340,7 @@ protected:
     
     void showStats();
     void createStatsLabel();
-    void calculateMPF();
+    public: void calculateMPF();
 
     /** calculates delta time since last time it was called */    
     void calculateDeltaTime();
@@ -354,9 +354,9 @@ protected:
     /* landscape mode ? */
     bool m_bLandscape;
     
-    bool m_bDisplayStats;
-    float m_fAccumDt;
-    float m_fFrameRate;
+    public: bool m_bDisplayStats;
+    public: float m_fAccumDt;
+    public: float m_fFrameRate;
     
     CCLabelAtlas *m_pFPSLabel;
     CCLabelAtlas *m_pSPFLabel;
@@ -387,7 +387,7 @@ protected:
     struct cc_timeval *m_pLastUpdate;
 
     /* delta time since last tick to main loop */
-    float m_fDeltaTime;
+    public: float m_fDeltaTime;
 
     /* whether or not the next delta time will be zero */
     bool m_bNextDeltaTimeZero;

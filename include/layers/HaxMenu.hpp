@@ -2,6 +2,7 @@
 
 #include <cocos2d.h>
 #include <Module.hpp>
+#include "CCMenuItemSpriteExtra.hpp"
 
 class HaxMenu : public CCLayerColor {
 
@@ -25,12 +26,14 @@ protected:
     void onBypass();
     void onInformational();
     void onUniversal();
+    void onLabel();
     void onParticles();
 
     void toggler(CCObject*);
     float getDuration();
     void setColorAtIndex(int index);
     void onPih(CCObject*);
+    void onUDID();
 
     CCNode* leftParent;
     CCNode* rightParent;
@@ -38,4 +41,7 @@ protected:
     CCArray* catButtons;
     CCMenu* catMenu;
     CCMenu* modMenu;
+    CCMenuItemSpriteExtra* udidBtn;
+    CCSprite* leftPanel;
+    CCSprite* rightPanel;
 };

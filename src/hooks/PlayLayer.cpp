@@ -100,9 +100,16 @@ void (*TRAM_PlayLayer_destroyPlayer)(PlayLayer* self);
 void PlayLayer_destroyPlayer(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("noclip") || hax.getModuleEnabled("instant_complete")) {
+        if (hax.lastDeadFrame < hax.frameCount - 1) {
+            hax.deaths++;
+        }
+        hax.lastDeadFrame = hax.frameCount;
         getPlayLayerHazards()->removeAllObjects(); // the humble noclip lag fix
         return;
     }
+    float currRun = getCurrentPercentageF(self);
+    if (currRun > hax.bestRun)
+        hax.bestRun = currRun;
     TRAM_PlayLayer_destroyPlayer(self);
     if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
         auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
@@ -137,11 +144,22 @@ void instantComplete(PlayLayer* self) {
     hax.instantComped = true;
 }
 
+void (*TRAM_PlayLayer_levelComplete)(PlayLayer* self);
+void PlayLayer_levelComplete(PlayLayer* self) {
+    HaxManager& hax = HaxManager::sharedState();
+    hax.bestRun = 100;
+    TRAM_PlayLayer_levelComplete(self);
+}
+
 void (*TRAM_PlayLayer_resetLevel)(PlayLayer* self);
 void PlayLayer_resetLevel(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getCheatIndicatorColor() == CheatIndicatorColor::Orange) hax.hasCheated = false;
     hax.instantComped = false;
+    hax.lastDeadFrame = -1;
+    hax.frameCount = 0;
+    hax.deaths = 0;
+    hax.clicks = 0;
     if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
         auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
         int seekTime = 0;
@@ -188,8 +206,9 @@ void PlayLayer_toggleFlipped(void* self, bool p1, bool p2) {
 
 void (*TRAM_PlayLayer_update)(PlayLayer* self, float dt);
 void PlayLayer_update(PlayLayer* self, float dt) {
-    TRAM_PlayLayer_update(self, dt);
     HaxManager& hax = HaxManager::sharedState();
+    TRAM_PlayLayer_update(self, dt);
+    hax.frameCount++;
     if (hax.quitPlayLayer) return;
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
@@ -248,6 +267,17 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         if (hax.pMenu && hax.pMenu != nullptr && hax.pMenu->isVisible()) {
             hax.pMenu->setVisible(false);
         }
+    }
+    if (hax.getShowLabel()) {
+        if (!hax.uiLabel || hax.uiLabel == nullptr) {
+            uiLayer->createLabel();
+        } else if (!hax.uiLabel->isVisible()) {
+            hax.uiLabel->setVisible(true);
+        }
+        uiLayer->updateLabel(dt);
+    } else {
+        if (hax.uiLabel && hax.uiLabel != nullptr && hax.uiLabel->isVisible())
+            hax.uiLabel->setVisible(false);
     }
     if (hax.getModuleEnabled("instant_complete") && !hax.instantComped) {
         instantComplete(self);
@@ -321,6 +351,9 @@ void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer11shakeCameraEf",
         reinterpret_cast<void*>(PlayLayer_shakeCamera),
         reinterpret_cast<void**>(&TRAM_PlayLayer_shakeCamera));
+    Omni::hook("_ZN9PlayLayer13levelCompleteEv",
+        reinterpret_cast<void*>(PlayLayer_levelComplete),
+        reinterpret_cast<void**>(&TRAM_PlayLayer_levelComplete));
     // Omni::hook("_ZN9PlayLayer14createParticleEiPKciN7cocos2d15tCCPositionTypeE",
     //     reinterpret_cast<void*>(PlayLayer_createParticle),
     //     reinterpret_cast<void**>(&TRAM_PlayLayer_createParticle));

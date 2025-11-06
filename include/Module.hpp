@@ -6,7 +6,8 @@ enum class ModuleCategory {
     Bypass = 2,
     Informational = 3,
     Universal = 4,
-    Particles = 5
+    Label = 5,
+    Particles = 6
 };
 
 class Module {

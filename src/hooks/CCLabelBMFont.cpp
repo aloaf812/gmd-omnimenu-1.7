@@ -16,6 +16,25 @@ int cc_wcslen(const unsigned short* str)
     return i;
 }
 
+// void (*TRAM_CCLabelBMFont_setString)(CCLabelBMFont* self, const char *newString, bool fromUpdate);
+// void CCLabelBMFont_setString(CCLabelBMFont* self, const char *newString, bool fromUpdate) {
+//     HaxManager& hax = HaxManager::sharedState();
+//     std::string str = newString;
+//     CCLog(str.c_str());
+//     if (hax.getModuleEnabled("eeffoc")) {
+//         std::reverse(str.begin(), str.end());
+//     }
+//     TRAM_CCLabelBMFont_setString(self, str.c_str(), fromUpdate);
+// }
+// bool (*TRAM_CCLabelBMFont_initWithString)(CCLabelBMFont* self, const char *theString, const char *fntFile, float width, CCTextAlignment alignment, CCPoint imageOffset);
+// bool CCLabelBMFont_initWithString(CCLabelBMFont* self, const char *theString, const char *fntFile, float width, CCTextAlignment alignment, CCPoint imageOffset) {
+//     HaxManager& hax = HaxManager::sharedState();
+//     std::string str = theString;
+//     if (hax.getModuleEnabled("eeffoc")) {
+//         std::reverse(str.begin(), str.end());
+//     }
+//     return TRAM_CCLabelBMFont_initWithString(self, str.c_str(), fntFile, width, alignment, imageOffset);
+// }
 
 void (*TRAM_CCLabelBMFont_createFontChars)(CCLabelBMFont* self);
 void CCLabelBMFont_createFontChars(CCLabelBMFont* self) {
@@ -138,4 +157,10 @@ void CCLabelBMFont_om() {
         reinterpret_cast<void*>(CCLabelBMFont_createFontChars),
         reinterpret_cast<void**>(&TRAM_CCLabelBMFont_createFontChars));
 #endif
+    // Omni::hook("_ZN7cocos2d13CCLabelBMFont9setStringEPKcb",
+    //     reinterpret_cast<void*>(CCLabelBMFont_setString),
+    //     reinterpret_cast<void**>(&TRAM_CCLabelBMFont_setString));
+    // Omni::hook("_ZN7cocos2d13CCLabelBMFont14initWithStringEPKcS2_fNS_15CCTextAlignmentENS_7CCPointE",
+    //     reinterpret_cast<void*>(CCLabelBMFont_initWithString),
+    //     reinterpret_cast<void**>(&TRAM_CCLabelBMFont_initWithString));
 }

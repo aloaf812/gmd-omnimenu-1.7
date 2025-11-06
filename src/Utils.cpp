@@ -5,26 +5,6 @@
 #include "GJGameLevel.hpp"
 #include "HaxManager.hpp"
 
-// Credit to akqanile/Adelfa
-static CCSize targetResolution = CCSizeMake(480, 320);
-
-// Credit to akqanile/Adelfa
-float getPixelsInCocosUnit(int width, int height) {
-    float scaleW = static_cast<float>(width) / targetResolution.width;
-    float scaleH = static_cast<float>(height) / targetResolution.height;
-
-    return std::min(scaleW, scaleH);
-}
-
-static float standardDefinition = getPixelsInCocosUnit(1920, 1080);
-
-// Credit to akqanile/Adelfa
-float scaleFontSize(float fontSize) {
-    static CCSize frameSize = CCDirector::sharedDirector()->getOpenGLView()->getFrameSize();
-    return fontSize *
-        (standardDefinition / getPixelsInCocosUnit(frameSize.width, frameSize.height));
-}
-
 CCSprite* createInfoSprite() {
 #if GAME_VERSION < 7
     return CCSprite::create("GJ_infoIcon.png");
@@ -168,4 +148,30 @@ GJGameLevel* readGMD(const char* uriStr) {
     level = GJGameLevel::createWithCoder(dict);
 
     return level;
+}
+jobject getGlobalContext(JNIEnv *env)
+{   
+    jclass activityThread = env->FindClass("android/app/ActivityThread");
+    jmethodID currentActivityThread = env->GetStaticMethodID(activityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
+    jobject activityThreadObj = env->CallStaticObjectMethod(activityThread, currentActivityThread);
+    
+    jmethodID getApplication = env->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
+    jobject context = env->CallObjectMethod(activityThreadObj, getApplication);
+    return context;
+}
+void copyStringToClipboard(const char* string) {
+    JNIEnv* env = getEnv();
+    jclass context_cls = env->FindClass("android/content/Context");
+    jfieldID clipboardService_fid = env->GetStaticFieldID(context_cls, "CLIPBOARD_SERVICE", "Ljava/lang/String;");
+    jmethodID getSystemService_mid = env->GetMethodID(context_cls, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
+    jobject clipboardService_obj = env->CallObjectMethod(
+        getGlobalContext(env), 
+        getSystemService_mid, 
+        (jstring)env->GetStaticObjectField(context_cls, clipboardService_fid)
+    );
+    
+    jstring strToCopy = env->NewStringUTF(string);
+    jclass clipManager_cls = env->FindClass("android/text/ClipboardManager");
+    jmethodID setText_mid = env->GetMethodID(clipManager_cls, "setText", "(Ljava/lang/CharSequence;)V");
+    env->CallVoidMethod(clipboardService_obj, setText_mid, strToCopy);
 }

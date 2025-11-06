@@ -48,9 +48,12 @@
 /**/ #define LevelInfoLayer__m_level           0x154 /**/
 /**/ #define LevelSelectLayer__m_scrollLayer   0x14c /**/
 /**/ #define LocalLevelManager__m_localLevels  0x130 /**/
+/**/ #define PlayLayer__m_attempts             0x288 /**/
 /**/ #define PlayLayer__m_checkpoints          0x154 /**/
+/**/ #define PlayLayer__m_clkTimer             0x290 /**/
 /**/ #define PlayLayer__m_hazards              0x188 /**/
 /**/ #define PlayLayer__m_isPractice           0x255 /**/
+/**/ #define PlayLayer__m_jumps                0x28c /**/
 /**/ #define PlayLayer__m_lastX                0x1d8 /**/
 /**/ #define PlayLayer__m_level                0x230 /**/
 /**/ #define PlayLayer__m_pGlitter             0x1a0 /**/

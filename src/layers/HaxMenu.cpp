@@ -7,6 +7,7 @@
 #include "CCMenuItemSpriteExtra.hpp"
 #include "Utils.hpp"
 #include "GameSoundManager.hpp"
+#include "ButtonSprite.hpp"
 
 using namespace cocos2d;
 
@@ -35,6 +36,16 @@ float HaxMenu::getDuration() {
 
 ccColor3B color = ccc3(127, 255, 255);
 
+bool CCRectContainsPoint(CCRect rect, const CCPoint& point)
+{
+    if (point.x >= CCRect::CCRectGetMinX(rect) && point.x < CCRect::CCRectGetMaxX(rect)
+        && point.y >= CCRect::CCRectGetMinY(rect) && point.y < CCRect::CCRectGetMaxY(rect)) {
+        return true;
+    }
+    return false;
+}
+
+
 bool HaxMenu::init(CCLayer* referrer) {
     if (!CCLayerColor::initWithColor(ccc4(0, 0, 0, 180)))
         return false;
@@ -61,6 +72,7 @@ bool HaxMenu::init(CCLayer* referrer) {
     leftParent->addChild(leftPanel);
     leftPanel->setPosition({0.f, 0.f});
     leftPanel->setScaleY(2.0f);
+    this->leftPanel = leftPanel;
 
     auto logo = CCSprite::create("omnimenu_logo.png");
     leftParent->addChild(logo, 1001);
@@ -80,6 +92,7 @@ bool HaxMenu::init(CCLayer* referrer) {
     rightParent->addChild(rightPanel);
     rightPanel->setPosition({0.f, 0.f});
     rightPanel->setScaleY(2.0f);
+    this->rightPanel = rightPanel;
     
     rightParent->runAction(CCEaseOut::create(
         CCMoveTo::create(getDuration(), ccp(winSize.width - 80.f, winSize.height / 2)), 3
@@ -103,7 +116,8 @@ bool HaxMenu::init(CCLayer* referrer) {
     addButton(" Bypass ", 14, 40, this, menu_selector(HaxMenu::onBypass));
     addButton(" Informational ", 14, 20, this, menu_selector(HaxMenu::onInformational));
     addButton(" Universal ", 14, 0, this, menu_selector(HaxMenu::onUniversal));
-    addButton(" Particles ", 14, -20, this, menu_selector(HaxMenu::onParticles));
+    addButton(" Label ", 14, -20, this, menu_selector(HaxMenu::onLabel));
+    addButton(" Particles ", 14, -40, this, menu_selector(HaxMenu::onParticles));
 
     setTouchEnabled(true);
     setKeypadEnabled(true);
@@ -148,6 +162,9 @@ void HaxMenu::onInformational() {
 void HaxMenu::onUniversal() {
     onCategory(ModuleCategory::Universal);
 }
+void HaxMenu::onLabel() {
+    onCategory(ModuleCategory::Label);
+}
 void HaxMenu::onParticles() {
     onCategory(ModuleCategory::Particles);
 }
@@ -191,16 +208,41 @@ void HaxMenu::onCategory(ModuleCategory category) {
         checkbox->setScale(0.5f);
         checkbox->setUserData(key);
         this->modMenu->addChild(checkbox, 1003);
-        checkbox->setPosition({-60, winSize.height / 2 + y});
+        checkbox->setPosition({-63, winSize.height / 2 + y});
 
         std::string labelValue = mod->name;
         labelValue += " "; // italics font gets cut off grrrr
-        auto label = CCLabelTTF::create(labelValue.c_str(), "Helvetica-Oblique.ttf", 12);
+        auto label = CCLabelTTF::create(labelValue.c_str(), "Helvetica-Oblique.ttf", 11);
         this->rightParent->addChild(label, 1003);
         label->setAnchorPoint({0.f, 0.5f});
-        label->setPosition(ccp(-47, winSize.height / 2 + y));
+        label->setPosition(ccp(-50, winSize.height / 2 + y));
         y -= 16;
     }
+    if (category == ModuleCategory::Universal) {
+        auto udidSpr = ButtonSprite::create("Copy UDID", 50, 0, 1, false, "bigFont.fnt", "GJ_button_04.png");
+        // delSelSpr->setScale(0.8f);
+
+        auto udidBtn = CCMenuItemSpriteExtra::create(udidSpr, udidSpr, this, menu_selector(HaxMenu::onUDID));
+        udidBtn->setPosition(ccp(-40, -winSize.height / 2 + 30));
+        this->modMenu->addChild(udidBtn);
+        this->udidBtn = udidBtn;
+    }
+}
+ // dfdfdcsxxs
+
+void HaxMenu::onUDID() {
+    std::string udid = getPlayerUDID();
+    copyStringToClipboard(udid.c_str());
+
+    FLAlertLayer::create(
+        nullptr,
+        "UDID",
+        CCString::createWithFormat(
+            "<cy>Your UDID</c>: %s. It should also appear on your <cg>clipboard</c>.\n<co>Warning</c>: Do <cr>NOT</c> share this with anyone! Your <cy>UDID</c> can be used to <cr>access your account</c>.", udid.c_str())->getCString(),
+        "OK",
+        nullptr,
+        300.f
+    )->show();
 }
 
 void HaxMenu::toggler(CCObject* sender) {
@@ -209,7 +251,7 @@ void HaxMenu::toggler(CCObject* sender) {
     auto& hax = HaxManager::sharedState();
     hax.getModule(userData->c_str())->toggle();
     if (!strcmp(userData->c_str(), "ping_spoofing")) {
-        GameSoundManager::sharedManager()->playUniqueEffect("pih.mp3");
+        GameSoundManager::sharedManager()->playEffect("pih.mp3");
         hax.getModule(userData->c_str())->toggle();
         static_cast<CCMenuItemToggler*>(sender)->toggle(true);
         this->runAction(CCSequence::create(
@@ -227,7 +269,7 @@ void HaxMenu::onPih(CCObject* sender) {
     pih->setPosition(ccp(winSize.width / 2, winSize.height / 2));
     pih->setScale(2.f);
     pih->runAction(CCSequence::create(
-        CCFadeOut::create(1.0f),
+        CCFadeOut::create(1.5f),
         CCCallFunc::create(pih, callfunc_selector(CCNode::removeFromParentAndCleanup)),
         nullptr
     ));
@@ -267,7 +309,22 @@ void HaxMenu::onClose(CCObject* sender) {
 
 bool HaxMenu::ccTouchBegan(cocos2d::CCTouch* t, cocos2d::CCEvent*)
 {
-    
+    // CCPoint pg = t->locationInView();
+    // CCPoint gl = t->locationInView();
+    // CCPoint p1 = leftPanel->convertToNodeSpace(pg);
+    // CCPoint p2 = rightPanel->convertToNodeSpace(pg);
+    // CCRect bb1 = leftPanel->boundingBox();
+    // CCRect bb2 = rightPanel->boundingBox();
+    // CCLog("bb1: %i %i %i %i", CCRect::CCRectGetMinX(bb1), CCRect::CCRectGetMinY(bb1), CCRect::CCRectGetMaxX(bb1), CCRect::CCRectGetMaxY(bb1));
+    // CCLog("bb2: %i %i %i %i", CCRect::CCRectGetMinX(bb2), CCRect::CCRectGetMinY(bb2), CCRect::CCRectGetMaxX(bb2), CCRect::CCRectGetMaxY(bb2));
+    // CCLog("p1: %i %i", p1.x, p1.y);
+    // CCLog("p2: %i %i", p2.x, p2.y);
+    // CCLog("pg: %i %i", pg.x, pg.y);
+    // if (!CCRectContainsPoint(leftPanel->boundingBox(), leftPanel->convertToNodeSpace(t->locationInView()))
+    // && !CCRectContainsPoint(rightPanel->boundingBox(), rightPanel->convertToNodeSpace(t->locationInView()))) {
+    //     onClose(nullptr);
+    // }
+    onClose(nullptr);
     return true;
 }
 

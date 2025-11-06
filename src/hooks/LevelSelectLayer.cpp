@@ -40,7 +40,9 @@ void LevelSelectLayer::onViewLevelInfo() {
                 READABLE_GAME_VERSION
             )->getCString()),
             "I'm literally older than yo Brainrot Ahhh.",
-            "#KillSereneNecrosis"
+            "#KillSereneNecrosis",
+            "xD:Call me ...Ring...Ring... hello...What?! ok :D bye mlg",
+            "The community in this game does there difficulty rating sonhorrible"
         };
         int index = rand() % messages.size();
         FLAlertLayer::create(

@@ -19,6 +19,8 @@ public:
     void createCheatIndicator();
     void createPercentageLabel();
     void createPCommand();
+    void createLabel();
+    void updateLabel(float dt);
 
     void toggleCheckpointsMenu(bool toggle);
 };

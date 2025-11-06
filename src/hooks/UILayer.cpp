@@ -3,6 +3,121 @@
 #include "CCMenuItemSpriteExtra.hpp"
 #include "ButtonSprite.hpp"
 #include "PlayerObject.hpp"
+#include <string>
+#include <sstream>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+
+template <typename T>
+std::string ToString(T val)
+{
+    std::stringstream stream;
+    stream << val;
+    return stream.str();
+}
+
+void UILayer::createLabel() {
+    HaxManager& hax = HaxManager::sharedState();
+    auto director = CCDirector::sharedDirector();
+    auto winSize = director->getWinSize();
+    auto uiLabel = CCLabelBMFont::create("", "chatFont.fnt");
+    uiLabel->setAnchorPoint({0, 1});
+    uiLabel->setPosition(ccp(10, winSize.height - 23));
+    uiLabel->setOpacity(127);
+    uiLabel->setScale(0.5f);
+    addChild(uiLabel);
+    hax.uiLabel = uiLabel;
+    updateLabel(1);
+}
+void UILayer::updateLabel(float dt) {
+    HaxManager& hax = HaxManager::sharedState();
+    std::string labelText = "";
+    if (hax.getModuleEnabled("label_clock")) {
+        const std::time_t clock = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        char buff[20];
+        time_t now = time(NULL);
+        tm* mytm = localtime(&now);
+        std::stringstream strm;
+        strm << std::setfill('0') << std::setw(2);
+        strm << mytm->tm_hour;
+        strm << ':';
+        strm << std::setfill('0') << std::setw(2);
+        strm << mytm->tm_min;
+        strm << ':';
+        strm << std::setfill('0') << std::setw(2);
+        strm << mytm->tm_sec;
+        labelText += strm.str();
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_fps")) {
+        labelText += "FPS: ";
+        labelText += ToString(hax.fps);
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_attempts_session")) {
+        labelText += "Attempts: ";
+        labelText += ToString(getCurrentAttempts());
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_attempts_total")) {
+        labelText += "Total Attempts: ";
+        labelText += ToString(getLevelAttempts(getPlayLayerLevel()));
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_best_run")) {
+        labelText += "Best Run: ";
+        if (hax.getModuleEnabled("show_percentage_decimal")) {
+            labelText += ToString(hax.bestRun);
+        } else {
+            labelText += ToString(floorf(hax.bestRun));
+        }
+        labelText += "%\n";
+    }
+    if (hax.getModuleEnabled("label_jumps")) {
+        labelText += "Jumps: ";
+        labelText += ToString(getCurrentJumps());
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_clicks")) {
+        labelText += "Clicks: ";
+        labelText += ToString(hax.clicks);
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_time_spent")) {
+        labelText += "Time Spent: ";
+        labelText += ToString(getClkTimer());
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_frames")) {
+        labelText += "Frames: ";
+        labelText += ToString(hax.frameCount);
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_noclip_deaths") && hax.getModuleEnabled("noclip")) {
+        labelText += "NoClip Deaths: ";
+        labelText += ToString(hax.deaths);
+        labelText += "\n";
+    }
+    auto player = getPlayer();
+    if (hax.getModuleEnabled("label_player_position") && player) {
+        labelText += "Player X: ";
+        labelText += ToString(getPlayer()->getPositionX());
+        labelText += "\nPlayer Y: ";
+        labelText += ToString(getPlayer()->getPositionY());
+        labelText += "\n";
+    }
+    if (hax.getModuleEnabled("label_pcommand") && player) {
+        labelText += "X Velocity: ";
+        labelText += ToString(getXVelocity(getPlayer()));
+        labelText += "\nGravity: ";
+        labelText += ToString(getGravity(getPlayer()));
+        labelText += "\nY Velocity: ";
+        labelText += ToString(getYStart(getPlayer()));
+        labelText += "\n";
+    }
+    hax.uiLabel->setString(labelText.c_str());
+}
 
 void UILayer::createCheatIndicator() {
     HaxManager& hax = HaxManager::sharedState();
@@ -93,7 +208,7 @@ void UILayer::speedDown() {
 }
 void UILayer::gravityUp() {
     PlayerObject* player = getPlayer();
-    addGravity(player, 0.25d);
+    addGravity(player, 0.1d);
     HaxManager& hax = HaxManager::sharedState();
     hax.pGravityModified += 1;
     hax.setCheating(true);
@@ -101,7 +216,7 @@ void UILayer::gravityUp() {
 }
 void UILayer::gravityDown() {
     PlayerObject* player = getPlayer();
-    addGravity(player, -0.25d);
+    addGravity(player, -0.1d);
     HaxManager& hax = HaxManager::sharedState();
     hax.pGravityModified -= 1;
     hax.setCheating(true);
@@ -138,6 +253,9 @@ bool UILayer_init(UILayer* self) {
     if (hax.getModuleEnabled("pcommand")) {
         self->createPCommand();
     }
+    if (hax.getShowLabel()) {
+        self->createLabel();
+    }
     return true;
 }
 void (*TRAM_UILayer_destructor)(UILayer* self);
@@ -152,10 +270,22 @@ void UILayer_destructor(UILayer* self) {
     hax.pButton4 = nullptr;
     hax.pButton5 = nullptr;
     hax.pButton6 = nullptr;
+    hax.uiLabel = nullptr;
     hax.pMenu = nullptr;
     hax.pSpeedModified = 0;
     hax.pGravityModified = 0;
     hax.pYStartModified = 0;
+    hax.bestRun = 0;
+    hax.clicks = 0;
+    hax.deaths = 0;
+    hax.frameCount = 0;
+    hax.lastDeadFrame = -1;
+}
+void (*TRAM_UILayer_ccTouchBegan)(UILayer* self, CCTouch* touch, CCEvent* event);
+void UILayer_ccTouchBegan(UILayer* self, CCTouch* touch, CCEvent* event) {
+    TRAM_UILayer_ccTouchBegan(self, touch, event);
+    HaxManager& hax = HaxManager::sharedState();
+    hax.clicks++;
 }
 
 
@@ -166,4 +296,7 @@ void UILayer_om() {
     Omni::hook("_ZN7UILayerD0Ev",
         reinterpret_cast<void*>(UILayer_destructor),
         reinterpret_cast<void**>(&TRAM_UILayer_destructor));
+    Omni::hook("_ZN7UILayer12ccTouchBeganEPN7cocos2d7CCTouchEPNS0_7CCEventE",
+        reinterpret_cast<void*>(UILayer_ccTouchBegan),
+        reinterpret_cast<void**>(&TRAM_UILayer_ccTouchBegan));
 }

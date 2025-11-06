@@ -134,3 +134,11 @@ float getUnkFloat(EditorUI* uiLayer);
 
 CCArray* getEditorSections(LevelEditorLayer* editLayer);
 int getObjectKey(GameObject* obj);
+
+int getCurrentAttempts(PlayLayer* playLayer);
+int getCurrentAttempts();
+int getCurrentJumps(PlayLayer* playLayer);
+int getCurrentJumps();
+float getClkTimer(PlayLayer* playLayer);
+float getClkTimer();
+std::string getPlayerUDID();

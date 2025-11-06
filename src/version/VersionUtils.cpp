@@ -441,3 +441,24 @@ CCArray* getEditorSections(LevelEditorLayer* editLayer) {
 int getObjectKey(GameObject* obj) {
     return MEMBER_BY_OFFSET(int, obj, GameObject__m_objectKey);
 }
+int getCurrentAttempts(PlayLayer* playLayer) {
+    return MEMBER_BY_OFFSET(int, playLayer, PlayLayer__m_attempts);
+}
+int getCurrentAttempts() {
+    return getCurrentAttempts(getPlayLayer());
+}
+int getCurrentJumps(PlayLayer* playLayer) {
+    return MEMBER_BY_OFFSET(int, playLayer, PlayLayer__m_jumps);
+}
+int getCurrentJumps() {
+    return getCurrentJumps(getPlayLayer());
+}
+float getClkTimer(PlayLayer* playLayer) {
+    return MEMBER_BY_OFFSET(float, playLayer, PlayLayer__m_clkTimer);
+}
+float getClkTimer() {
+    return getClkTimer(getPlayLayer());
+}
+std::string getPlayerUDID() {
+    return MEMBER_BY_OFFSET(std::string, GameManager::sharedState(), GameManager__m_playerUDID);
+}
