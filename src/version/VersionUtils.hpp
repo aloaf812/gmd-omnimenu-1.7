@@ -142,3 +142,13 @@ int getCurrentJumps();
 float getClkTimer(PlayLayer* playLayer);
 float getClkTimer();
 std::string getPlayerUDID();
+
+CCLabelBMFont* getAttemptLabel(PlayLayer* layer);
+CCLabelBMFont* getAttemptLabel();
+CCArray* getPlaySections(PlayLayer* playLayer);
+CCArray* getPlaySections();
+CCArray* getStartPositions(PlayLayer* playLayer);
+CCArray* getStartPositions();
+void setStartPos(PlayLayer* playLayer, CCPoint point);
+void setStartPos(CCPoint point);
+CCPoint getRealPosition(GameObject* object);

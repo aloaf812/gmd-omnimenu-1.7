@@ -25,6 +25,7 @@
 #include "hooks/CCLabelTTF.cpp"
 #include "hooks/CCScheduler.cpp"
 #include "hooks/GameSoundManager.cpp"
+#include "hooks/SimpleAudioEngine.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -56,4 +57,5 @@ void initialize_hooks() {
     CCLabelTTF_om();
     CCScheduler_om();
     GameSoundManager_om();
+    SimpleAudioEngine_om();
 }

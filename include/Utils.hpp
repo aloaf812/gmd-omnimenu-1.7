@@ -8,3 +8,4 @@ JNIEnv* getEnv();
 void writeGMD(GJGameLevel* level, const char* uriStr);
 GJGameLevel* readGMD(const char* uriStr);
 void copyStringToClipboard(const char* string);
+void seekBackgroundMusicTo(int ms);

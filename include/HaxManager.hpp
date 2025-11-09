@@ -50,7 +50,8 @@ public:
     jobject activity;
     GJGameLevel* gdShareLevel;
     MyLevelsLayer* myLevelsLayer;
-    float bestRun;
+    float bestRunStart;
+    float bestRunEnd;
     int frames;
     int fps;
     float fpsCounter;
@@ -58,6 +59,10 @@ public:
     int deaths;
     int frameCount;
     int lastDeadFrame;
+    CCNode* spSwitcherParent;
+    int startPosIndex;
+    CCLabelBMFont* switcherLabel;
+    float startPercent;
 
     Module* getModule(const char* id) {
         return modules.at(std::string(id));
@@ -82,21 +87,21 @@ public:
     }
 
     bool getShowLabel() {
-        if (
+        return (
             getModuleEnabled("label_attempts_session") ||
             getModuleEnabled("label_attempts_total") ||
             getModuleEnabled("label_best_run") ||
             getModuleEnabled("label_clicks") ||
             getModuleEnabled("label_clock") ||
-            getModuleEnabled("label_frames") ||
             getModuleEnabled("label_fps") ||
+            getModuleEnabled("label_frames") ||
             getModuleEnabled("label_jumps") ||
             getModuleEnabled("label_noclip_deaths") ||
             getModuleEnabled("label_pcommand") ||
-            getModuleEnabled("label_player_position") |
+            getModuleEnabled("label_player_position") ||
+            getModuleEnabled("label_player_rotation") ||
             getModuleEnabled("label_time_spent")
-        ) return true;
-        return false;
+        );
     }
 
     void setCheating(bool val) {
@@ -180,6 +185,10 @@ private:
                 "Cheat Indicator", 
                 "Adds a dot that indicates whether any unfair hacks are currently enabled.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("hide_attempts", new Module(
+                "Hide Attempts", 
+                "Hides the attempts label while playing.", 
+                false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("instant_complete", new Module(
                 "Instant Complete", 
                 "Completes the level as soon as it is entered.", 
@@ -194,6 +203,10 @@ private:
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
+        modules.insert(std::pair<std::string, Module*>("music_bug_fix", new Module(
+                "Music Bug Fix", 
+                "Fixes music seeking not working properly.", 
+                true, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("noclip", new Module(
                 "NoClip", 
                 "Prevents the player from dying.", 
@@ -258,6 +271,10 @@ private:
         modules.insert(std::pair<std::string, Module*>("show_percentage_decimal", new Module(
                 "Decimal Percentage", 
                 "Puts 3 decimal places after the percentage if you have Show Percentage enabled.", 
+                false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("start_pos_switcher", new Module(
+                "Start Pos Switcher", 
+                "Adds the ability to switch between start positions on the fly.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
 
 
@@ -486,6 +503,10 @@ private:
                 "Player Position", 
                 "Displays the player's X and Y coordinates.", 
                 false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_player_rotation", new Module(
+                "Player Rotation", 
+                "Displays the player's rotation.", 
+                false, ModuleCategory::Label, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("label_time_spent", new Module(
                 "Time Spent", 
                 "Displays the amount of time spent this session.", 
@@ -556,7 +577,8 @@ private:
         pGravityModified = 0;
         pYStartModified = 0;
 
-        bestRun = 0;
+        bestRunStart = 0;
+        bestRunEnd = 0;
 
         frames = 0;
         fps = 0;
@@ -566,6 +588,11 @@ private:
         deaths = 0;
         frameCount = 0;
         lastDeadFrame = -1;
+
+        spSwitcherParent = nullptr;
+        startPosIndex = -1;
+        switcherLabel = nullptr;
+        startPercent = 0;
     }
 
     HaxManager(const HaxManager&) = delete;

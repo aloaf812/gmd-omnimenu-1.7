@@ -24,6 +24,7 @@
 /**/ #define GameManager__m_playerUDID         0x164 /**/
 /**/ #define GameObject__m_objectKey           0x314 /**/
 /**/ #define GameObject__m_particles           0x280 /**/
+/**/ #define GameObject__m_realPosition        0x2c8 /**/
 /**/ #define GameObject__m_shouldSpawn         0x2c4 /**/
 /**/ #define GameObject__m_type                0x2bc /**/
 /**/ #define GameObject__m_useAudioScale       0x2ef /**/
@@ -49,6 +50,7 @@
 /**/ #define LevelSelectLayer__m_scrollLayer   0x14c /**/
 /**/ #define LocalLevelManager__m_localLevels  0x130 /**/
 /**/ #define PlayLayer__m_attempts             0x288 /**/
+/**/ #define PlayLayer__m_attemptLabel         0x1e0 /**/
 /**/ #define PlayLayer__m_checkpoints          0x154 /**/
 /**/ #define PlayLayer__m_clkTimer             0x290 /**/
 /**/ #define PlayLayer__m_hazards              0x188 /**/
@@ -58,7 +60,8 @@
 /**/ #define PlayLayer__m_level                0x230 /**/
 /**/ #define PlayLayer__m_pGlitter             0x1a0 /**/
 /**/ #define PlayLayer__m_playerObject         0x22c /**/
-/**/ #define PlayLayer__m_startPos             0x2c8 /**/
+/**/ #define PlayLayer__m_sections             0x184 /**/
+/**/ #define PlayLayer__m_startPos             0x268 /**/
 /**/ #define PlayLayer__m_uiLayer              0x228 /**/
 /**/ #define PlayLayer__m_unkPrac              0x267 /**/
 /**/ #define PlayerObject__m_gravity           0x350 /**/

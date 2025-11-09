@@ -5,7 +5,6 @@
 #include "PlayerObject.hpp"
 #include <string>
 #include <sstream>
-#include <chrono>
 #include <ctime>
 #include <iomanip>
 
@@ -28,14 +27,12 @@ void UILayer::createLabel() {
     uiLabel->setScale(0.5f);
     addChild(uiLabel);
     hax.uiLabel = uiLabel;
-    updateLabel(1);
+    updateLabel();
 }
-void UILayer::updateLabel(float dt) {
+void UILayer::updateLabel() {
     HaxManager& hax = HaxManager::sharedState();
     std::string labelText = "";
     if (hax.getModuleEnabled("label_clock")) {
-        const std::time_t clock = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        char buff[20];
         time_t now = time(NULL);
         tm* mytm = localtime(&now);
         std::stringstream strm;
@@ -68,9 +65,17 @@ void UILayer::updateLabel(float dt) {
     if (hax.getModuleEnabled("label_best_run")) {
         labelText += "Best Run: ";
         if (hax.getModuleEnabled("show_percentage_decimal")) {
-            labelText += ToString(hax.bestRun);
+            if (hax.bestRunStart > 0) {
+                labelText += ToString(hax.bestRunStart);
+                labelText += "% - ";
+            }
+            labelText += ToString(hax.bestRunEnd);
         } else {
-            labelText += ToString(floorf(hax.bestRun));
+            if (hax.bestRunStart > 0) {
+                labelText += ToString(floorf(hax.bestRunStart));
+                labelText += "% - ";
+            }
+            labelText += ToString(floorf(hax.bestRunEnd));
         }
         labelText += "%\n";
     }
@@ -100,23 +105,111 @@ void UILayer::updateLabel(float dt) {
         labelText += "\n";
     }
     auto player = getPlayer();
-    if (hax.getModuleEnabled("label_player_position") && player) {
-        labelText += "Player X: ";
-        labelText += ToString(getPlayer()->getPositionX());
-        labelText += "\nPlayer Y: ";
-        labelText += ToString(getPlayer()->getPositionY());
-        labelText += "\n";
-    }
-    if (hax.getModuleEnabled("label_pcommand") && player) {
-        labelText += "X Velocity: ";
-        labelText += ToString(getXVelocity(getPlayer()));
-        labelText += "\nGravity: ";
-        labelText += ToString(getGravity(getPlayer()));
-        labelText += "\nY Velocity: ";
-        labelText += ToString(getYStart(getPlayer()));
-        labelText += "\n";
+    if (player) {
+        if (hax.getModuleEnabled("label_player_position")) {
+            labelText += "Player X: ";
+            labelText += ToString(getPlayer()->getPositionX());
+            labelText += "\nPlayer Y: ";
+            labelText += ToString(getPlayer()->getPositionY());
+            labelText += "\n";
+        }
+        if (hax.getModuleEnabled("label_player_rotation")) {
+            labelText += "Rotation: ";
+            labelText += ToString(getPlayer()->getRotation());
+            labelText += "\n";
+        }
+        if (hax.getModuleEnabled("label_pcommand")) {
+            labelText += "X Velocity: ";
+            labelText += ToString(getXVelocity(getPlayer()));
+            labelText += "\nGravity: ";
+            labelText += ToString(getGravity(getPlayer()));
+            labelText += "\nY Velocity: ";
+            labelText += ToString(getYStart(getPlayer()));
+            labelText += "\n";
+        }
     }
     hax.uiLabel->setString(labelText.c_str());
+}
+
+const char* getSwitcherText() {
+    auto startPoses = getStartPositions();
+    HaxManager& hax = HaxManager::sharedState();
+    std::stringstream strm;
+    strm << hax.startPosIndex + 1;
+    strm << "/";
+    strm << startPoses->count();
+    return strm.str().c_str();
+}
+
+void UILayer::createSwitcher() {
+    auto startPoses = getStartPositions();
+    if (startPoses->count() < 1) return;
+
+    HaxManager& hax = HaxManager::sharedState();
+    auto director = CCDirector::sharedDirector();
+    auto winSize = director->getWinSize();
+
+    auto parent = CCNode::create();
+    parent->setPosition(ccp(winSize.width / 2, 23));
+    addChild(parent);
+    hax.spSwitcherParent = parent;
+
+    auto label = CCLabelBMFont::create(getSwitcherText(), "bigFont.fnt");
+    label->setString(getSwitcherText());
+    label->setScale(0.6);
+    parent->addChild(label);
+    hax.switcherLabel = label;
+
+    auto menu = CCMenu::create();
+    parent->addChild(menu);
+    menu->setPosition(CCPointZero);
+
+    CCSprite* prevSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png");
+    prevSpr->setScale(0.75);
+    CCMenuItemSpriteExtra* prevBtn = CCMenuItemSpriteExtra::create(prevSpr, prevSpr, this, menu_selector(UILayer::onBackSP));
+    menu->addChild(prevBtn);
+    prevBtn->setPosition({-50, 0});
+
+    CCSprite* nextSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png");
+    nextSpr->setScale(0.75);
+    nextSpr->setFlipX(true);
+    CCMenuItemSpriteExtra* nextBtn = CCMenuItemSpriteExtra::create(nextSpr, nextSpr, this, menu_selector(UILayer::onForwardSP));
+    menu->addChild(nextBtn);
+    nextBtn->setPosition(ccp(50, 0));
+}
+
+void UILayer::onBackSP() {
+    HaxManager& hax = HaxManager::sharedState();
+    auto startPoses = getStartPositions();
+    if (hax.startPosIndex > -1) hax.startPosIndex--;
+    else hax.startPosIndex = startPoses->count() - 1;
+    UILayer::pickStartPos(hax.startPosIndex);
+}
+void UILayer::onForwardSP() {
+    HaxManager& hax = HaxManager::sharedState();
+    auto startPoses = getStartPositions();
+    if (startPoses->count() != 0 && (hax.startPosIndex == -1 || hax.startPosIndex < startPoses->count() - 1)) hax.startPosIndex++;
+    else hax.startPosIndex = -1;
+    UILayer::pickStartPos(hax.startPosIndex);
+}
+
+void UILayer::pickStartPos(int ind) {
+    cocos2d::CCArray* checkpoints = getPlayLayerCheckpoints();
+    while (checkpoints->count() > 0) {
+        getPlayLayer()->removeLastCheckpoint();
+    }
+    HaxManager& hax = HaxManager::sharedState();
+    auto startPoses = getStartPositions();
+    if (ind == -1) {
+        setStartPos(ccp(0, 105));
+        hax.startPercent = 0;
+    } else if (ind >= startPoses->count()) return;
+    else {
+        setStartPos(getRealPosition(static_cast<GameObject*>(startPoses->objectAtIndex(ind))));
+    }
+    getPlayLayer()->resetLevel();
+    if (ind != -1) hax.startPercent = getCurrentPercentageF();
+    hax.switcherLabel->setString(getSwitcherText());
 }
 
 void UILayer::createCheatIndicator() {
@@ -256,6 +349,10 @@ bool UILayer_init(UILayer* self) {
     if (hax.getShowLabel()) {
         self->createLabel();
     }
+    // moved to PlayLayer::init
+    // if (hax.getModuleEnabled("start_pos_switcher")) {
+    //     self->createSwitcher();
+    // }
     return true;
 }
 void (*TRAM_UILayer_destructor)(UILayer* self);
@@ -272,14 +369,19 @@ void UILayer_destructor(UILayer* self) {
     hax.pButton6 = nullptr;
     hax.uiLabel = nullptr;
     hax.pMenu = nullptr;
+    hax.spSwitcherParent = nullptr;
     hax.pSpeedModified = 0;
     hax.pGravityModified = 0;
     hax.pYStartModified = 0;
-    hax.bestRun = 0;
+    hax.bestRunStart = 0;
+    hax.bestRunEnd = 0;
+    hax.startPercent = 0;
     hax.clicks = 0;
     hax.deaths = 0;
     hax.frameCount = 0;
     hax.lastDeadFrame = -1;
+    hax.startPosIndex = -1;
+    hax.switcherLabel = nullptr;
 }
 void (*TRAM_UILayer_ccTouchBegan)(UILayer* self, CCTouch* touch, CCEvent* event);
 void UILayer_ccTouchBegan(UILayer* self, CCTouch* touch, CCEvent* event) {

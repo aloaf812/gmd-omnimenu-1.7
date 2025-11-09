@@ -3,99 +3,6 @@
 #include "UILayer.hpp"
 #include "Utils.hpp"
 
-void seekBackgroundMusicTo(int ms) {
-    JNIEnv* env = getEnv();
-
-    if (!env) {
-        cocos2d::CCLog("Failed to get JNI environment");
-        return;
-    }
-    jclass Cocos2dxActivity = env->FindClass("org/cocos2dx/lib/Cocos2dxActivity");
-    if (Cocos2dxActivity == nullptr) {
-        cocos2d::CCLog("Failed to find Cocos2dxActivity class");
-        return;
-    }
-    // some cocos2d java class names have been obfuscated, but not all
-    jfieldID fieldID_backgroundMusicPlayer = env->GetStaticFieldID(Cocos2dxActivity, "backgroundMusicPlayer", "Lorg/cocos2dx/lib/p;");
-    if (fieldID_backgroundMusicPlayer == nullptr) {
-        cocos2d::CCLog("Failed to get field ID of backgroundMusicPlayer");
-        return;
-    }
-    jobject backgroundMusicPlayer = env->GetStaticObjectField(Cocos2dxActivity, fieldID_backgroundMusicPlayer);
-    if (backgroundMusicPlayer == nullptr) {
-        cocos2d::CCLog("Failed to get backgroundMusicPlayer");
-        return;
-    }
-
-    jclass Cocos2dxMusic = env->FindClass("org/cocos2dx/lib/p");
-    if (Cocos2dxMusic == nullptr) {
-        cocos2d::CCLog("Failed to get Cocos2dxMusic");
-        return;
-    }
-    jfieldID fieldID_mBackgroundMediaPlayer = env->GetFieldID(Cocos2dxMusic, "mBackgroundMediaPlayer", "Landroid/media/MediaPlayer;");
-    if (fieldID_mBackgroundMediaPlayer == nullptr) {
-        cocos2d::CCLog("Failed to get field ID of mBackgroundMediaPlayer");
-        return;
-    }
-    jobject mBackgroundMediaPlayer = env->GetObjectField(backgroundMusicPlayer, fieldID_mBackgroundMediaPlayer);
-    if (mBackgroundMediaPlayer == nullptr) {
-        cocos2d::CCLog("Failed to get mBackgroundMediaPlayer");
-        return;
-    }
-
-    jclass MediaPlayer = env->GetObjectClass(mBackgroundMediaPlayer);
-    if (MediaPlayer == nullptr) {
-        cocos2d::CCLog("Failed to get MediaPlayer");
-        return;
-    }
-    
-    bool useNew = true;
-    jclass versionClass;
-    jfieldID sdkIntFieldID;
-    jint sdkJint;
-    int sdkInt;
-    jmethodID seekTo;
-    do {
-        versionClass = env->FindClass("android/os/Build$VERSION");
-        if (versionClass == nullptr) {
-            cocos2d::CCLog("Warning: Failed to get class Build$VERSION. Using old \"broken\" method.");
-            useNew = false;
-            break;
-        }
-        sdkIntFieldID = env->GetStaticFieldID(versionClass, "SDK_INT", "I");
-        if (sdkIntFieldID == nullptr) {
-            cocos2d::CCLog("Warning: Failed to get field ID of SDK_INT. Using old \"broken\" method.");
-            useNew = false;
-            break;
-        }
-
-        sdkJint = env->GetStaticIntField(versionClass, sdkIntFieldID);
-        sdkInt = static_cast<int>(sdkJint);
-        if (sdkInt < 26) {
-            cocos2d::CCLog("sdkInt: %i < 26. Using old \"broken\" method.", sdkInt);
-            useNew = false;
-            break;
-        }
-        seekTo = env->GetMethodID(MediaPlayer, "seekTo", "(JI)V");
-        if (seekTo == nullptr) {
-            cocos2d::CCLog("Warning: Failed to get method ID of seekTo(long, int). Using old \"broken\" method.");
-            useNew = false;
-            break;
-        }
-    } while (0);
-
-    if (useNew) {
-        env->CallVoidMethod(mBackgroundMediaPlayer, seekTo, static_cast<jlong>(static_cast<long>(ms)), static_cast<jint>(2));
-    } else {
-        jmethodID oldSeekTo = env->GetMethodID(MediaPlayer, "seekTo", "(I)V");
-        if (oldSeekTo == nullptr) {
-            cocos2d::CCLog("Failed to get method ID of seekTo(int)");
-            return;
-        }
-        env->CallVoidMethod(mBackgroundMediaPlayer, oldSeekTo, static_cast<jint>(ms));
-    } 
-}
-
 void (*TRAM_PlayLayer_destroyPlayer)(PlayLayer* self);
 void PlayLayer_destroyPlayer(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
@@ -107,9 +14,12 @@ void PlayLayer_destroyPlayer(PlayLayer* self) {
         getPlayLayerHazards()->removeAllObjects(); // the humble noclip lag fix
         return;
     }
+    float brDiff = hax.bestRunEnd - hax.bestRunStart;
     float currRun = getCurrentPercentageF(self);
-    if (currRun > hax.bestRun)
-        hax.bestRun = currRun;
+    if (currRun - hax.startPercent > brDiff) {
+        hax.bestRunStart = hax.startPercent;
+        hax.bestRunEnd = currRun;
+    }
     TRAM_PlayLayer_destroyPlayer(self);
     if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
         auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
@@ -134,6 +44,10 @@ void PlayLayer_togglePracticeMode(PlayLayer* self, bool toggle) {
             self->resetLevel();
         }
     } else TRAM_PlayLayer_togglePracticeMode(self, toggle);
+    if (hax.spSwitcherParent) {
+        if (toggle) hax.spSwitcherParent->setPosition(ccp(hax.spSwitcherParent->getPositionX(), 85));
+        else hax.spSwitcherParent->setPosition(ccp(hax.spSwitcherParent->getPositionX(), 23));
+    }
 }
 
 void instantComplete(PlayLayer* self) {
@@ -147,7 +61,7 @@ void instantComplete(PlayLayer* self) {
 void (*TRAM_PlayLayer_levelComplete)(PlayLayer* self);
 void PlayLayer_levelComplete(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
-    hax.bestRun = 100;
+    hax.bestRunEnd = 100;
     TRAM_PlayLayer_levelComplete(self);
 }
 
@@ -274,10 +188,20 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         } else if (!hax.uiLabel->isVisible()) {
             hax.uiLabel->setVisible(true);
         }
-        uiLayer->updateLabel(dt);
+        uiLayer->updateLabel();
     } else {
         if (hax.uiLabel && hax.uiLabel != nullptr && hax.uiLabel->isVisible())
             hax.uiLabel->setVisible(false);
+    }
+    if (hax.getModuleEnabled("start_pos_switcher")) {
+        if (!hax.spSwitcherParent || hax.spSwitcherParent == nullptr) {
+            uiLayer->createSwitcher();
+        } else if (!hax.spSwitcherParent->isVisible()) {
+            hax.spSwitcherParent->setVisible(true);
+        }
+    } else {
+        if (hax.spSwitcherParent && hax.spSwitcherParent != nullptr && hax.spSwitcherParent->isVisible())
+            hax.spSwitcherParent->setVisible(false);
     }
     if (hax.getModuleEnabled("instant_complete") && !hax.instantComped) {
         instantComplete(self);
@@ -286,12 +210,25 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         auto p = getBGParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
+    if (hax.getModuleEnabled("hide_attempts")) {
+        getAttemptLabel(self)->setVisible(false);
+    } else {
+        getAttemptLabel(self)->setVisible(true);
+    }
 }
 bool (*TRAM_PlayLayer_init)(PlayLayer* self, GJGameLevel* level);
 bool PlayLayer_init(PlayLayer* self, GJGameLevel* level) {
     if (!TRAM_PlayLayer_init(self, level)) return false;
     HaxManager& hax = HaxManager::sharedState();
+    hax.startPosIndex = getStartPositions(self)->count() - 1;
+    hax.startPercent = getCurrentPercentageF();
+    if (hax.getModuleEnabled("hide_attempts")) {
+        getAttemptLabel(self)->setVisible(false);
+    }
     hax.quitPlayLayer = false;
+    if (hax.getModuleEnabled("start_pos_switcher")) {
+        getUILayer(self)->createSwitcher();
+    }
     return true;
 }
 void (*TRAM_PlayLayer_shakeCamera)(PlayLayer* self, float duration);

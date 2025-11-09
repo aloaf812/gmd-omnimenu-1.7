@@ -175,3 +175,96 @@ void copyStringToClipboard(const char* string) {
     jmethodID setText_mid = env->GetMethodID(clipManager_cls, "setText", "(Ljava/lang/CharSequence;)V");
     env->CallVoidMethod(clipboardService_obj, setText_mid, strToCopy);
 }
+
+void seekBackgroundMusicTo(int ms) {
+    JNIEnv* env = getEnv();
+
+    if (!env) {
+        cocos2d::CCLog("Failed to get JNI environment");
+        return;
+    }
+    jclass Cocos2dxActivity = env->FindClass("org/cocos2dx/lib/Cocos2dxActivity");
+    if (Cocos2dxActivity == nullptr) {
+        cocos2d::CCLog("Failed to find Cocos2dxActivity class");
+        return;
+    }
+    // some cocos2d java class names have been obfuscated, but not all
+    jfieldID fieldID_backgroundMusicPlayer = env->GetStaticFieldID(Cocos2dxActivity, "backgroundMusicPlayer", "Lorg/cocos2dx/lib/p;");
+    if (fieldID_backgroundMusicPlayer == nullptr) {
+        cocos2d::CCLog("Failed to get field ID of backgroundMusicPlayer");
+        return;
+    }
+    jobject backgroundMusicPlayer = env->GetStaticObjectField(Cocos2dxActivity, fieldID_backgroundMusicPlayer);
+    if (backgroundMusicPlayer == nullptr) {
+        cocos2d::CCLog("Failed to get backgroundMusicPlayer");
+        return;
+    }
+
+    jclass Cocos2dxMusic = env->FindClass("org/cocos2dx/lib/p");
+    if (Cocos2dxMusic == nullptr) {
+        cocos2d::CCLog("Failed to get Cocos2dxMusic");
+        return;
+    }
+    jfieldID fieldID_mBackgroundMediaPlayer = env->GetFieldID(Cocos2dxMusic, "mBackgroundMediaPlayer", "Landroid/media/MediaPlayer;");
+    if (fieldID_mBackgroundMediaPlayer == nullptr) {
+        cocos2d::CCLog("Failed to get field ID of mBackgroundMediaPlayer");
+        return;
+    }
+    jobject mBackgroundMediaPlayer = env->GetObjectField(backgroundMusicPlayer, fieldID_mBackgroundMediaPlayer);
+    if (mBackgroundMediaPlayer == nullptr) {
+        cocos2d::CCLog("Failed to get mBackgroundMediaPlayer");
+        return;
+    }
+
+    jclass MediaPlayer = env->GetObjectClass(mBackgroundMediaPlayer);
+    if (MediaPlayer == nullptr) {
+        cocos2d::CCLog("Failed to get MediaPlayer");
+        return;
+    }
+    
+    bool useNew = true;
+    jclass versionClass;
+    jfieldID sdkIntFieldID;
+    jint sdkJint;
+    int sdkInt;
+    jmethodID seekTo;
+    do {
+        versionClass = env->FindClass("android/os/Build$VERSION");
+        if (versionClass == nullptr) {
+            cocos2d::CCLog("Warning: Failed to get class Build$VERSION. Using old \"broken\" method.");
+            useNew = false;
+            break;
+        }
+        sdkIntFieldID = env->GetStaticFieldID(versionClass, "SDK_INT", "I");
+        if (sdkIntFieldID == nullptr) {
+            cocos2d::CCLog("Warning: Failed to get field ID of SDK_INT. Using old \"broken\" method.");
+            useNew = false;
+            break;
+        }
+
+        sdkJint = env->GetStaticIntField(versionClass, sdkIntFieldID);
+        sdkInt = static_cast<int>(sdkJint);
+        if (sdkInt < 26) {
+            cocos2d::CCLog("sdkInt: %i < 26. Using old \"broken\" method.", sdkInt);
+            useNew = false;
+            break;
+        }
+        seekTo = env->GetMethodID(MediaPlayer, "seekTo", "(JI)V");
+        if (seekTo == nullptr) {
+            cocos2d::CCLog("Warning: Failed to get method ID of seekTo(long, int). Using old \"broken\" method.");
+            useNew = false;
+            break;
+        }
+    } while (0);
+
+    if (useNew) {
+        env->CallVoidMethod(mBackgroundMediaPlayer, seekTo, static_cast<jlong>(static_cast<long>(ms)), static_cast<jint>(2));
+    } else {
+        jmethodID oldSeekTo = env->GetMethodID(MediaPlayer, "seekTo", "(I)V");
+        if (oldSeekTo == nullptr) {
+            cocos2d::CCLog("Failed to get method ID of seekTo(int)");
+            return;
+        }
+        env->CallVoidMethod(mBackgroundMediaPlayer, oldSeekTo, static_cast<jint>(ms));
+    } 
+}

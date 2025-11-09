@@ -1,7 +1,7 @@
 #include "versions.hpp"
 
 #define GAME_VERSION GV_1_2
-#define MENU_VERSION "0.78"
+#define MENU_VERSION "0.80"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 

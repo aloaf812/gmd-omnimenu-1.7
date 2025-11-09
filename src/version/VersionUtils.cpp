@@ -10,6 +10,8 @@
 #include "LocalLevelManager.hpp"
 #include "DrawGridLayer.hpp"
 #include "EditButtonBar.hpp"
+#include "GameObject.hpp"
+#include <algorithm>
 
 #define ARM_NOP {0x00, 0xbf}
 #define ARM_FLOAT_INF {0x00, 0x00, 0x80, 0x7f}
@@ -461,4 +463,51 @@ float getClkTimer() {
 }
 std::string getPlayerUDID() {
     return MEMBER_BY_OFFSET(std::string, GameManager::sharedState(), GameManager__m_playerUDID);
+}
+CCLabelBMFont* getAttemptLabel(PlayLayer* layer) {
+    return MEMBER_BY_OFFSET(CCLabelBMFont*, layer, PlayLayer__m_attemptLabel);
+}
+CCLabelBMFont* getAttemptLabel() {
+    return getAttemptLabel(getPlayLayer());
+}
+
+CCArray* getPlaySections(PlayLayer* playLayer) {
+    return MEMBER_BY_OFFSET(CCArray*, playLayer, PlayLayer__m_sections);
+}
+CCArray* getPlaySections() {
+    return getPlaySections(getPlayLayer());
+}
+
+bool compareXes(CCObject* p1, CCObject* p2) {
+  return getRealPosition(static_cast<GameObject*>(p1)).x < getRealPosition(static_cast<GameObject*>(p2)).x;
+}
+
+CCArray* getStartPositions(PlayLayer* playLayer) {
+    auto sections = getPlaySections(playLayer);
+    CCArray* arr = CCArray::create();
+    for (int i = 0; i < sections->count(); i++) {
+        auto currSec = static_cast<CCArray*>(sections->objectAtIndex(i));
+        for (int j = 0; j < currSec->count(); j++) {
+            auto currObj = static_cast<GameObject*>(currSec->objectAtIndex(j));
+            if (getObjectKey(currObj) == 31) {
+                arr->addObject(currObj);
+            }
+        }
+    }
+    std::sort(arr->data->arr, arr->data->arr + arr->data->num, compareXes);
+    return arr;
+}
+CCArray* getStartPositions() {
+    return getStartPositions(getPlayLayer());
+}
+
+void setStartPos(PlayLayer* playLayer, cocos2d::CCPoint point) {
+    MEMBER_BY_OFFSET(cocos2d::CCPoint, playLayer, PlayLayer__m_startPos) = point;
+}
+void setStartPos(cocos2d::CCPoint point) {
+    setStartPos(getPlayLayer(), point);
+}
+
+CCPoint getRealPosition(GameObject* object) {
+    return MEMBER_BY_OFFSET(CCPoint, object, GameObject__m_realPosition);
 }

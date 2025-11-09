@@ -20,7 +20,11 @@ public:
     void createPercentageLabel();
     void createPCommand();
     void createLabel();
-    void updateLabel(float dt);
+    void updateLabel();
+    void createSwitcher();
+    void pickStartPos(int index);
+    void onBackSP();
+    void onForwardSP();
 
     void toggleCheckpointsMenu(bool toggle);
 };
