@@ -159,7 +159,7 @@ jobject getGlobalContext(JNIEnv *env)
     jobject context = env->CallObjectMethod(activityThreadObj, getApplication);
     return context;
 }
-void copyStringToClipboard(const char* string) {
+void copyStringToClipboardOld(const char* string) {
     JNIEnv* env = getEnv();
     jclass context_cls = env->FindClass("android/content/Context");
     jfieldID clipboardService_fid = env->GetStaticFieldID(context_cls, "CLIPBOARD_SERVICE", "Ljava/lang/String;");
@@ -174,6 +174,21 @@ void copyStringToClipboard(const char* string) {
     jclass clipManager_cls = env->FindClass("android/text/ClipboardManager");
     jmethodID setText_mid = env->GetMethodID(clipManager_cls, "setText", "(Ljava/lang/CharSequence;)V");
     env->CallVoidMethod(clipboardService_obj, setText_mid, strToCopy);
+}
+void copyStringToClipboard(const char* string) {
+    JNIEnv* env = getEnv();
+    jclass helperCls = env->FindClass(CLIPBOARD_HELPER_CLASS);
+    if (!helperCls) {
+        CCLog("warning: no helper class found. using copyStringToClipboardOld");
+        return copyStringToClipboardOld(string);
+    }
+    jmethodID copyMid = env->GetStaticMethodID(helperCls, "copyToClipboard",
+                                            "(Ljava/lang/String;)V");
+    if (!copyMid) {
+        CCLog("warning: no copy method found. using copyStringToClipboardOld");
+        return copyStringToClipboardOld(string);
+    }
+    env->CallStaticVoidMethod(helperCls, copyMid, env->NewStringUTF(string));
 }
 
 void seekBackgroundMusicTo(int ms) {
@@ -267,4 +282,23 @@ void seekBackgroundMusicTo(int ms) {
         }
         env->CallVoidMethod(mBackgroundMediaPlayer, oldSeekTo, static_cast<jint>(ms));
     } 
+}
+
+template <typename T>
+std::string ToString(T val)
+{
+    std::stringstream stream;
+    stream << val;
+    return stream.str();
+}
+
+int stoi(const std::string& s) {
+    int result = 0;
+    int multiplier = 1;
+    if (s.empty()) return 0;
+    for (size_t i = s.length(); i-- > 0;) {
+        result += multiplier * (s[i] - '0');
+        multiplier *= 10;
+    }
+    return result;
 }

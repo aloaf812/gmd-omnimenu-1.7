@@ -11,6 +11,8 @@
 #include "GameObject.hpp"
 #include "DrawGridLayer.hpp"
 #include "EditButtonBar.hpp"
+#include "CCTextInputNode.hpp"
+#include "ColorSelectPopup.hpp"
 
 #define MEMBER_BY_OFFSET(type, var, offset) \
     (*reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(var) + static_cast<uintptr_t>(offset)))
@@ -152,3 +154,13 @@ CCArray* getStartPositions();
 void setStartPos(PlayLayer* playLayer, CCPoint point);
 void setStartPos(CCPoint point);
 CCPoint getRealPosition(GameObject* object);
+
+TextInputDelegate* getTextInputDelegate(CCTextInputNode* node);
+void setTextInputDelegate(CCTextInputNode* node, TextInputDelegate* delegate);
+
+cocos2d::extension::CCControlColourPicker* getColorPicker(ColorSelectPopup* popup);
+cocos2d::extension::CCControlColourPicker* getColorPicker(ColorPickerPopup* popup);
+void setCharLimit(CCTextInputNode* node, int limit);
+
+void setEditButton(bool enable);
+void setRestartButton(bool enable);

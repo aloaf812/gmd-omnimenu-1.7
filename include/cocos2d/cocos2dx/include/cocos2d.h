@@ -212,6 +212,9 @@ THE SOFTWARE.
 #include "extensions/HttpRequest.h"
 #include "extensions/HttpResponse.h"
 
+// control utils
+#include "extensions/CCControlExtension/CCControlUtils.h"
+
 // cocosdenshion
 #include "../CocosDenshion/include/SimpleAudioEngine.h"
 

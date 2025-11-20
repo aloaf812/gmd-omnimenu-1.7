@@ -359,29 +359,7 @@ void (*TRAM_UILayer_destructor)(UILayer* self);
 void UILayer_destructor(UILayer* self) {
     HaxManager& hax = HaxManager::sharedState();
     TRAM_UILayer_destructor(self);
-    hax.cheatIndicatorLabel = nullptr;
-    hax.percentageLabel = nullptr;
-    hax.pButton1 = nullptr;
-    hax.pButton2 = nullptr;
-    hax.pButton3 = nullptr;
-    hax.pButton4 = nullptr;
-    hax.pButton5 = nullptr;
-    hax.pButton6 = nullptr;
-    hax.uiLabel = nullptr;
-    hax.pMenu = nullptr;
-    hax.spSwitcherParent = nullptr;
-    hax.pSpeedModified = 0;
-    hax.pGravityModified = 0;
-    hax.pYStartModified = 0;
-    hax.bestRunStart = 0;
-    hax.bestRunEnd = 0;
-    hax.startPercent = 0;
-    hax.clicks = 0;
-    hax.deaths = 0;
-    hax.frameCount = 0;
-    hax.lastDeadFrame = -1;
-    hax.startPosIndex = -1;
-    hax.switcherLabel = nullptr;
+    hax.resetValues();
 }
 void (*TRAM_UILayer_ccTouchBegan)(UILayer* self, CCTouch* touch, CCEvent* event);
 void UILayer_ccTouchBegan(UILayer* self, CCTouch* touch, CCEvent* event) {

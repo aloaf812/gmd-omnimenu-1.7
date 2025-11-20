@@ -30,6 +30,7 @@ protected:
     void onParticles();
 
     void toggler(CCObject*);
+    void modInfo(CCObject*);
     float getDuration();
     void setColorAtIndex(int index);
     void onPih(CCObject*);

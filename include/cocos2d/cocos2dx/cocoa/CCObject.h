@@ -92,7 +92,7 @@ public:
     virtual CCObjectType getObjType() const { return m_eObjType; }
     virtual void setObjType(const CCObjectType& var) { m_eObjType = var; }
     CCObject* createWithCoder(DS_Dictionary*);
-    virtual void encodeWithEncoder(DS_Dictionary*) {}
+    virtual void encodeWithCoder(DS_Dictionary*) {}
     virtual bool canEncode();
 
     CC_GD_ADD_END

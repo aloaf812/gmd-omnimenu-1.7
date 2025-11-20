@@ -1,9 +1,11 @@
 #include "versions.hpp"
 
 #define GAME_VERSION GV_1_2
-#define MENU_VERSION "0.80"
+#define MENU_VERSION "0.81"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
+
+#define CLIPBOARD_HELPER_CLASS "com/robtopx/geometryjump/ClipboardHelper"
 
 // #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
 #define PING_SPOOFING // Uncomment this to enable a joke feature

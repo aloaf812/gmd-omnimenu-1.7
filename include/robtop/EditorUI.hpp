@@ -24,6 +24,7 @@ public:
     void updateCreateMenu();
     CreateMenuItem* getCreateBtn(const char*, int);
 #if GAME_VERSION < GV_1_5
+    GameObject* duplicateObject(GameObject* obj, void* getSaveString);
     void onDuplicate();
 #endif
 #if GAME_VERSION < GV_1_6

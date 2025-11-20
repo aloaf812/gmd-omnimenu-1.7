@@ -12,10 +12,12 @@
 #include "EditButtonBar.hpp"
 #include "GameObject.hpp"
 #include <algorithm>
+#include "CCTextInputNode.hpp"
 
 #define ARM_NOP {0x00, 0xbf}
 #define ARM_FLOAT_INF {0x00, 0x00, 0x80, 0x7f}
 #define ARM_FLOAT_MINUS_INF {0x00, 0x00, 0x80, 0xff}
+#define ARM_BNE {0x00, 0xd1}
     
 uintptr_t get_address(int offset) {
     void* handle = dlopen(MAIN_LIBRARY, RTLD_NOW);
@@ -315,7 +317,7 @@ void setZoomBypass(bool enable) {
     } else {
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(zoom_bypass_max_1)),
-            std::vector<uint8_t>({0x00, 0xd1}).data(), 2 // BNE
+            std::vector<uint8_t>(ARM_BNE).data(), 2
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(zoom_bypass_max_2)),
@@ -323,7 +325,33 @@ void setZoomBypass(bool enable) {
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(zoom_bypass_min)),
-            std::vector<uint8_t>({0x00, 0xd1}).data(), 2 // BNE
+            std::vector<uint8_t>(ARM_BNE).data(), 2
+        );
+    }
+}
+void setEditButton(bool enable) {
+    if (enable) {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(pause_edit_button)),
+            std::vector<uint8_t>(ARM_NOP).data(), 2
+        );
+    } else {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(pause_edit_button)),
+            std::vector<uint8_t>(ARM_BNE).data(), 2
+        );
+    }
+}
+void setRestartButton(bool enable) {
+    if (enable) {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(pause_restart_button)),
+            std::vector<uint8_t>(ARM_NOP).data(), 2
+        );
+    } else {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(pause_restart_button)),
+            std::vector<uint8_t>(ARM_BNE).data(), 2
         );
     }
 }
@@ -510,4 +538,22 @@ void setStartPos(cocos2d::CCPoint point) {
 
 CCPoint getRealPosition(GameObject* object) {
     return MEMBER_BY_OFFSET(CCPoint, object, GameObject__m_realPosition);
+}
+
+TextInputDelegate* getTextInputDelegate(CCTextInputNode* node) {
+    return MEMBER_BY_OFFSET(TextInputDelegate*, node, CCTextInputNode__m_inputDelegate);
+}
+void setTextInputDelegate(CCTextInputNode* node, TextInputDelegate* delegate) {
+    MEMBER_BY_OFFSET(TextInputDelegate*, node, CCTextInputNode__m_inputDelegate) = delegate;
+}
+
+cocos2d::extension::CCControlColourPicker* getColorPicker(ColorSelectPopup* popup) {
+    return MEMBER_BY_OFFSET(cocos2d::extension::CCControlColourPicker*, popup, ColorSelectPopup__m_colorWheel);
+}
+cocos2d::extension::CCControlColourPicker* getColorPicker(ColorPickerPopup* popup) {
+    return MEMBER_BY_OFFSET(cocos2d::extension::CCControlColourPicker*, popup, ColorPickerPopup__m_colorWheel);
+}
+
+void setCharLimit(CCTextInputNode* node, int limit) {
+    MEMBER_BY_OFFSET(int, node, CCTextInputNode__m_charLimit) = limit;
 }

@@ -10,4 +10,17 @@ public:
     bool getProfanityFilter();
     void setProfanityFilter(bool profanityFilter);
     void setAllowedChars(std::string charFilter);
+    // void setCharLimit(int limit);
+
+    const char* getString();
+    void setString(const char* string);
+
+    void setMaxLabelScale(float scale);
+    void setLabelPlaceholderScale(float scale);
+};
+
+class TextInputDelegate {
+    virtual void textChanged(CCTextInputNode*) {}
+    virtual void textInputOpened(CCTextInputNode*) {}
+    virtual void textInputClosed(CCTextInputNode*) {}
 };

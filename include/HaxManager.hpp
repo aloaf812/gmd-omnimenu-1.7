@@ -63,6 +63,7 @@ public:
     int startPosIndex;
     CCLabelBMFont* switcherLabel;
     float startPercent;
+    bool checkpointsInNormalMode;
 
     Module* getModule(const char* id) {
         return modules.at(std::string(id));
@@ -77,12 +78,13 @@ public:
     CheatIndicatorColor getCheatIndicatorColor() {
         if (getModuleEnabled("noclip") || 
         getModuleEnabled("instant_complete") || 
-        // getModuleEnabled("pcommand") || 
-        getModuleEnabled("force_visibility") || 
+        checkpointsInNormalMode || 
         getModuleEnabled("jump_hack") || 
         pSpeedModified != 0 || pGravityModified != 0 || pYStartModified != 0) return CheatIndicatorColor::Red;
         if (hasCheated) return CheatIndicatorColor::Orange;
+#ifndef FORCE_AUTO_SAFE_MODE
         if (getModuleEnabled("level_edit")) return CheatIndicatorColor::Yellow;
+#endif 
         return CheatIndicatorColor::Green;
     }
 
@@ -178,6 +180,33 @@ public:
     // bool setAll(bool value) {
         
     // }
+    void resetValues() {
+        hasCheated = false;
+        cheatIndicatorLabel = nullptr;
+        percentageLabel = nullptr;
+        pButton1 = nullptr;
+        pButton2 = nullptr;
+        pButton3 = nullptr;
+        pButton4 = nullptr;
+        pButton5 = nullptr;
+        pButton6 = nullptr;
+        uiLabel = nullptr;
+        pMenu = nullptr;
+        spSwitcherParent = nullptr;
+        pSpeedModified = 0;
+        pGravityModified = 0;
+        pYStartModified = 0;
+        bestRunStart = 0;
+        bestRunEnd = 0;
+        startPercent = 0;
+        clicks = 0;
+        deaths = 0;
+        frameCount = 0;
+        lastDeadFrame = -1;
+        startPosIndex = -1;
+        switcherLabel = nullptr;
+        checkpointsInNormalMode = false;
+    }
 
 private:
     HaxManager() {
@@ -272,6 +301,16 @@ private:
                 "Decimal Percentage", 
                 "Puts 3 decimal places after the percentage if you have Show Percentage enabled.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("show_restart_button", new Module(
+                "Show Restart Button", 
+                "Adds the restart button to the pause menu of all levels", 
+                false, ModuleCategory::Gameplay, [](bool _){
+                    if (_) {
+                        setRestartButton(true);
+                    } else {
+                        setRestartButton(false);
+                    }
+                })));
         modules.insert(std::pair<std::string, Module*>("start_pos_switcher", new Module(
                 "Start Pos Switcher", 
                 "Adds the ability to switch between start positions on the fly.", 
@@ -323,10 +362,18 @@ private:
                 "Level Copying", 
                 "Adds a button to copy any level.", 
                 false, ModuleCategory::Editor, [](bool _){})));
+#ifndef FORCE_AUTO_SAFE_MODE
         modules.insert(std::pair<std::string, Module*>("level_edit", new Module(
                 "Level Edit", 
-                "Allows you to locally edit any level, as well as adding the restart button to all levels.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+                "Allows you to locally edit any level.", 
+                false, ModuleCategory::Editor, [](bool _){
+                    if (_) {
+                        setEditButton(true);
+                    } else {
+                        setEditButton(false);
+                    }
+                })));
+#endif
         modules.insert(std::pair<std::string, Module*>("object_counter", new Module(
                 "Object Counter", 
                 "Displays the object count of the level in the editor pause menu.", 
@@ -340,6 +387,10 @@ private:
                     else
                         setObjectLimit(OBJECT_LIMIT);
                 })));
+        modules.insert(std::pair<std::string, Module*>("rgb_color_inputs", new Module(
+                "RGB Color Inputs", 
+                "Allows you to directly input the RGB values in color selection menus.", 
+                false, ModuleCategory::Editor, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("unlisted_objects", new Module(
                 "Unlisted Objects", 
                 "Adds unlisted objects to the editor, allowing them to be used in levels.", 
@@ -560,39 +611,8 @@ private:
                 true, ModuleCategory::Particles, [](bool _){})));
 
         lastCategory = ModuleCategory::Gameplay;
-        hasCheated = false;
-        
-        cheatIndicatorLabel = nullptr;
-        percentageLabel = nullptr;
-        pMenu = nullptr;
-        pButton1 = nullptr;
-        pButton2 = nullptr;
-        pButton3 = nullptr;
-        pButton4 = nullptr;
-        pButton5 = nullptr;
-        pButton6 = nullptr;
-        uiLabel = nullptr;
 
-        pSpeedModified = 0;
-        pGravityModified = 0;
-        pYStartModified = 0;
-
-        bestRunStart = 0;
-        bestRunEnd = 0;
-
-        frames = 0;
-        fps = 0;
-        fpsCounter = 0;
-
-        clicks = 0;
-        deaths = 0;
-        frameCount = 0;
-        lastDeadFrame = -1;
-
-        spSwitcherParent = nullptr;
-        startPosIndex = -1;
-        switcherLabel = nullptr;
-        startPercent = 0;
+        resetValues();
     }
 
     HaxManager(const HaxManager&) = delete;

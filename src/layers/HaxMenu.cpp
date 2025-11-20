@@ -65,7 +65,7 @@ bool HaxMenu::init(CCLayer* referrer) {
 
     CCNode* leftParent = CCNode::create();
     addChild(leftParent);
-    leftParent->setPosition(-80.f, winSize.height / 2);
+    leftParent->setPosition(-100.f, winSize.height / 2);
     this->leftParent = leftParent;
     
     CCSprite* leftPanel = CCSprite::create("menupanel.png");
@@ -80,12 +80,12 @@ bool HaxMenu::init(CCLayer* referrer) {
     logo->setScale(0.8f);
     
     leftParent->runAction(CCEaseOut::create(
-        CCMoveTo::create(getDuration(), ccp(80.0f, winSize.height / 2)), 3
+        CCMoveTo::create(getDuration(), ccp(100.0f, winSize.height / 2)), 3
     ));
 
     CCNode* rightParent = CCNode::create();
     addChild(rightParent);
-    rightParent->setPosition(winSize.width + 80.f, winSize.height / 2);
+    rightParent->setPosition(winSize.width + 100.f, winSize.height / 2);
     this->rightParent = rightParent;
     
     CCSprite* rightPanel = CCSprite::create("menupanel.png");
@@ -95,7 +95,7 @@ bool HaxMenu::init(CCLayer* referrer) {
     this->rightPanel = rightPanel;
     
     rightParent->runAction(CCEaseOut::create(
-        CCMoveTo::create(getDuration(), ccp(winSize.width - 80.f, winSize.height / 2)), 3
+        CCMoveTo::create(getDuration(), ccp(winSize.width - 100.f, winSize.height / 2)), 3
     ));
 
     this->catMenu = CCMenu::create();
@@ -145,7 +145,7 @@ void HaxMenu::addButton(const char* text, float fontSize, float yOffset, CCObjec
     this->catButtons->addObject(item);
     this->catMenu->addChild(item, 1002);
     item->setAnchorPoint({0, 0.5});
-    item->setPosition(ccp(0, 10 + yOffset));
+    item->setPosition(ccp(-25, 10 + yOffset));
 }
 void HaxMenu::onGameplay() {
     onCategory(ModuleCategory::Gameplay);
@@ -180,6 +180,10 @@ void HaxMenu::onCategory(ModuleCategory category) {
         this->rightParent->removeChild(node, true);
     }
     while (this->modMenu->getChildrenCount() > 0) {
+        if (this->modMenu->getChildrenCount() > 1) {
+            CCNode* node2 = static_cast<CCNode*>(this->modMenu->getChildren()->objectAtIndex(1));
+            this->modMenu->removeChild(node2, true);
+        }
         CCNode* node = static_cast<CCNode*>(this->modMenu->getChildren()->objectAtIndex(0));
         std::string* userData = static_cast<std::string*>(node->getUserData());
         delete userData;
@@ -208,14 +212,22 @@ void HaxMenu::onCategory(ModuleCategory category) {
         checkbox->setScale(0.5f);
         checkbox->setUserData(key);
         this->modMenu->addChild(checkbox, 1003);
-        checkbox->setPosition({-63, winSize.height / 2 + y});
+        checkbox->setPosition({-100, winSize.height / 2 + y});
 
         std::string labelValue = mod->name;
         labelValue += " "; // italics font gets cut off grrrr
         auto label = CCLabelTTF::create(labelValue.c_str(), "Helvetica-Oblique.ttf", 11);
         this->rightParent->addChild(label, 1003);
         label->setAnchorPoint({0.f, 0.5f});
-        label->setPosition(ccp(-50, winSize.height / 2 + y));
+        label->setPosition(ccp(-68, winSize.height / 2 + y));
+
+        CCSprite* infoSpr = createInfoSprite();
+        infoSpr->setScale(0.6f);
+        CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, this, menu_selector(HaxMenu::modInfo));
+        infoBtn->setSizeMult(1.5f);
+        infoBtn->setPosition(ccp(-80 + label->getContentSize().width, winSize.height / 2 + y));
+        infoBtn->setUserData(key);
+        this->modMenu->addChild(infoBtn, 1003);
         y -= 16;
     }
     if (category == ModuleCategory::Universal) {
@@ -223,12 +235,12 @@ void HaxMenu::onCategory(ModuleCategory category) {
         // delSelSpr->setScale(0.8f);
 
         auto udidBtn = CCMenuItemSpriteExtra::create(udidSpr, udidSpr, this, menu_selector(HaxMenu::onUDID));
-        udidBtn->setPosition(ccp(-40, -winSize.height / 2 + 30));
+        udidBtn->setPosition(ccp(-70, -winSize.height / 2 + 30));
         this->modMenu->addChild(udidBtn);
         this->udidBtn = udidBtn;
     }
 }
- // dfdfdcsxxs
+ // if you see this dm "dfdfdcsxxs" to unsimply on discord
 
 void HaxMenu::onUDID() {
     std::string udid = getPlayerUDID();
@@ -261,13 +273,27 @@ void HaxMenu::toggler(CCObject* sender) {
         ));
     }
 }
+void HaxMenu::modInfo(CCObject* sender) {
+    CCMenuItem* menuItem = (CCMenuItem *)(sender);
+    std::string* userData = static_cast<std::string*>(menuItem->getUserData());
+    auto& hax = HaxManager::sharedState();
+    Module* mod = hax.getModule(userData->c_str());
+    FLAlertLayer::create(
+        nullptr,
+        mod->name,
+        mod->description.c_str(),
+        "OK",
+        nullptr,
+        300.f
+    )->show();
+}
 void HaxMenu::onPih(CCObject* sender) {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     CCSprite* pih = CCSprite::create("pih.png");
     addChild(pih, 1010);
     pih->setPosition(ccp(winSize.width / 2, winSize.height / 2));
-    pih->setScale(2.f);
+    pih->setScale(1.5);
     pih->runAction(CCSequence::create(
         CCFadeOut::create(1.5f),
         CCCallFunc::create(pih, callfunc_selector(CCNode::removeFromParentAndCleanup)),

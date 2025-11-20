@@ -96,3 +96,11 @@
     :end
     return-void
 .end method
+
+.method public static getInstance()Lcom/robtopx/geometryjump/GeometryJump;
+    .locals 1
+
+    # return instance
+    sget-object v0, Lcom/robtopx/geometryjump/GeometryJump;->instance:Lcom/robtopx/geometryjump/GeometryJump;
+    return-object v0
+.end method

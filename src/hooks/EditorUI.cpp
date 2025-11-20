@@ -44,47 +44,47 @@ void EditorUI_zoomOut(EditorUI* self) {
 }
 
 #if GAME_VERSION < GV_1_5
-void EditorUI::onDuplicate() {
-    GameObject* selObj = getSelectedObject(this);
-    CCArray* selectedObjects = getSelectedObjects(this);
+const auto cyan = ccc3(0, 255, 255);
+GameObject* EditorUI::duplicateObject(GameObject* obj, void* getSaveString) {
     LevelEditorLayer* editLayer = getUIEditorLayer(this);
     DrawGridLayer* gridLayer = getGridLayer(editLayer);
     CCSpriteBatchNode* batchNode = getEditorBatchNode(editLayer);
+
+    std::string saveString = ((std::string(*)(GameObject*))getSaveString)(obj);
+    GameObject* newObj = GameObject::objectFromString(saveString);
+
+    obj->setColor(ccWHITE);
+    editLayer->addToSection(newObj);
+    if (getObjectType(newObj) == 7 && getShouldSpawn(newObj)) { // trigger effect line
+        gridLayer->addToEffects(newObj);
+    }
+    newObj->setColor(cyan);
+
+    batchNode->addChild(newObj);
+    UndoObject* undo = UndoObject::create(newObj, UndoCommand::Placement);
+    editLayer->addToUndoList(undo);
+
+    return newObj;
+}
+void EditorUI::onDuplicate() {
+    GameObject* selObj = getSelectedObject(this);
+    CCArray* selectedObjects = getSelectedObjects(this);
+        
     if (selObj == nullptr && selectedObjects->count() < 0) return;
 
     void* getSaveString = DobbySymbolResolver(MAIN_LIBRARY, "_ZN10GameObject13getSaveStringEv");
+    LevelEditorLayer* editLayer = getUIEditorLayer(this);
     getRedoArray(editLayer)->removeAllObjects();
 
-    auto cyan = ccc3(0, 255, 255);
-
     if (selObj != nullptr) {
-        std::string saveString = ((std::string(*)(GameObject*))getSaveString)(selObj);
-        GameObject* newObj = GameObject::objectFromString(saveString);
-        selObj->setColor(ccWHITE);
-        editLayer->addToSection(newObj);
-        if (getObjectType(newObj) == 7 && getShouldSpawn(newObj)) { // trigger
-            gridLayer->addToEffects(newObj);
-        }
-        batchNode->addChild(newObj);
+        auto newObj = duplicateObject(selObj, getSaveString);
         this->selectObject(newObj);
         newObj->setColor(cyan);
-        UndoObject* undo = UndoObject::create(newObj, UndoCommand::Placement);
-        editLayer->addToUndoList(undo);
     } else {
         for (int i = 0; i < selectedObjects->count(); i++) {
             auto currObj = static_cast<GameObject*>(selectedObjects->objectAtIndex(i));
-            std::string saveString = ((std::string(*)(GameObject*))getSaveString)(currObj);
-            GameObject* newObj = GameObject::objectFromString(saveString);
-            editLayer->addToSection(newObj);
-            currObj->setColor(ccWHITE);
-            if (getObjectType(newObj) == 7 && getShouldSpawn(newObj)) { // trigger effect line
-                gridLayer->addToEffects(newObj);
-            }
-            newObj->setColor(cyan);
-            batchNode->addChild(newObj);
+            auto newObj = duplicateObject(currObj, getSaveString);
             selectedObjects->replaceObjectAtIndex(i, newObj, false);
-            UndoObject* undo = UndoObject::create(newObj, UndoCommand::Placement);
-            editLayer->addToUndoList(undo);
         }
     }
 }

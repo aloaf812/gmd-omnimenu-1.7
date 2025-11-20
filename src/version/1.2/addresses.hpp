@@ -8,8 +8,13 @@
 /**/ #define BoomScrollLayer__m_dynamicPages   0x150 /**/
 /**/ #define BoomScrollLayer__m_pages          0x164 /**/
 /**/ #define CCTableViewCell__m_mainLayer      0x17c /**/
+/**/ #define CCTextInputNode__m_charLimit      0x170 /**/
+/**/ #define CCTextInputNode__m_inputDelegate  0x16c /**/
+/**/ #define CCTextInputNode__m_textField      0x168 /**/
 /**/ #define CCEGLViewProtocol__m_screenBottom  0xe4 /**/
 /**/ #define CheckpointObject__m_playerPos     0x12c /**/
+/**/ #define ColorPickerPopup__m_colorWheel    0x1cc /**/
+/**/ #define ColorSelectPopup__m_colorWheel    0x1cc /**/
 /**/ #define EditLevelLayer__m_level           0x148 /**/
 /**/ #define EditorPauseLayer__m_editorLayer   0x1c8 /**/
 /**/ #define EditorUI__m_buttonMenu            0x184 /**/
@@ -82,6 +87,8 @@
 /**/ #define move_y_max                     0x150678 /**/ // 00 40 A1 44
 /**/ #define move_y_min                     0x150674 /**/ // 00 00 B6 42
 /**/ #define object_limit                   0x152520 /**/
+/**/ #define pause_edit_button              0x154BF6 /**/
+/**/ #define pause_restart_button           0x154CB0 /**/
 /**/ #define place_x_max                    0x15232C /**/ // 00 42 EA 46
 /**/ #define place_y_max                    0x152330 /**/ // 00 60 9F 44
 /**/ #define place_x_min                    0x152324 /**/ // 00 80 9D 43

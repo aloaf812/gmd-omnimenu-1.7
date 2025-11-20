@@ -8,4 +8,5 @@ public:
     static EditLevelLayer* create(GJGameLevel*);
     static CCScene* scene(GJGameLevel*);
     void onViewLevelInfo();
+    void onExport();
 };

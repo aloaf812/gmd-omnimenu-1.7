@@ -26,6 +26,7 @@
 #include "hooks/CCScheduler.cpp"
 #include "hooks/GameSoundManager.cpp"
 #include "hooks/SimpleAudioEngine.cpp"
+#include "hooks/CCControlColourPicker.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -58,4 +59,5 @@ void initialize_hooks() {
     CCScheduler_om();
     GameSoundManager_om();
     SimpleAudioEngine_om();
+    CCControlColourPicker_om();
 }

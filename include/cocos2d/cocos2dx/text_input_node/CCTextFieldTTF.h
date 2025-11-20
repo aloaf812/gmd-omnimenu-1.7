@@ -133,8 +133,8 @@ public:
 public:
     virtual void setString(const char *text);
     virtual const char* getString(void);
-protected:
     std::string * m_pInputText;
+protected:
 
     // place holder text property
     // place holder text displayed when there is no text in the text field.

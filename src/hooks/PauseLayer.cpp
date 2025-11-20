@@ -11,15 +11,19 @@ void PauseLayer::onOpenMenu() {
 void (*TRAM_PauseLayer_customSetup)(CCLayer* self);
 void PauseLayer_customSetup(CCLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
+#ifndef FORCE_AUTO_SAFE_MODE
     if (hax.getModuleEnabled("level_edit")) {
-        GJGameLevel* level = getPlayLayerLevel();
-        GJLevelType type = getLevelType(level); // GJGameLevel::getLevelType
-        setLevelType(level, GJLevelType::Editor);
-        TRAM_PauseLayer_customSetup(self); 
-        setLevelType(level, type);
+        setEditButton(true);
     } else {
-        TRAM_PauseLayer_customSetup(self); 
+        setEditButton(false);
     }
+#endif
+    if (hax.getModuleEnabled("show_restart_button")) {
+        setRestartButton(true);
+    } else {
+        setRestartButton(false);
+    }
+    TRAM_PauseLayer_customSetup(self);
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 

@@ -61,7 +61,11 @@ void instantComplete(PlayLayer* self) {
 void (*TRAM_PlayLayer_levelComplete)(PlayLayer* self);
 void PlayLayer_levelComplete(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
-    hax.bestRunEnd = 100;
+    float brDiff = hax.bestRunEnd - hax.bestRunStart;
+    if (100 - hax.startPercent > brDiff) {
+        hax.bestRunStart = hax.startPercent;
+        hax.bestRunEnd = 100;
+    }
     TRAM_PlayLayer_levelComplete(self);
 }
 
@@ -99,6 +103,7 @@ void PlayLayer_resetLevel(PlayLayer* self) {
         }
     }
     TRAM_PlayLayer_resetLevel(self);
+    hax.startPercent = getCurrentPercentageF();
     if (hax.getModuleEnabled("instant_complete")) {
         instantComplete(self);
     }
@@ -127,6 +132,13 @@ void PlayLayer_update(PlayLayer* self, float dt) {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
     UILayer* uiLayer = getUILayer(self);
+    // force visibility
+    if (!getPlayLayerPractice(self) && getPlayLayerCheckpoints(self)->count() > 0) {
+        hax.checkpointsInNormalMode = true;
+        hax.hasCheated = true;
+    } else {
+        hax.checkpointsInNormalMode = false;
+    }
     if (hax.getModuleEnabled("cheat_indicator")) {
         if (!hax.cheatIndicatorLabel || hax.cheatIndicatorLabel == nullptr) {
             uiLayer->createCheatIndicator();
