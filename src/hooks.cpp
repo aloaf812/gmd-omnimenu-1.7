@@ -27,6 +27,8 @@
 #include "hooks/GameSoundManager.cpp"
 #include "hooks/SimpleAudioEngine.cpp"
 #include "hooks/CCControlColourPicker.cpp"
+#include "hooks/LevelBrowserLayer.cpp"
+#include "hooks/GJGarageLayer.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -60,4 +62,10 @@ void initialize_hooks() {
     GameSoundManager_om();
     SimpleAudioEngine_om();
     CCControlColourPicker_om();
+#if GAME_VERSION >= GV_1_4
+    LevelBrowserLayer_om();
+#endif
+#if GAME_VERSION > GV_1_2
+    GJGarageLayer_om();
+#endif
 }

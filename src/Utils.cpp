@@ -46,54 +46,87 @@ JNIEnv* getEnv() {
 }
 
 void writeGMD(GJGameLevel* level, const char* uriStr) {
-    HaxManager& hax = HaxManager::sharedState();
     JNIEnv* env = getEnv();
     if (!env) return;
     
+    CCLog("1");
     jstring jUriStr = env->NewStringUTF(uriStr);
+    CCLog("2");
 
     jclass uriClass = env->FindClass("android/net/Uri");
+    CCLog("3");
     jmethodID parseMethod = env->GetStaticMethodID(uriClass, "parse", "(Ljava/lang/String;)Landroid/net/Uri;");
+    CCLog("4");
     jobject uri = env->CallStaticObjectMethod(uriClass, parseMethod, jUriStr);
 
-    jclass activityClass = env->GetObjectClass(hax.activity);
+    CCLog("5");
+    jclass activityClass = env->FindClass(JAVA_PATH_MAIN "/GeometryJump");
+    CCLog("6");
+    jmethodID getActivity = env->GetStaticMethodID(activityClass, "getInstance", "()L" JAVA_PATH_MAIN "/GeometryJump;");
+    CCLog("7");
+    jobject activity = env->CallStaticObjectMethod(activityClass, getActivity);
+    CCLog("6");
     jmethodID getCR = env->GetMethodID(activityClass, "getContentResolver", "()Landroid/content/ContentResolver;");
-    jobject resolver = env->CallObjectMethod(hax.activity, getCR);
+    CCLog("7");
+    jobject resolver = env->CallObjectMethod(activity, getCR);
 
+    CCLog("8");
     jclass resolverClass = env->FindClass("android/content/ContentResolver");
+    CCLog("9");
     jmethodID openOut = env->GetMethodID(resolverClass, "openOutputStream", "(Landroid/net/Uri;)Ljava/io/OutputStream;");
+    CCLog("10");
     jobject outputStream = env->CallObjectMethod(resolver, openOut, uri);
 
+    CCLog("11");
     if (!outputStream) {
+        CCLog("12");
         env->DeleteLocalRef(uri);
+        CCLog("13");
         env->DeleteLocalRef(jUriStr);
+        CCLog("14");
         return;
     }
 
+    CCLog("15");
     auto dict = new DS_Dictionary();
+    CCLog("16");
     void* encodeWithCoder = DobbySymbolResolver(MAIN_LIBRARY, "_ZN11GJGameLevel15encodeWithCoderEP13DS_Dictionary");
+    CCLog("17");
     ((void(*)(GJGameLevel*, DS_Dictionary*))encodeWithCoder)(level, dict);
 
+    CCLog("18");
     const char* str = dict->saveRootSubDictToString().c_str();
 
+    CCLog("19");
     std::vector<uint8_t> data(str, str + strlen(str));
 
+    CCLog("20");
     jclass outputStreamClass = env->FindClass("java/io/OutputStream");
+    CCLog("21");
     jmethodID writeMethod = env->GetMethodID(outputStreamClass, "write", "([B)V");
+    CCLog("22");
     jmethodID closeMethod = env->GetMethodID(outputStreamClass, "close", "()V");
 
+    CCLog("23");
     jbyteArray jData = env->NewByteArray(data.size());
+    CCLog("24");
     env->SetByteArrayRegion(jData, 0, data.size(), reinterpret_cast<const jbyte*>(data.data()));
+    CCLog("25");
     env->CallVoidMethod(outputStream, writeMethod, jData);
+    CCLog("26");
     env->CallVoidMethod(outputStream, closeMethod);
     
+    CCLog("27");
     env->DeleteLocalRef(jData);
+    CCLog("28");
     env->DeleteLocalRef(outputStream);
+    CCLog("29");
     env->DeleteLocalRef(uri);
+    CCLog("30");
     env->DeleteLocalRef(jUriStr);
+    CCLog("31");
 }
 GJGameLevel* readGMD(const char* uriStr) {
-    HaxManager& hax = HaxManager::sharedState();
     JNIEnv* env = getEnv();
     if (!env) return nullptr;
     GJGameLevel* level;
@@ -104,49 +137,86 @@ GJGameLevel* readGMD(const char* uriStr) {
     jmethodID parseMethod = env->GetStaticMethodID(uriClass, "parse", "(Ljava/lang/String;)Landroid/net/Uri;");
     jobject uri = env->CallStaticObjectMethod(uriClass, parseMethod, jUriStr);
 
-    jclass activityClass = env->GetObjectClass(hax.activity);
+    CCLog("5");
+    jclass activityClass = env->FindClass(JAVA_PATH_MAIN "/GeometryJump");
+    CCLog("6");
+    jmethodID getActivity = env->GetStaticMethodID(activityClass, "getInstance", "()L" JAVA_PATH_MAIN "/GeometryJump;");
+    CCLog("7");
+    jobject activity = env->CallStaticObjectMethod(activityClass, getActivity);
+    CCLog("8");
     jmethodID getCR = env->GetMethodID(activityClass, "getContentResolver", "()Landroid/content/ContentResolver;");
-    jobject resolver = env->CallObjectMethod(hax.activity, getCR);
+    CCLog("9");
+    jobject resolver = env->CallObjectMethod(activity, getCR);
 
+    CCLog("10");
     jclass resolverClass = env->FindClass("android/content/ContentResolver");
+    CCLog("11");
     jmethodID openIn = env->GetMethodID(resolverClass, "openInputStream", "(Landroid/net/Uri;)Ljava/io/InputStream;");
+    CCLog("12");
     jobject inputStream = env->CallObjectMethod(resolver, openIn, uri);
+    CCLog("13");
 
     if (!inputStream) {
+        CCLog("14");
         env->DeleteLocalRef(uri);
+        CCLog("15");
         env->DeleteLocalRef(jUriStr);
+        CCLog("16");
         return nullptr;
     }
 
+    CCLog("17");
     jclass inputStreamClass = env->FindClass("java/io/InputStream");
+    CCLog("18");
     jmethodID readMethod = env->GetMethodID(inputStreamClass, "read", "([B)I");
+    CCLog("19");
     jmethodID closeMethod = env->GetMethodID(inputStreamClass, "close", "()V");
 
+    CCLog("20");
     const int bufSize = 8192;
+    CCLog("21");
     jbyteArray buffer = env->NewByteArray(bufSize);
 
+    CCLog("22");
     while (true) {
+        CCLog("23");
         jint bytesRead = env->CallIntMethod(inputStream, readMethod, buffer);
+        CCLog("24");
         if (bytesRead <= 0) break;
+        CCLog("25");
         jbyte* bytes = env->GetByteArrayElements(buffer, nullptr);
+        CCLog("26");
         result.insert(result.end(), bytes, bytes + bytesRead);
+        CCLog("27");
         env->ReleaseByteArrayElements(buffer, bytes, JNI_ABORT);
+        CCLog("28");
     }
 
+    CCLog("29");
     env->CallVoidMethod(inputStream, closeMethod);
+    CCLog("30");
     env->DeleteLocalRef(buffer);
+    CCLog("31");
     env->DeleteLocalRef(inputStream);
+    CCLog("32");
     env->DeleteLocalRef(uri);
+    CCLog("33");
     env->DeleteLocalRef(jUriStr);
+    CCLog("34");
 
     const uint8_t* rawDataPtr = result.data();
+    CCLog("35");
     const char* str = reinterpret_cast<const char*>(rawDataPtr);
+    CCLog("36");
 
     auto dict = new DS_Dictionary();
+    CCLog("37");
     if (!dict->loadRootSubDictFromString(str)) return nullptr;
 
+    CCLog("38");
     level = GJGameLevel::createWithCoder(dict);
 
+    CCLog("39");
     return level;
 }
 jobject getGlobalContext(JNIEnv *env)

@@ -67,6 +67,11 @@ void PlayLayer_levelComplete(PlayLayer* self) {
         hax.bestRunEnd = 100;
     }
     TRAM_PlayLayer_levelComplete(self);
+    // bandaid fix
+    if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
+        auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
+        audioEngine->resumeBackgroundMusic();
+    }
 }
 
 void (*TRAM_PlayLayer_resetLevel)(PlayLayer* self);
@@ -95,12 +100,11 @@ void PlayLayer_resetLevel(PlayLayer* self) {
             } else {
                 cocos2d::CCLog("Failed to get Java Env");
                 audioEngine->setBackgroundMusicTime(static_cast<float>(seekTime) / 1000.f);
-                audioEngine->resumeBackgroundMusic();
             }
         } else {
             audioEngine->setBackgroundMusicTime(0.f);
-            audioEngine->resumeBackgroundMusic();
         }
+        audioEngine->resumeBackgroundMusic();
     }
     TRAM_PlayLayer_resetLevel(self);
     hax.startPercent = getCurrentPercentageF();

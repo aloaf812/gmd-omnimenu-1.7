@@ -110,7 +110,12 @@ bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
         CCMenu* btnMenu = CCMenu::create();
         self->addChild(btnMenu);
 
-        btnMenu->setPosition(ccp(winSize.width - 30, winSize.height - 70));
+#if GAME_VERSION == GV_1_4
+        auto y = winSize.height - 120;
+#else
+        auto y = winSize.height - 70;
+#endif
+        btnMenu->setPosition(ccp(winSize.width - 27, y));
         CCSprite* copySpr = CCSprite::create("GJ_copyBtn.png");
         CCMenuItemSpriteExtra* copyBtn = CCMenuItemSpriteExtra::create(copySpr, copySpr, self, menu_selector(EditorUI::onDuplicate));
 
@@ -230,7 +235,7 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
         fuckingArray->addObject(self->getCreateBtn("portal_06_front_001.png", 4)); // blue mirror portal
 #elif GAME_VERSION == GV_1_1 // 1.11 ONLY!
         fuckingArray->addObject(self->getCreateBtn("portal_07_front_001.png", 4)); // ball portal
-#elif GAME-VERSION >= GV_1_3
+#elif GAME_VERSION >= GV_1_3
         fuckingArray->addObject(self->getCreateBtn("edit_eeFABtn_001.png", 4)); // scatter transition trigger
     #if GAME_VERSION < GV_1_6 // they are removed in 1.6 and reintroduced in 1.8
         fuckingArray->addObject(self->getCreateBtn("square_b_02_001.png", 4)); // wavy slab outer corner thing

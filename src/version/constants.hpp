@@ -1,14 +1,25 @@
 #include "versions.hpp"
 
-#define GAME_VERSION GV_1_2
-#define MENU_VERSION "0.81"
+
+
+
+#define MENU_VERSION "0.82"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 
-#define CLIPBOARD_HELPER_CLASS "com/robtopx/geometryjump/ClipboardHelper"
+// You have to replace both of these
+#define JAVA_PATH_MAIN "com/robtopx/geometryjump"
+#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometryjump
 
 // #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
 #define PING_SPOOFING // Uncomment this to enable a joke feature
+
+
+
+
+#define CLIPBOARD_HELPER_CLASS JAVA_PATH_MAIN "/ClipboardHelper"
+#define JNI_FN_EXPAND(pkg, cls, fn) Java_##pkg##_##cls##_##fn
+#define JNI_FN(pkg, cls, fn) JNI_FN_EXPAND(pkg, cls, fn)
 
 #if GAME_VERSION == GV_1_0
     #define GAME_VER_PATH 1.0

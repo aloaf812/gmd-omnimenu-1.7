@@ -3,7 +3,7 @@
 #include <jni.h>
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_robtopx_geometryjump_GeometryJump_nativeOnFileSaveChosen(
+JNI_FN(JAVA_PATH_MAIN_JNI_HOOK, GeometryJump, nativeOnFileSaveChosen)(
         JNIEnv* env, jobject /*thiz*/, jstring uri) {
     const char* uriStr = env->GetStringUTFChars(uri, nullptr);
     auto& hax = HaxManager::sharedState();
@@ -11,16 +11,14 @@ Java_com_robtopx_geometryjump_GeometryJump_nativeOnFileSaveChosen(
     env->ReleaseStringUTFChars(uri, uriStr);
 }
 extern "C" JNIEXPORT void JNICALL
-Java_com_robtopx_geometryjump_GeometryJump_nativeOnFileOpenChosen(
+JNI_FN(JAVA_PATH_MAIN_JNI_HOOK, GeometryJump, nativeOnFileOpenChosen)(
         JNIEnv* env, jobject /*thiz*/, jstring uri) {
     const char* uriStr = env->GetStringUTFChars(uri, nullptr);
     auto& hax = HaxManager::sharedState();
+#if GAME_VERSION < GV_1_4
     hax.myLevelsLayer->loadLevel(readGMD(uriStr));
+#else
+    hax.levelBrowserLayer->loadLevel(readGMD(uriStr));
+#endif
     env->ReleaseStringUTFChars(uri, uriStr);
-}
-extern "C" JNIEXPORT void JNICALL
-Java_com_robtopx_geometryjump_GeometryJump_nativeSetActivity(
-        JNIEnv* env, jobject thiz, jobject activity) {
-    auto& hax = HaxManager::sharedState();
-    hax.activity = env->NewGlobalRef(activity);
 }

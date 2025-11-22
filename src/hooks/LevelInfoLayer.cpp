@@ -41,7 +41,7 @@ void LevelInfoLayer::onExport() {
     }
     HaxManager& hax = HaxManager::sharedState();
     hax.gdShareLevel = level;
-    jclass activityClass = env->GetObjectClass(hax.activity);
+    jclass activityClass = env->FindClass(JAVA_PATH_MAIN "/GeometryJump");
     if (activityClass == nullptr) {
         GDSHARE_FL("Error: could not get the activity class");
         return;
@@ -52,7 +52,13 @@ void LevelInfoLayer::onExport() {
         return;
     }
     jstring jname = env->NewStringUTF(name.c_str());
-    env->CallVoidMethod(hax.activity, showPicker, jname);
+    jmethodID getActivity = env->GetStaticMethodID(activityClass, "getInstance", "()L" JAVA_PATH_MAIN "/GeometryJump;");
+    if (getActivity == nullptr) {
+        GDSHARE_FL("Error: could not find getInstance method. Are you sure you changed the smali?");
+        return;
+    }
+    jobject activity = env->CallStaticObjectMethod(activityClass, getActivity);
+    env->CallVoidMethod(activity, showPicker, jname);
 }
 bool (*TRAM_LevelInfoLayer_init)(LevelInfoLayer* self, GJGameLevel* level);
 bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {

@@ -9,8 +9,7 @@ void MyLevelsLayer::onImport() {
         GDSHARE_FL("Error: could not get JNI Environment");
         return;
     }
-    HaxManager& hax = HaxManager::sharedState();
-    jclass activityClass = env->GetObjectClass(hax.activity);
+    jclass activityClass = env->FindClass(JAVA_PATH_MAIN "/GeometryJump");
     if (activityClass == nullptr) {
         GDSHARE_FL("Error: could not get the activity class");
         return;
@@ -20,7 +19,13 @@ void MyLevelsLayer::onImport() {
         GDSHARE_FL("Error: could not find showOpenFilePicker method. Are you sure you changed the smali?");
         return;
     }
-    env->CallVoidMethod(hax.activity, showPicker);
+    jmethodID getActivity = env->GetStaticMethodID(activityClass, "getInstance", "()L" JAVA_PATH_MAIN "/GeometryJump;");
+    if (getActivity == nullptr) {
+        GDSHARE_FL("Error: could not find getInstance method. Are you sure you changed the smali?");
+        return;
+    }
+    jobject activity = env->CallStaticObjectMethod(activityClass, getActivity);
+    env->CallVoidMethod(activity, showPicker);
 }
 
 void MyLevelsLayer::loadLevel(GJGameLevel* level) {

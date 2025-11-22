@@ -13,6 +13,7 @@
 #include "GameObject.hpp"
 #include <algorithm>
 #include "CCTextInputNode.hpp"
+#include "LevelBrowserLayer.hpp"
 
 #define ARM_NOP {0x00, 0xbf}
 #define ARM_FLOAT_INF {0x00, 0x00, 0x80, 0x7f}
@@ -321,7 +322,12 @@ void setZoomBypass(bool enable) {
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(zoom_bypass_max_2)),
-            std::vector<uint8_t>({0x63, 0xe7}).data(), 2 // B
+#if GAME_VERSION == GV_1_2
+            std::vector<uint8_t>({0x63, 0xe7}).data(),
+#elif GAME_VERSION == GV_1_4
+            std::vector<uint8_t>({0x5e, 0xe7}).data(),
+#endif
+            2 // B
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(zoom_bypass_min)),
@@ -363,9 +369,6 @@ LevelEditorLayer* getUIEditorLayer(EditorUI* uiLayer) {
 }
 GJGameLevel* getCellLevel(CCNode* cell) {
     return MEMBER_BY_OFFSET(GJGameLevel*, cell, LevelCell__m_level);
-}
-CCLayer* getCellMainLayer(CCNode* cell) {
-    return MEMBER_BY_OFFSET(CCLayer*, cell, CCTableViewCell__m_mainLayer);
 }
 int getCommentID(CCNode* comment) {
     return MEMBER_BY_OFFSET(int, comment, GJComment__m_commentID);
@@ -557,3 +560,12 @@ cocos2d::extension::CCControlColourPicker* getColorPicker(ColorPickerPopup* popu
 void setCharLimit(CCTextInputNode* node, int limit) {
     MEMBER_BY_OFFSET(int, node, CCTextInputNode__m_charLimit) = limit;
 }
+
+#if GAME_VERSION >= GV_1_4
+GJSearchObject* getSearchObject(LevelBrowserLayer* browser) {
+    return MEMBER_BY_OFFSET(GJSearchObject*, browser, LevelBrowserLayer__m_searchObject);
+}
+int getSearchType(GJSearchObject* searcher) {
+    return MEMBER_BY_OFFSET(int, searcher, GJSearchObject__m_type);
+}
+#endif

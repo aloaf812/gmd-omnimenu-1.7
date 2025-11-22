@@ -4,9 +4,6 @@
 .method public native nativeOnFileOpenChosen(Ljava/lang/String;)V
 .end method
 
-.method public native nativeSetActivity(Landroid/app/Activity;)V
-.end method
-
 .method public showSaveFilePicker(Ljava/lang/String;)V
     .registers 5
 

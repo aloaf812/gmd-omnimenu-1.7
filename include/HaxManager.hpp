@@ -11,9 +11,9 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-#include <jni.h>
 #include "GJGameLevel.hpp"
 #include "MyLevelsLayer.hpp"
+#include "LevelBrowserLayer.hpp"
 
 enum class CheatIndicatorColor {
     Green,
@@ -47,9 +47,10 @@ public:
     int pSpeedModified;
     int pGravityModified;
     int pYStartModified;
-    jobject activity;
+    // jobject activity;
     GJGameLevel* gdShareLevel;
     MyLevelsLayer* myLevelsLayer;
+    LevelBrowserLayer* levelBrowserLayer;
     float bestRunStart;
     float bestRunEnd;
     int frames;
@@ -438,7 +439,7 @@ private:
 #if GAME_VERSION > GV_1_2
         modules.insert(std::pair<std::string, Module*>("demons_in_garage", new Module(
                 "Demons in Garage", 
-                "Displays your demon count in the icon kit (garage).", 
+                "Displays your demon count in the icon kit (garage). (module by Hris69)", 
                 false, ModuleCategory::Informational, [](bool _){})));
 #endif
         modules.insert(std::pair<std::string, Module*>("level_ids_in_list", new Module(

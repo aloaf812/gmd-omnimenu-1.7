@@ -13,7 +13,7 @@ void LevelCell_loadCustomLevelCell(CCNode* self) {
         idLabel->setColor(ccc3(0, 0, 0));
         idLabel->setOpacity(127);
         idLabel->setTag(6741);
-        getCellMainLayer(self)->addChild(idLabel, 1000);
+        self->addChild(idLabel, 1000);
     }
 }
 // void (*TRAM_LevelCell_draw)(CCNode* self);

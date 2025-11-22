@@ -13,6 +13,7 @@
 #include "EditButtonBar.hpp"
 #include "CCTextInputNode.hpp"
 #include "ColorSelectPopup.hpp"
+#include "LevelBrowserLayer.hpp"
 
 #define MEMBER_BY_OFFSET(type, var, offset) \
     (*reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(var) + static_cast<uintptr_t>(offset)))
@@ -93,7 +94,6 @@ void setZoomBypass(bool enabled);
 cocos2d::CCNode* getEditorGameLayer(LevelEditorLayer* editorLayer);
 LevelEditorLayer* getUIEditorLayer(EditorUI* uiLayer);
 GJGameLevel* getCellLevel(CCNode* cell);
-CCLayer* getCellMainLayer(CCNode* cell);
 int getCommentID(CCNode* comment);
 std::string getLevelString(GJGameLevel* level);
 GJGameLevel* getEditLayerLevel(CCLayer* editLayer);
@@ -164,3 +164,8 @@ void setCharLimit(CCTextInputNode* node, int limit);
 
 void setEditButton(bool enable);
 void setRestartButton(bool enable);
+
+#if GAME_VERSION >= GV_1_4
+GJSearchObject* getSearchObject(LevelBrowserLayer* browser);
+int getSearchType(GJSearchObject* searcher);
+#endif
