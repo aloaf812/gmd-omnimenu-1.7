@@ -7,6 +7,11 @@ class GameRateDelegate {
 	virtual void updateRate();
 };
 
+typedef enum {
+    Icon = 0,
+    Ship = 1
+} IconType;
+
 class GameManager : public cocos2d::CCNode {
 public:
     static GameManager* sharedState();

@@ -568,4 +568,17 @@ GJSearchObject* getSearchObject(LevelBrowserLayer* browser) {
 int getSearchType(GJSearchObject* searcher) {
     return MEMBER_BY_OFFSET(int, searcher, GJSearchObject__m_type);
 }
+void setIconHack(bool enable) {
+    if (enable) {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(__GameManager_isIconUnlocked)),
+            std::vector<uint8_t>({0x01, 0x20, 0x70, 0x47}).data(), 4
+        );
+    } else {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(__GameManager_isIconUnlocked)),
+            std::vector<uint8_t>({0x30, 0xb5, 0x85, 0xb0}).data(), 4
+        );
+    }
+}
 #endif

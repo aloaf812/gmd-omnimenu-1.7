@@ -7,9 +7,9 @@
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 
-// You have to replace both of these
-#define JAVA_PATH_MAIN "com/robtopx/geometryjump"
-#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometryjump
+// You have to replace both of these if necessary
+#define JAVA_PATH_MAIN "com/robtopx/geometry1410"
+#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometry1410
 
 // #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
 #define PING_SPOOFING // Uncomment this to enable a joke feature

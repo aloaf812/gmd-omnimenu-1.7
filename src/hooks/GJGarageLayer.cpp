@@ -4,8 +4,11 @@
 
 bool (*TRAM_GJGarageLayer_init)(CCLayer* self);
 bool GJGarageLayer_init(CCLayer* self) {
-    if (!TRAM_GJGarageLayer_init(self)) return false;
     HaxManager& hax = HaxManager::sharedState();
+#if GAME_VERSION >= GV_1_4
+    setIconHack(hax.getModuleEnabled("unlock_icons"));
+#endif
+    if (!TRAM_GJGarageLayer_init(self)) return false;
     if (hax.getModuleEnabled("demons_in_garage")) {
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();

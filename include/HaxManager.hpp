@@ -426,7 +426,11 @@ private:
         modules.insert(std::pair<std::string, Module*>("unlock_icons", new Module(
                 "Unlock Icons", 
                 "Unlocks all icons and colors in the Icon Kit.", 
-                false, ModuleCategory::Bypass, [](bool _){})));
+                false, ModuleCategory::Bypass, [](bool _){
+#if GAME_VERSION >= GV_1_4
+                    setIconHack(_);
+#endif
+                })));
 
 
 

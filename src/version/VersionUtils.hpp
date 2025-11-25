@@ -168,4 +168,5 @@ void setRestartButton(bool enable);
 #if GAME_VERSION >= GV_1_4
 GJSearchObject* getSearchObject(LevelBrowserLayer* browser);
 int getSearchType(GJSearchObject* searcher);
+void setIconHack(bool enable);
 #endif

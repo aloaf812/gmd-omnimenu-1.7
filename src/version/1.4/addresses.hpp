@@ -86,6 +86,7 @@
 /*/                     ADDRESSES                     /*/
 /*******************************************************/
 /**/ #define basicstring_assign             0x2E87D0 /**/ // differs between versions :/
+/**/ #define __GameManager_isIconUnlocked   0x144B04 /**/ // fuck dobbyhook fuck this stupid game fuck everyone kill 7 billion people
 /**/ #define move_x_max                     0x159174 /**/ // EditorUI::moveObject - 00 60 EA 46
 /**/ #define move_y_max                     0x15917C /**/ // EditorUI::moveObject - 00 40 A1 44
 /**/ #define move_y_min                     0x159178 /**/ // EditorUI::moveObject - 00 00 B6 42
