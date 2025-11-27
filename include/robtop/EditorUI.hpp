@@ -30,4 +30,15 @@ public:
 #if GAME_VERSION < GV_1_6
     void onDeleteStartPos();
 #endif
+
+    CCMenuItemSpriteExtra* getSpriteButton(const char* name, SEL_MenuHandler callback, CCMenu* menu, float scale);
+    CCMenuItemSpriteExtra* getSpriteButton2(const char* name, SEL_MenuHandler callback, CCMenu* menu, float scale);
+    CCMenuItemSpriteExtra* getSpriteButton3(const char* name, SEL_MenuHandler callback, CCMenu* menu, float scale, float scale2);
+    void moveObjectCall(CCNode* sender);
+    void transformObjectCall(CCNode* sender);
+    void moveObject(GameObject* obj, CCPoint transform);
+    void editObject();
+
+    void moveObjectCall2(CCNode* sender);
+    void transformObjectCall2(CCNode* sender);
 };

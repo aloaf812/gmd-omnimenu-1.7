@@ -170,3 +170,12 @@ GJSearchObject* getSearchObject(LevelBrowserLayer* browser);
 int getSearchType(GJSearchObject* searcher);
 void setIconHack(bool enable);
 #endif
+
+EditButtonBar* getEditButtonBar(EditorUI* uiLayer);
+void setEditButtonBar(EditorUI* uiLayer, EditButtonBar* bar);
+CCArray* getBarButtons(EditButtonBar* bar);
+void setOriginalScale(CCMenuItemSpriteExtra* btn, float scale);
+
+#if GAME_VERSION < GV_1_4
+void setEditObjectButton(EditorUI* self, CCMenuItemSpriteExtra* btn);
+#endif

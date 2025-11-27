@@ -7,6 +7,7 @@
 /**/ #define BoomScrollLayer__m_dynamic        0x154 /**/ // BoomScrollLayer::getTotalPages
 /**/ #define BoomScrollLayer__m_dynamicPages   0x150 /**/ // BoomScrollLayer::getTotalPages
 /**/ #define BoomScrollLayer__m_pages          0x164 /**/ // BoomScrollLayer::getTotalPages
+/**/ #define CCMenuItemSpriteExtra__m_ogScale  0x150 /**/ // CCMenuItemSpriteExtra::setOriginalScale
 /**/ #define CCTextInputNode__m_charLimit      0x170 /**/ // CCTextInputNode::getCharLimit
 /**/ #define CCTextInputNode__m_inputDelegate  0x16c /**/ // CCTextInputNode::getDelegate
 /**/ #define CCTextInputNode__m_textField      0x168 /**/ // CCTextInputNode::getTextField
@@ -14,11 +15,13 @@
 /**/ #define CheckpointObject__m_playerPos     0x12c /**/ // CheckpointObject::getPlayerPos
 /**/ #define ColorPickerPopup__m_colorWheel    0x1cc /**/ // ColorPickerPopup::selectColor
 /**/ #define ColorSelectPopup__m_colorWheel    0x1cc /**/ // ColorSelectPopup::selectColor
+/**/ #define EditButtonBar__m_buttons          0x12c /**/ // EditButtonBar::init
 /**/ #define EditLevelLayer__m_level           0x148 /**/ // EditLevelLayer::init
 /**/ #define EditorPauseLayer__m_editorLayer   0x1c8 /**/ // EditorPauseLayer::init
 /**/ #define EditorUI__m_buttonMenu            0x184 /**/ // EditorUI::setupDeleteMenu
 /**/ #define EditorUI__m_createButtonBar       0x144 /**/ // EditorUI::setupCreateMenu (at the bottom)
 /**/ #define EditorUI__m_createButtons         0x1bc /**/ // EditorUI::getCreateBtn (at the bottom)
+/**/ #define EditorUI__m_editButtonBar         0x148 /**/ // EditorUI::createMoveMenu (at the bottom)
 /**/ #define EditorUI__m_editorLayer           0x1c4 /**/ // EditorUI::init
 /**/ #define EditorUI__m_selectedObject        0x248 /**/ // EditorUI::selectObject
 /**/ #define EditorUI__m_selectedObjects       0x180 /**/ // EditorUI::deselectAll 

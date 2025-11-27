@@ -300,7 +300,7 @@ private:
                 false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("show_percentage_decimal", new Module(
                 "Decimal Percentage", 
-                "Puts 3 decimal places after the percentage if you have Show Percentage enabled.", 
+                "Puts 3 decimal places after the percentage if you have Show Percentage enabled and in the Best Run label.", 
                 false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("show_restart_button", new Module(
                 "Show Restart Button", 
@@ -345,6 +345,10 @@ private:
                 "Adds a button that removes all start positions in the level.", 
                 false, ModuleCategory::Editor, [](bool _){})));
 #endif
+        modules.insert(std::pair<std::string, Module*>("extra_edit_buttons", new Module(
+                "Extra Edit Buttons", 
+                "Adds extra buttons to the edit tab that allow you to control objects more precisely.", 
+                false, ModuleCategory::Editor, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("free_build", new Module(
                 "Free Build", 
                 "Removes the constraints for placing and moving objects in the editor.", 

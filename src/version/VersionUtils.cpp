@@ -582,3 +582,20 @@ void setIconHack(bool enable) {
     }
 }
 #endif
+EditButtonBar* getEditButtonBar(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(EditButtonBar*, uiLayer, EditorUI__m_editButtonBar);
+}
+void setEditButtonBar(EditorUI* uiLayer, EditButtonBar* bar) {
+    MEMBER_BY_OFFSET(EditButtonBar*, uiLayer, EditorUI__m_editButtonBar) = bar;
+}
+CCArray* getBarButtons(EditButtonBar* bar) {
+    return MEMBER_BY_OFFSET(CCArray*, bar, EditButtonBar__m_buttons);
+}
+void setOriginalScale(CCMenuItemSpriteExtra* btn, float scale) {
+    MEMBER_BY_OFFSET(float, btn, CCMenuItemSpriteExtra__m_ogScale) = scale;
+}
+#if GAME_VERSION < GV_1_4
+void setEditObjectButton(EditorUI* self, CCMenuItemSpriteExtra* btn) {
+    MEMBER_BY_OFFSET(CCMenuItemSpriteExtra*, self, EditorUI__m_editObjectButton) = btn;
+}
+#endif
