@@ -17,10 +17,10 @@ Note: the minimum Android version is currently KitKat (4.4). Android 14+ devices
 0. NOTE: You should remove the build folder reguarly.
 1. [Download and run APK Editor Studio](<https://qwertycube.com/apk-editor-studio/download/>)
 2. Open Settings > Options or press Ctrl+P, go to Apktool and check "Decompile source code (smali)" if it isn't checked already
-3. Load the desired version APK
-4. Find the package name smali uses by locating the GeometryJump.smali file. The default directory is `com/robtopx/geometryjump/GeometryJump.smali`. If this directory is different for you, open `version/constants.hpp` in OMNImenu's source code and change the `JAVA_PATH_MAIN` and `JAVA_PATH_MAIN_JNI_HOOK` constants to use the correct path instead of `com/robtopx/geometryjump` and `com_robtopx_geometryjump` respectively.
-5. Run build script (TODO instructions for Windows). The libmenu.so file will be in the `build` folder.
-6. In the bottom left corner of APK Editor Studio, click on File System, find the `lib` folder. Then, if you're building for pre-1.5, open the only folder: `armeabi`, otherwise open `armeabi-v7a` (and delete the other folders). Right-click the existing `.so` file and press "Open Resource Directory...", then paste the `libmenu.so` file from the `build` folder.
+3. In the bottom left corner of APK Editor Studio, click on File System, find the `lib` folder. Then, if you're building for pre-1.5, open the only folder: `armeabi`, otherwise open `armeabi-v7a` (and delete the other folders). Right-click the existing `.so` file and press "Open Resource Directory...", then copy the `libgame.so` or `libcocos2dcpp.so` file and paste it to `src/version/{GD version}`.
+4. Find the libgame.so in lib/armeabi or lib/armeabi-v7a 
+5. Find the package name smali uses by locating the GeometryJump.smali file. The default directory is `com/robtopx/geometryjump/GeometryJump.smali`. If this directory is different for you, open `version/constants.hpp` in OMNImenu's source code and change the `JAVA_PATH_MAIN` and `JAVA_PATH_MAIN_JNI_HOOK` constants to use the correct path instead of `com/robtopx/geometryjump` and `com_robtopx_geometryjump` respectively.
+6. Run build script (TODO instructions for Windows). The libmenu.so file will be in the `build` folder, which you need to paste to the same location you got `libgame.so`/`libcocos2dcpp.so` from.
 7. Copy all of the resources from the `resources` folder to the APK's `assets` folder.
 8. In the `smali` folder of the APK, open the `GeometryJump.smali` file. Find where it says something like:
 
