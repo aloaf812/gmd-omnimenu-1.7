@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-//                         1.2                         //
+//                         1.4                         //
 /*******************************************************/
 /*/                      OFFSETS                      /*/
 /*******************************************************/
@@ -32,19 +32,19 @@
 /**/ #define GameManager__m_playLayer          0x150 /**/ // GameManager::getPlayLayer
 /**/ #define GameManager__m_playerName         0x168 /**/ // GameManager::getPlayerName
 /**/ #define GameManager__m_playerUDID         0x164 /**/ // GameManager::getPlayerUDID
-/**/ #define GameObject__m_objectKey           0x314 /**/ // GameObject::getObjectKey
+/**/ #define GameObject__m_objectKey           0x31c /**/ // GameObject::getObjectKey
 /**/ #define GameObject__m_particles           0x280 /**/ // GameObject::setOpacity
 /**/ #define GameObject__m_realPosition        0x2c8 /**/ // GameObject::getRealPosition
 /**/ #define GameObject__m_shouldSpawn         0x2c4 /**/ // GameObject::getShouldSpawn
 /**/ #define GameObject__m_type                0x2bc /**/ // GameObject::getType
-/**/ #define GameObject__m_useAudioScale       0x2ef /**/ // GameObject::getUseAudioScale
+/**/ #define GameObject__m_useAudioScale       0x2f0 /**/ // GameObject::getUseAudioScale
 /**/ #define GJComment__m_commentID            0x130 /**/ // GJComment::getCommentID
 /**/ #define GJGameLevel__m_attempts           0x164 /**/ // GJGameLevel::getAttempts
 /**/ #define GJGameLevel__m_isVerified         0x159 /**/ // GJGameLevel::getIsVerified
 /**/ #define GJGameLevel__m_levelID            0x128 /**/ // GJGameLevel::getLevelID
 /**/ #define GJGameLevel__m_levelName          0x12c /**/ // GJGameLevel::getLevelName
 /**/ #define GJGameLevel__m_levelString        0x134 /**/ // GJGameLevel::getLevelString
-/**/ #define GJGameLevel__m_levelType          0x1a0 /**/ // GJGameLevel::getLevelType
+/**/ #define GJGameLevel__m_levelType          0x1a8 /**/ // GJGameLevel::getLevelType
 /**/ #define GJGameLevel__m_normalPercent      0x168 /**/ // GJGameLevel::getNormalPercent
 /**/ #define GJGameLevel__m_practicePercent    0x16c /**/ // GJGameLevel::getPracticePercent
 /**/ #define GJGameLevel__m_userID             0x13c /**/ // GJGameLevel::getUserID
@@ -55,7 +55,7 @@
 /**/ #define LevelEditorLayer__m_gridLayer     0x150 /**/ // LevelEditorLayer::removeObject
 /**/ #define LevelEditorLayer__m_objectCount   0x154 /**/ // LevelEditorLayer::getObjectCount
 /**/ #define LevelEditorLayer__m_sections      0x144 /**/ // LevelEditorLayer::getSectionCount
-/**/ #define LevelEditorLayer__m_settings      0x160 /**/ // LevelEditorLayer::createObjectsFromSetup
+/**/ #define LevelEditorLayer__m_settings      0x160 /**/ // LevelEditorLayer::getLevelSettings
 /**/ #define LevelEditorLayer__m_redoArray     0x14c /**/ // LevelEditorLayer::addToRedoList
 /**/ #define LevelInfoLayer__m_level           0x154 /**/ // LevelInfoLayer::init
 /**/ #define LevelSelectLayer__m_scrollLayer   0x14c /**/ // LevelSelectLayer::onNext (param in BoomScrollLayer::quickUpdate)
@@ -75,32 +75,32 @@
 /**/ #define PlayLayer__m_startPos             0x268 /**/ // PlayLayer::getStartPos
 /**/ #define PlayLayer__m_uiLayer              0x228 /**/ // PlayLayer::getUILayer
 /**/ #define PlayLayer__m_unkPrac              0x267 /**/ // PlayLayer::togglePracticeMode (set to 1 at the bottom)
-/**/ #define PlayerObject__m_gravity           0x350 /**/ // PlayerObject::gravityUp
-/**/ #define PlayerObject__m_onGround          0x35e /**/ // PlayerObject::pushButton (if statement that updateJump is called in)
-/**/ #define PlayerObject__m_pGround           0x3bc /**/ // PlayerObject::deactivateParticle
-/**/ #define PlayerObject__m_pShipGround       0x3c8 /**/ // PlayerObject::update (man idk how to describe where to find it)
-/**/ #define PlayerObject__m_pShipFire         0x3c0 /**/ // PlayerObject::update (man idk how to describe where to find it)
-/**/ #define PlayerObject__m_pShipLift         0x3c4 /**/ // PlayerObject::update (man idk how to describe where to find it)
-/**/ #define PlayerObject__m_pLanding          0x3d0 /**/ // PlayerObject::hitGround (second if statement)
-/**/ #define PlayerObject__m_pLanding2         0x3d4 /**/ // PlayerObject::hitGround (second if statement)
-/**/ #define PlayerObject__m_xVelocity         0x340 /**/ // PlayerObject::speedUp
-/**/ #define PlayerObject__m_yStart            0x348 /**/ // PlayerObject::yStartUp
+/**/ #define PlayerObject__m_gravity           0x358 /**/ // PlayerObject::gravityUp
+/**/ #define PlayerObject__m_onGround          0x366 /**/ // PlayerObject::pushButton (if statement that updateJump is called in)
+/**/ #define PlayerObject__m_pGround           0x3c4 /**/ // PlayerObject::deactivateParticle
+/**/ #define PlayerObject__m_pShipGround       0x3d0 /**/ // PlayerObject::update (man idk how to describe where to find it)
+/**/ #define PlayerObject__m_pShipFire         0x3c8 /**/ // PlayerObject::update (man idk how to describe where to find it)
+/**/ #define PlayerObject__m_pShipLift         0x3cc /**/ // PlayerObject::update (man idk how to describe where to find it)
+/**/ #define PlayerObject__m_pLanding          0x3d8 /**/ // PlayerObject::hitGround (second if statement)
+/**/ #define PlayerObject__m_pLanding2         0x3dc /**/ // PlayerObject::hitGround (second if statement)
+/**/ #define PlayerObject__m_xVelocity         0x348 /**/ // PlayerObject::speedUp
+/**/ #define PlayerObject__m_yStart            0x350 /**/ // PlayerObject::yStartUp
 /*******************************************************/
 /*/                     ADDRESSES                     /*/
 /*******************************************************/
-/**/ #define basicstring_assign             0x2D45A8 /**/ // differs between versions :/
-/**/ #define global_order_of_arrival        0x40D26C /**/ // CCNode::reorderChild
-/**/ #define move_x_max                     0x150670 /**/ // EditorUI::moveObject - 00 60 EA 46
-/**/ #define move_y_max                     0x150678 /**/ // EditorUI::moveObject - 00 40 A1 44
-/**/ #define move_y_min                     0x150674 /**/ // EditorUI::moveObject - 00 00 B6 42
-/**/ #define object_limit                   0x152520 /**/ // EditorUI::onCreate
-/**/ #define pause_edit_button              0x154BF6 /**/ // PauseLayer::customSetup
-/**/ #define pause_restart_button           0x154CB0 /**/ // PauseLayer::customSetup
-/**/ #define place_x_max                    0x15232C /**/ // EditorUI::onCreateObject - 00 42 EA 46
-/**/ #define place_y_max                    0x152330 /**/ // EditorUI::onCreateObject - 00 60 9F 44
-/**/ #define place_x_min                    0x152324 /**/ // EditorUI::onCreateObject - 00 80 9D 43
-/**/ #define place_y_min                    0x152328 /**/ // EditorUI::onCreateObject - 00 00 D2 42
-/**/ #define zoom_bypass_max_1              0x1509D0 /**/ // EditorUI::zoomGameLayer
-/**/ #define zoom_bypass_max_2              0x150B0A /**/ // EditorUI::zoomGameLayer
-/**/ #define zoom_bypass_min                0x150B18 /**/ // EditorUI::zoomGameLayer
+/**/ #define basicstring_assign             0x2E1390 /**/ // differs between versions :/
+/**/ #define global_order_of_arrival        0x430C4C /**/ // CCNode::reorderChild
+/**/ #define move_x_max                     0x15500C /**/ // EditorUI::moveObject - 00 60 EA 46
+/**/ #define move_y_max                     0x155014 /**/ // EditorUI::moveObject - 00 40 A1 44
+/**/ #define move_y_min                     0x155010 /**/ // EditorUI::moveObject - 00 00 B6 42
+/**/ #define object_limit                   0x156BD8 /**/ // EditorUI::onCreate
+/**/ #define pause_edit_button              0x1592AE /**/ // PauseLayer::customSetup
+/**/ #define pause_restart_button           0x159368 /**/ // PauseLayer::customSetup
+/**/ #define place_x_max                    0x1569E4 /**/ // EditorUI::onCreateObject - 00 42 EA 46
+/**/ #define place_y_max                    0x1569E8 /**/ // EditorUI::onCreateObject - 00 60 9F 44
+/**/ #define place_x_min                    0x1569DC /**/ // EditorUI::onCreateObject - 00 80 9D 43
+/**/ #define place_y_min                    0x1569E0 /**/ // EditorUI::onCreateObject - 00 00 D2 42
+/**/ #define zoom_bypass_max_1              0x15536C /**/ // EditorUI::zoomGameLayer
+/**/ #define zoom_bypass_max_2              0x1554A6 /**/ // EditorUI::zoomGameLayer
+/**/ #define zoom_bypass_min                0x1554B4 /**/ // EditorUI::zoomGameLayer
 /*******************************************************/

@@ -5,6 +5,12 @@
 #include "GameObject.hpp"
 #include "UndoObject.hpp"
 
+struct OrderingData
+{
+    int order_of_arrival;
+    int z_order;
+};
+
 class LevelEditorLayer : public cocos2d::CCLayer
 {
 public:
@@ -14,6 +20,4 @@ public:
     void addToSection(GameObject* object);
     void addToUndoList(UndoObject*);
     void removeObject(GameObject*);
-
-    virtual int getObjectCount();
 };

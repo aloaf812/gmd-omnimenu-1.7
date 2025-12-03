@@ -247,7 +247,7 @@ private:
         modules.insert(std::pair<std::string, Module*>("no_glow", new Module(
                 "No Glow", 
                 "Disables object glow. (Note: Will only apply after re-entering the level)", 
-                false, ModuleCategory::Gameplay, [](bool _){ })));
+                false, ModuleCategory::Gameplay, [](bool _){})));
 #if GAME_VERSION > GV_1_0
         modules.insert(std::pair<std::string, Module*>("no_mirror", new Module(
                 "No Mirror", 
@@ -280,10 +280,7 @@ private:
         modules.insert(std::pair<std::string, Module*>("pcommand", new Module(
                 "pCommand", 
                 "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (Note: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 
-                false, ModuleCategory::Gameplay, [](bool _){
-                    // HaxManager& hax = HaxManager::sharedState();
-                    // if (_) hax.setCheating(true);
-                })));
+                false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("practice_music", new Module(
                 "Practice Music Hack", 
                 "Plays the normal level music in practice mode.", 
@@ -306,11 +303,7 @@ private:
                 "Show Restart Button", 
                 "Adds the restart button to the pause menu of all levels", 
                 false, ModuleCategory::Gameplay, [](bool _){
-                    if (_) {
-                        setRestartButton(true);
-                    } else {
-                        setRestartButton(false);
-                    }
+                    setRestartButton(_);
                 })));
         modules.insert(std::pair<std::string, Module*>("start_pos_switcher", new Module(
                 "Start Pos Switcher", 
@@ -324,6 +317,12 @@ private:
 //                 "Opens the editor pause menu when pressing the back button on the keypad.", 
 //                 false, ModuleCategory::Editor, [](bool _){})));
 // #endif
+
+        // 16k fix code: https://github.com/cierra-kb/legacy-starry-sky/blob/main/src/modules/editor.cpp
+        modules.insert(std::pair<std::string, Module*>("16k_fix", new Module(
+                "16K Fix (Read Desc)", 
+                "Fixes a bug where only 16,384 objects can render in the editor by culling the objects. (module by akqanile/Adelfa) NOTE: this can be potentially incompatible with vanilla layering, and makes the editor way laggier on dense levels.", 
+                false, ModuleCategory::Editor, [](bool _){})));
 #if GAME_VERSION < GV_1_5
         modules.insert(std::pair<std::string, Module*>("copy_paste", new Module(
                 "Copy & Paste", 
@@ -353,11 +352,7 @@ private:
                 "Free Build", 
                 "Removes the constraints for placing and moving objects in the editor.", 
                 false, ModuleCategory::Editor, [](bool _){
-                    if (_) {
-                        setFreeBuild(true);
-                    } else {
-                        setFreeBuild(false);
-                    }
+                    setFreeBuild(_);
                 })));
         modules.insert(std::pair<std::string, Module*>("free_scroll", new Module(
                 "Free Scroll", 
@@ -372,11 +367,7 @@ private:
                 "Level Edit", 
                 "Allows you to locally edit any level.", 
                 false, ModuleCategory::Editor, [](bool _){
-                    if (_) {
-                        setEditButton(true);
-                    } else {
-                        setEditButton(false);
-                    }
+                    setEditButton(_);
                 })));
 #endif
         modules.insert(std::pair<std::string, Module*>("object_counter", new Module(
@@ -385,11 +376,15 @@ private:
                 false, ModuleCategory::Editor, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("object_hack", new Module(
                 "Object Limit Bypass", 
-                "Sets the object limit to 16,384. (Note: 16k Fix is not yet available. It will be added in a future update.)", 
+                "Sets the object limit to the 32-bit integer limit, or to 16,384 if 16k Fix is not enabled.", 
                 false, ModuleCategory::Editor, [](bool _){
-                    if (_)
-                        setObjectLimit(INCREASED_OBJECT_LIMIT - 1);
-                    else
+                    if (_) {
+                        HaxManager& hax = HaxManager::sharedState();
+                        if (hax.getModuleEnabled("16k_fix"))
+                            setObjectLimit(2147483646);
+                        else
+                            setObjectLimit(INCREASED_OBJECT_LIMIT - 1);
+                    } else
                         setObjectLimit(OBJECT_LIMIT);
                 })));
         modules.insert(std::pair<std::string, Module*>("rgb_color_inputs", new Module(

@@ -232,10 +232,9 @@ std::string getPlayerName() {
     return MEMBER_BY_OFFSET(std::string, gman, GameManager__m_playerName);
 }
 void setObjectLimit(int limit) {
-    if (limit > 0xFFFF) return;
     DobbyCodePatch(
         reinterpret_cast<void*>(get_address(object_limit)),
-        toBytesLE(limit).data(), 2
+        toBytesLE(limit).data(), 4
     );
 }
 void setFreeBuild(bool enable) {
@@ -322,7 +321,7 @@ void setZoomBypass(bool enable) {
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(zoom_bypass_max_2)),
-#if GAME_VERSION == GV_1_2
+#if GAME_VERSION == GV_1_2 || GAME_VERSION == GV_1_3
             std::vector<uint8_t>({0x63, 0xe7}).data(),
 #elif GAME_VERSION == GV_1_4
             std::vector<uint8_t>({0x5e, 0xe7}).data(),
@@ -361,8 +360,8 @@ void setRestartButton(bool enable) {
         );
     }
 }
-cocos2d::CCNode* getEditorGameLayer(LevelEditorLayer* editorLayer) {
-    return MEMBER_BY_OFFSET(cocos2d::CCNode*, editorLayer, LevelEditorLayer__m_gameLayer);
+cocos2d::CCLayer* getEditorGameLayer(LevelEditorLayer* editorLayer) {
+    return MEMBER_BY_OFFSET(cocos2d::CCLayer*, editorLayer, LevelEditorLayer__m_gameLayer);
 }
 LevelEditorLayer* getUIEditorLayer(EditorUI* uiLayer) {
     return MEMBER_BY_OFFSET(LevelEditorLayer*, uiLayer, EditorUI__m_editorLayer);
@@ -599,3 +598,14 @@ void setEditObjectButton(EditorUI* self, CCMenuItemSpriteExtra* btn) {
     MEMBER_BY_OFFSET(CCMenuItemSpriteExtra*, self, EditorUI__m_editObjectButton) = btn;
 }
 #endif
+
+int getGlobalOrderOfArrival() {
+    return *reinterpret_cast<int*>(get_address(global_order_of_arrival));
+}
+
+LevelSettingsObject* getEditorSettingsObject(LevelEditorLayer* lel) {
+    return MEMBER_BY_OFFSET(LevelSettingsObject*, lel, LevelEditorLayer__m_settings);
+}
+void setEditorSettingsObject(LevelEditorLayer* lel, LevelSettingsObject* settings) {
+    MEMBER_BY_OFFSET(LevelSettingsObject*, lel, LevelEditorLayer__m_settings) = settings;
+}

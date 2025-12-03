@@ -9,7 +9,7 @@ bool (*TRAM_CCString_initWithFormatAndValist)(cocos2d::CCString* self, const cha
 bool CCString_initWithFormatAndValist(cocos2d::CCString* self, const char* format, va_list ap) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("100_kb_fix")) {
-         size_t buf_size = static_cast<size_t>(vsnprintf(nullptr, 0, format, ap)) + 1;
+        size_t buf_size = static_cast<size_t>(vsnprintf(nullptr, 0, format, ap)) + 1;
         char* buf = static_cast<char*>(malloc(buf_size));
 
         vsprintf(buf, format, ap);

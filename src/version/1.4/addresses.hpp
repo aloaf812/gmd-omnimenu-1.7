@@ -56,6 +56,7 @@
 /**/ #define LevelEditorLayer__m_gridLayer     0x150 /**/ // LevelEditorLayer::removeObject
 /**/ #define LevelEditorLayer__m_objectCount   0x154 /**/ // LevelEditorLayer::getObjectCount
 /**/ #define LevelEditorLayer__m_sections      0x144 /**/ // LevelEditorLayer::getSectionCount
+/**/ #define LevelEditorLayer__m_settings      0x160 /**/ // LevelEditorLayer::getLevelSettings
 /**/ #define LevelEditorLayer__m_redoArray     0x14c /**/ // LevelEditorLayer::addToRedoList
 /**/ #define LevelInfoLayer__m_level           0x154 /**/ // LevelInfoLayer::init
 /**/ #define LevelSelectLayer__m_scrollLayer   0x14c /**/ // LevelSelectLayer::onNext (param in BoomScrollLayer::quickUpdate)
@@ -89,6 +90,7 @@
 /*/                     ADDRESSES                     /*/
 /*******************************************************/
 /**/ #define basicstring_assign             0x2E87D0 /**/ // differs between versions :/
+/**/ #define global_order_of_arrival        0x4544CC /**/ // CCNode::reorderChild
 /**/ #define __GameManager_isIconUnlocked   0x144B04 /**/ // fuck dobbyhook fuck this stupid game fuck everyone kill 7 billion people
 /**/ #define move_x_max                     0x159174 /**/ // EditorUI::moveObject - 00 60 EA 46
 /**/ #define move_y_max                     0x15917C /**/ // EditorUI::moveObject - 00 40 A1 44

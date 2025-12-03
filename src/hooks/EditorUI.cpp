@@ -36,7 +36,7 @@ void (*TRAM_EditorUI_zoomOut)(EditorUI* self);
 void EditorUI_zoomOut(EditorUI* self) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("zoom_bypass")) {
-        cocos2d::CCNode* gameLayer = getEditorGameLayer(getUIEditorLayer(self));
+        cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(self));
         if (gameLayer->getScale() > 0.1f) TRAM_EditorUI_zoomOut(self);
     } else {
         TRAM_EditorUI_zoomOut(self);
@@ -438,15 +438,12 @@ void EditorUI_createMoveMenu(EditorUI* self) {
         btn = self->getSpriteButton2("edit_upBtn3_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100001);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_downBtn3_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100002);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_leftBtn3_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100003);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rightBtn3_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100004);
         buttons->addObject(btn);
@@ -456,15 +453,12 @@ void EditorUI_createMoveMenu(EditorUI* self) {
         btn = self->getSpriteButton3("edit_upBtn_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9, 0.8);
         btn->setTag(100005);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton3("edit_downBtn_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9, 0.8);
         btn->setTag(100006);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton3("edit_leftBtn_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9, 0.8);
         btn->setTag(100007);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton3("edit_rightBtn_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9, 0.8);
         btn->setTag(100008);
         buttons->addObject(btn);
@@ -474,15 +468,12 @@ void EditorUI_createMoveMenu(EditorUI* self) {
         btn = self->getSpriteButton2("edit_upBtn5_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100009);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_downBtn5_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100010);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_leftBtn5_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100011);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rightBtn5_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100012);
         buttons->addObject(btn);
@@ -507,23 +498,18 @@ void EditorUI_createMoveMenu(EditorUI* self) {
         btn = self->getSpriteButton2("edit_rotate45rBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100014);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate45lBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100013);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate22rBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100016);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate22lBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100015);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate11rBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100018);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate11lBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100017);
         buttons->addObject(btn);
@@ -531,19 +517,15 @@ void EditorUI_createMoveMenu(EditorUI* self) {
         btn = self->getSpriteButton2("edit_rotate5rBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100020);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate5lBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100019);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate1rBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100022);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotate1lBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100021);
         buttons->addObject(btn);
-
         btn = self->getSpriteButton2("edit_rotateResetBtn_001.png", menu_selector(EditorUI::transformObjectCall2), nullptr, 0.9);
         btn->setTag(100023);
         buttons->addObject(btn);

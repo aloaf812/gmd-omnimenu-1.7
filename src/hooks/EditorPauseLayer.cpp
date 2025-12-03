@@ -14,13 +14,15 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
     if (hax.getModuleEnabled("object_counter")) {
+        bool objHack = hax.getModuleEnabled("object_hack");
         auto objectLimit = OBJECT_LIMIT + 1;
-        if (hax.getModuleEnabled("object_hack")) objectLimit = INCREASED_OBJECT_LIMIT;
+        if (objHack) objectLimit = INCREASED_OBJECT_LIMIT;
         int objectCount = getObjectCount(editLayer);
-        auto counterLabel = CCLabelBMFont::create(
-            CCString::createWithFormat("%i/%i objects", objectCount, objectLimit)->getCString(), 
-            "goldFont.fnt"
-        );
+    
+        const char* thething = CCString::createWithFormat("%i/%i objects", objectCount, objectLimit)->getCString();
+        if (objHack && hax.getModuleEnabled("16k_fix")) thething = CCString::createWithFormat("%i objects", objectCount)->getCString();
+
+        auto counterLabel = CCLabelBMFont::create(thething, "goldFont.fnt");
         counterLabel->setScale(0.5f);
         counterLabel->setAnchorPoint({0.f, 0.5f});
         counterLabel->setPosition(ccp(10, winSize.height - 15));

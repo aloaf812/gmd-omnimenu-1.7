@@ -2,7 +2,7 @@
 
 Mod Menu for older versions of Geometry Dash (pre-1.9).
 
-Currently being tested on version 1.22.
+Currently works for versions 1.22, 1.3 and 1.41.
 
 ## Special Thanks
 - [**akqanile (Adelfa)**](https://github.com/cierra-kb) - 100 KB fix, font size calculator, lots of help with issues. He is regarded as the god of tradmodding for a reason.

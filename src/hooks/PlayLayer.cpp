@@ -11,7 +11,7 @@ void PlayLayer_destroyPlayer(PlayLayer* self) {
             hax.deaths++;
         }
         hax.lastDeadFrame = hax.frameCount;
-        getPlayLayerHazards()->removeAllObjects(); // the humble noclip lag fix
+        getPlayLayerHazards(self)->removeAllObjects(); // the humble noclip lag fix
         return;
     }
     float brDiff = hax.bestRunEnd - hax.bestRunStart;

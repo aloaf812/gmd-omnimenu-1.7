@@ -14,6 +14,7 @@
 #include "CCTextInputNode.hpp"
 #include "ColorSelectPopup.hpp"
 #include "LevelBrowserLayer.hpp"
+#include "LevelSettingsObject.hpp"
 
 #define MEMBER_BY_OFFSET(type, var, offset) \
     (*reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(var) + static_cast<uintptr_t>(offset)))
@@ -91,7 +92,7 @@ int getCurrentScrollIndex(CCLayer* scrollLayer);
 std::string getPlayerName();
 void setObjectLimit(int limit);
 void setZoomBypass(bool enabled);
-cocos2d::CCNode* getEditorGameLayer(LevelEditorLayer* editorLayer);
+cocos2d::CCLayer* getEditorGameLayer(LevelEditorLayer* editorLayer);
 LevelEditorLayer* getUIEditorLayer(EditorUI* uiLayer);
 GJGameLevel* getCellLevel(CCNode* cell);
 int getCommentID(CCNode* comment);
@@ -179,3 +180,7 @@ void setOriginalScale(CCMenuItemSpriteExtra* btn, float scale);
 #if GAME_VERSION < GV_1_4
 void setEditObjectButton(EditorUI* self, CCMenuItemSpriteExtra* btn);
 #endif
+
+int getGlobalOrderOfArrival();
+LevelSettingsObject* getEditorSettingsObject(LevelEditorLayer* lel);
+void setEditorSettingsObject(LevelEditorLayer* lel, LevelSettingsObject* settings);
