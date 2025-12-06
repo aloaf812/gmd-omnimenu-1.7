@@ -15,6 +15,7 @@
 #include "ColorSelectPopup.hpp"
 #include "LevelBrowserLayer.hpp"
 #include "LevelSettingsObject.hpp"
+#include "GameLevelManager.hpp"
 
 #define MEMBER_BY_OFFSET(type, var, offset) \
     (*reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(var) + static_cast<uintptr_t>(offset)))
@@ -30,12 +31,6 @@ GJGameLevel* getPlayLayerLevel();
 UILayer* getUILayer(PlayLayer* playLayer);
 UILayer* getUILayer();
 
-GJLevelType getLevelType(GJGameLevel* level);
-void setLevelType(GJGameLevel* level, GJLevelType type);
-
-bool getLevelVerified(GJGameLevel* level);
-void setLevelVerified(GJGameLevel* level, bool isVerified);
-
 double getXVelocity(PlayerObject* player);
 void setXVelocity(PlayerObject* player, double xVel);
 void addXVelocity(PlayerObject* player, double adder);
@@ -48,24 +43,12 @@ double getYStart(PlayerObject* player);
 void setYStart(PlayerObject* player, double yStart);
 void addYStart(PlayerObject* player, double adder);
 
-int getLevelNormalPercent(GJGameLevel* level);
-int getLevelPracticePercent(GJGameLevel* level);
-void setLevelNormalPercent(GJGameLevel* level, int percent);
-void setLevelPracticePercent(GJGameLevel* level, int percent);
 float getCurrentPercentageF(PlayLayer* playLayer);
 float getCurrentPercentageF();
 int getCurrentPercentage(PlayLayer* playLayer);
 int getCurrentPercentage();
 
-int getLevelAttempts(GJGameLevel* level);
-void setLevelAttempts(GJGameLevel* level, int attempts);
 GJGameLevel* getInfoLayerLevel(LevelInfoLayer* infoLayer);
-
-int getLevelID(GJGameLevel* level);
-void setLevelID(GJGameLevel* level, int levelID);
-std::string getLevelName(GJGameLevel* level);
-std::string getLevelUsername(GJGameLevel* level);
-int getLevelUserID(GJGameLevel* level);
 
 template <typename T>
 std::vector<uint8_t> toBytesLE(T value);
@@ -95,8 +78,9 @@ void setZoomBypass(bool enabled);
 cocos2d::CCLayer* getEditorGameLayer(LevelEditorLayer* editorLayer);
 LevelEditorLayer* getUIEditorLayer(EditorUI* uiLayer);
 GJGameLevel* getCellLevel(CCNode* cell);
+#if GAME_VERSION > GV_1_0
 int getCommentID(CCNode* comment);
-std::string getLevelString(GJGameLevel* level);
+#endif
 GJGameLevel* getEditLayerLevel(CCLayer* editLayer);
 
 CCParticleSystem* getShipLiftParticles(PlayerObject* player);
@@ -107,7 +91,11 @@ CCParticleSystem* getLandingParticles2(PlayerObject* player);
 CCParticleSystem* getShipFireParticles(PlayerObject* player);
 CCParticleSystem* getBGParticles(PlayLayer* playLayer);
 CCParticleSystem* getObjectParticles(void* object);
+#if GAME_VERSION > GV_1_0
 CCArray* getLocalLevels(LocalLevelManager* lolman);
+#else
+CCArray* getLocalLevels(GameLevelManager* glman);
+#endif
 CCArray* getLocalLevels();
 
 bool getObjectUseAudioScale(void* object);
@@ -161,6 +149,7 @@ void setTextInputDelegate(CCTextInputNode* node, TextInputDelegate* delegate);
 
 cocos2d::extension::CCControlColourPicker* getColorPicker(ColorSelectPopup* popup);
 cocos2d::extension::CCControlColourPicker* getColorPicker(ColorPickerPopup* popup);
+int getCharLimit(CCTextInputNode* node);
 void setCharLimit(CCTextInputNode* node, int limit);
 
 void setEditButton(bool enable);
@@ -184,3 +173,7 @@ void setEditObjectButton(EditorUI* self, CCMenuItemSpriteExtra* btn);
 int getGlobalOrderOfArrival();
 LevelSettingsObject* getEditorSettingsObject(LevelEditorLayer* lel);
 void setEditorSettingsObject(LevelEditorLayer* lel, LevelSettingsObject* settings);
+
+#if GAME_VERSION < GV_1_2
+std::string getAllowedChars(CCTextInputNode* input);
+#endif

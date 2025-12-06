@@ -65,6 +65,7 @@ public:
     CCLabelBMFont* switcherLabel;
     float startPercent;
     bool checkpointsInNormalMode;
+    CCLayerColor* noclipTint;
 
     Module* getModule(const char* id) {
         return modules.at(std::string(id));
@@ -207,108 +208,115 @@ public:
         startPosIndex = -1;
         switcherLabel = nullptr;
         checkpointsInNormalMode = false;
+        noclipTint = nullptr;
     }
 
 private:
     HaxManager() {
-        modules.insert(std::pair<std::string, Module*>("cheat_indicator", new Module(
-                "Cheat Indicator", 
-                "Adds a dot that indicates whether any unfair hacks are currently enabled.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("hide_attempts", new Module(
-                "Hide Attempts", 
-                "Hides the attempts label while playing.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("instant_complete", new Module(
                 "Instant Complete", 
                 "Completes the level as soon as it is entered.", 
-                false, ModuleCategory::Gameplay, [](bool _){
+                false, ModuleCategory::Player, [](bool _){
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
         modules.insert(std::pair<std::string, Module*>("jump_hack", new Module(
                 "Jump Hack", 
                 "Allows the player to jump in the air indefinitely.", 
-                false, ModuleCategory::Gameplay, [](bool _){
+                false, ModuleCategory::Player, [](bool _){
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
         modules.insert(std::pair<std::string, Module*>("music_bug_fix", new Module(
                 "Music Bug Fix", 
-                "Fixes music seeking not working properly.", 
-                true, ModuleCategory::Gameplay, [](bool _){})));
+                "Makes music seeking work properly more often.", 
+                true, ModuleCategory::Player, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("noclip", new Module(
                 "NoClip", 
                 "Prevents the player from dying.", 
-                false, ModuleCategory::Gameplay, [](bool _){
+                false, ModuleCategory::Player, [](bool _){
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
-        modules.insert(std::pair<std::string, Module*>("no_glow", new Module(
-                "No Glow", 
-                "Disables object glow. (Note: Will only apply after re-entering the level)", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
-#if GAME_VERSION > GV_1_0
         modules.insert(std::pair<std::string, Module*>("no_mirror", new Module(
                 "No Mirror", 
                 "Disables mirror portals.", 
-                false, ModuleCategory::Gameplay, [](bool _){
+                false, ModuleCategory::Player, [](bool _){
                     HaxManager& hax = HaxManager::sharedState();
                     if (_) hax.setCheating(true);
                 })));
-#endif
-        // modules.insert(std::pair<std::string, Module*>("no_particles", new Module(
-        //         "No Particles", 
-        //         "Disables every particle system in the game.", 
-        //         false, ModuleCategory::Gameplay, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_pulse", new Module(
-                "No Pulse", 
-                "Disables object pulses.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_rotation", new Module(
-                "No Rotation", 
-                "Prevents the player from rotating.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_shake", new Module(
-                "No Shake", 
-                "Disables camera shake when completing a level.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_trail", new Module(
-                "No Trail", 
-                "Disables the player's trail at all times.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("pcommand", new Module(
                 "pCommand", 
-                "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (Note: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("practice_music", new Module(
-                "Practice Music Hack", 
-                "Plays the normal level music in practice mode.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
+                "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (NOTE: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 
+                false, ModuleCategory::Player, [](bool _){})));
 #if GAME_VERSION < GV_1_2
         modules.insert(std::pair<std::string, Module*>("rotation_bug_fix", new Module(
                 "Rotation Bug Fix", 
-                "Makes it so hitboxes rotate properly along with the object. (module by akqanile/Adelfa)", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
+                "Makes it so hitboxes rotate properly along with the object. (module by akqanile/Adelfa)\nNOTE: toggling this mid-attempt counts as cheating.", 
+                false, ModuleCategory::Player, [](bool _){
+                    HaxManager& hax = HaxManager::sharedState();
+                    hax.setCheating(true);
+                })));
 #endif
-        modules.insert(std::pair<std::string, Module*>("show_percentage", new Module(
-                "Show Percentage", 
-                "Displays the percentage the player is currently at.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("show_percentage_decimal", new Module(
-                "Decimal Percentage", 
-                "Puts 3 decimal places after the percentage if you have Show Percentage enabled and in the Best Run label.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("practice_music", new Module(
+                "Practice Music Hack", 
+                "Plays the normal level music in practice mode.", 
+                false, ModuleCategory::Player, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("show_restart_button", new Module(
                 "Show Restart Button", 
                 "Adds the restart button to the pause menu of all levels", 
-                false, ModuleCategory::Gameplay, [](bool _){
+                false, ModuleCategory::Player, [](bool _){
                     setRestartButton(_);
                 })));
         modules.insert(std::pair<std::string, Module*>("start_pos_switcher", new Module(
                 "Start Pos Switcher", 
                 "Adds the ability to switch between start positions on the fly.", 
-                false, ModuleCategory::Gameplay, [](bool _){})));
+                false, ModuleCategory::Player, [](bool _){})));
+
+
+
+        modules.insert(std::pair<std::string, Module*>("hide_attempts", new Module(
+                "Hide Attempts", 
+                "Hides the attempts label while playing.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("noclip_tint_on_death", new Module(
+                "NoClip Tint On Death", 
+                "Tints the screen red when the player dies with NoClip enabled.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_glow", new Module(
+                "No Glow", 
+                "Disables object glow. (Note: Will only apply after re-entering the level)", 
+                false, ModuleCategory::Visual, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_pulse", new Module(
+                "No Pulse", 
+                "Disables object pulses.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_rotation", new Module(
+                "No Rotation", 
+                "Prevents the player from rotating.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_shake", new Module(
+                "No Shake", 
+                "Disables camera shake when completing a level.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("no_trail", new Module(
+                "No Trail", 
+                "Disables the player's trail at all times.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+#if GAME_VERSION == GV_1_4
+        modules.insert(std::pair<std::string, Module*>("obj_color_fix", new Module(
+                "Obj Color Fix", 
+                "Fixes the Object color not resetting to white after death.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+#endif
+        modules.insert(std::pair<std::string, Module*>("show_percentage", new Module(
+                "Show Percentage", 
+                "Displays the percentage the player is currently at.", 
+                false, ModuleCategory::Visual, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("show_percentage_decimal", new Module(
+                "Decimal Percentage", 
+                "Puts 3 decimal places after the percentage if you have Show Percentage enabled and in the Best Run label.", 
+                false, ModuleCategory::Visual, [](bool _){})));
 
 
 // #if GAME_VERSION < GV_1_6
@@ -321,7 +329,7 @@ private:
         // 16k fix code: https://github.com/cierra-kb/legacy-starry-sky/blob/main/src/modules/editor.cpp
         modules.insert(std::pair<std::string, Module*>("16k_fix", new Module(
                 "16K Fix (Read Desc)", 
-                "Fixes a bug where only 16,384 objects can render in the editor by culling the objects. (module by akqanile/Adelfa) NOTE: this can be potentially incompatible with vanilla layering, and makes the editor way laggier on dense levels.", 
+                "Fixes a bug where only 16,384 objects can render in the editor by culling the objects. (module by akqanile/Adelfa)\nNOTE: this can be potentially incompatible with vanilla layering, and makes the editor way laggier on dense levels.", 
                 false, ModuleCategory::Editor, [](bool _){})));
 #if GAME_VERSION < GV_1_5
         modules.insert(std::pair<std::string, Module*>("copy_paste", new Module(
@@ -496,6 +504,12 @@ private:
                 "GDShare", 
                 "Adds buttons to convert a level to a .gmd file and vice-versa. May not work on older Android versions.", 
                 false, ModuleCategory::Universal, [](bool _){})));
+#if GAME_VERSION < GV_1_2
+        modules.insert(std::pair<std::string, Module*>("input_bug_fix", new Module(
+                "Input Bug Fix", 
+                "Fixes a pre-1.2 bug where typing more than 1 character doesn't work on certain keyboards.", 
+                true, ModuleCategory::Universal, [](bool _){})));
+#endif
 #ifdef PING_SPOOFING
         modules.insert(std::pair<std::string, Module*>("ping_spoofing", new Module(
                 "Pig Spoofing", 
@@ -514,6 +528,10 @@ private:
 
 
 
+        modules.insert(std::pair<std::string, Module*>("cheat_indicator", new Module(
+                "Cheat Indicator", 
+                "Adds a dot that indicates whether any unfair hacks are currently enabled.", 
+                false, ModuleCategory::Label, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("label_attempts_session", new Module(
                 "Attempt Count (Session)", 
                 "Displays the current attempt count.", 
@@ -614,7 +632,7 @@ private:
                 "Toggles the visibility of the particles that appear when the ship is flying.", 
                 true, ModuleCategory::Particles, [](bool _){})));
 
-        lastCategory = ModuleCategory::Gameplay;
+        lastCategory = ModuleCategory::Player;
 
         resetValues();
     }

@@ -14,7 +14,9 @@
 #include "hooks/CCNode.cpp"
 #include "hooks/LevelSelectLayer.cpp"
 #include "hooks/LevelCell.cpp"
+#if GAME_VERSION > GV_1_0
 #include "hooks/CommentCell.cpp"
+#endif
 #include "hooks/GJGameLevel.cpp"
 #include "hooks/GameStatsManager.cpp"
 #include "hooks/PlayerObject.cpp"

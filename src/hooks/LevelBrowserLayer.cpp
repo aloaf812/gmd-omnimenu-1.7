@@ -34,8 +34,8 @@ void LevelBrowserLayer::loadLevel(GJGameLevel* level) {
         GDSHARE_FL("Error: could not load level");
         return;
     }
-    setLevelID(level, 0);
-    setLevelType(level, GJLevelType::Editor);
+    level->m_nLevelID = 0;
+    level->m_eLevelType = GJLevelType::Editor;
     getLocalLevels()->insertObject(level, 0);
     // this delay is necessary. TODO come up with a better solution?
     runAction(CCSequence::create(

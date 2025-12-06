@@ -13,4 +13,8 @@ public:
     void removeLastCheckpoint();
     CCNode* getLastCheckpoint();
     virtual PlayerObject* getPlayer();
+
+#if GAME_VERSION > GV_1_3
+    void tintObjects(ccColor3B color, float duration);
+#endif
 };

@@ -12,6 +12,10 @@ void PlayLayer_destroyPlayer(PlayLayer* self) {
         }
         hax.lastDeadFrame = hax.frameCount;
         getPlayLayerHazards(self)->removeAllObjects(); // the humble noclip lag fix
+
+        if (hax.getModuleEnabled("noclip_tint_on_death")) {
+            hax.noclipTint->setOpacity(100);
+        }
         return;
     }
     float brDiff = hax.bestRunEnd - hax.bestRunStart;
@@ -107,6 +111,11 @@ void PlayLayer_resetLevel(PlayLayer* self) {
         audioEngine->resumeBackgroundMusic();
     }
     TRAM_PlayLayer_resetLevel(self);
+#if GAME_VERSION == GV_1_4
+    if (hax.getModuleEnabled("obj_color_fix")) {
+        self->tintObjects(ccWHITE, 0.f);
+    }
+#endif
     hax.startPercent = getCurrentPercentageF();
     if (hax.getModuleEnabled("instant_complete")) {
         instantComplete(self);
@@ -230,6 +239,9 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         getAttemptLabel(self)->setVisible(false);
     } else {
         getAttemptLabel(self)->setVisible(true);
+    }
+    if (hax.lastDeadFrame < hax.frameCount - 1) {
+        hax.noclipTint->setOpacity(0);
     }
 }
 bool (*TRAM_PlayLayer_init)(PlayLayer* self, GJGameLevel* level);

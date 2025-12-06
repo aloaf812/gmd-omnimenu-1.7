@@ -6,7 +6,7 @@ void LevelCell_loadCustomLevelCell(CCNode* self) {
     TRAM_LevelCell_loadCustomLevelCell(self);
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("level_ids_in_list")) {
-        auto idLabel = CCLabelBMFont::create(CCString::createWithFormat("#%i", getLevelID(getCellLevel(self)))->getCString(), "chatFont.fnt");
+        auto idLabel = CCLabelBMFont::create(CCString::createWithFormat("#%i", getCellLevel(self)->m_nLevelID)->getCString(), "chatFont.fnt");
         idLabel->setAnchorPoint({1, 0.5});
         idLabel->setScale(0.5f);
         idLabel->setPosition(ccp(345, 60));

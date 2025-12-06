@@ -2,18 +2,21 @@
 #include "EditLevelLayer.hpp"
 #include <algorithm>
 #include "Utils.hpp"
+#include "LevelTools.hpp"
 
 void EditLevelLayer::onViewLevelInfo() {
     GJGameLevel* level = getEditLayerLevel(this);
-    std::string s = getLevelString(level);
+    std::string s = level->m_sLevelString;
     std::string::difference_type count = std::count(s.begin(), s.end(), ';');
     int objectCount = std::max(0, static_cast<int>(count) - 1);
     CCString* flAlertInsides = CCString::createWithFormat(
-        "<cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cz>Object Count</c>: %i",
-        getLevelName(level).c_str(),
-        getLevelAttempts(level),
-        getLevelNormalPercent(level),
-        getLevelPracticePercent(level),
+        "<cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cy>Audio Track</c>: %s (ID %i)\n<cz>Object Count</c>: %i",
+        level->m_sLevelName.c_str(),
+        level->m_nAttempts,
+        level->m_nNormalPercent,
+        level->m_nPracticePercent,
+        LevelTools::getAudioTitle(level->m_nAudioTrack),
+        level->m_nAudioTrack,
         objectCount
     );
     FLAlertLayer::create(
@@ -27,7 +30,7 @@ void EditLevelLayer::onViewLevelInfo() {
 }
 void EditLevelLayer::onExport() {
     GJGameLevel* level = getEditLayerLevel(this);
-    std::string name = getLevelName(level);
+    std::string name = level->m_sLevelName;
     if (!strcmp(name.c_str(), "")) name = "Unnamed";
     name += ".gmd";
     JNIEnv* env = getEnv();
@@ -61,7 +64,7 @@ bool EditLevelLayer_init(EditLevelLayer* self, GJGameLevel* level) {
     HaxManager& hax = HaxManager::sharedState();
 #ifndef FORCE_AUTO_SAFE_MODE
     if (hax.getModuleEnabled("verify_bypass")) {
-        setLevelVerified(level, true);
+        level->m_bIsVerified = true;
     }
 #endif
     if (hax.getModuleEnabled("view_level_stats")) {

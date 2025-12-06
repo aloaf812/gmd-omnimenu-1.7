@@ -21,7 +21,7 @@ Note: the minimum Android version is currently KitKat (4.4). Android 14+ devices
 4. Find the libgame.so in lib/armeabi or lib/armeabi-v7a 
 5. Find the package name smali uses by locating the GeometryJump.smali file. The default directory is `com/robtopx/geometryjump/GeometryJump.smali`. If this directory is different for you, open `version/constants.hpp` in OMNImenu's source code and change the `JAVA_PATH_MAIN` and `JAVA_PATH_MAIN_JNI_HOOK` constants to use the correct path instead of `com/robtopx/geometryjump` and `com_robtopx_geometryjump` respectively.
 6. Run build script (TODO instructions for Windows). The libmenu.so file will be in the `build` folder, which you need to paste to the same location you got `libgame.so`/`libcocos2dcpp.so` from.
-7. Copy all of the resources from the `resources` folder to the APK's `assets` folder.
+7. Copy all of the resources from the `resources` folder to the APK's `assets` folder. If compiling for 1.0, copy the resources from `resources-1.0` as well.
 8. In the `smali` folder of the APK, open the `GeometryJump.smali` file. Find where it says something like:
 
 ```

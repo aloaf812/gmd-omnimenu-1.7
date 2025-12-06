@@ -59,10 +59,10 @@ void LevelSelectLayer::onViewLevelInfo() {
     GJGameLevel* level = GLM->getMainLevel(levelID); 
     CCString* flAlertInsides = CCString::createWithFormat(
         "<cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cb>Level ID</c>: %i",
-        getLevelName(level).c_str(),
-        getLevelAttempts(level),
-        getLevelNormalPercent(level),
-        getLevelPracticePercent(level),
+        level->m_sLevelName.c_str(),
+        level->m_nAttempts,
+        level->m_nNormalPercent,
+        level->m_nPracticePercent,
         levelID
     );
     FLAlertLayer::create(

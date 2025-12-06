@@ -59,7 +59,7 @@ void UILayer::updateLabel() {
     }
     if (hax.getModuleEnabled("label_attempts_total")) {
         labelText += "Total Attempts: ";
-        labelText += ToString(getLevelAttempts(getPlayLayerLevel()));
+        labelText += ToString(getPlayLayerLevel()->m_nAttempts);
         labelText += "\n";
     }
     if (hax.getModuleEnabled("label_best_run")) {
@@ -349,6 +349,9 @@ bool UILayer_init(UILayer* self) {
     if (hax.getShowLabel()) {
         self->createLabel();
     }
+    hax.noclipTint = CCLayerColor::create(ccc4(255, 0, 0, 0));
+    hax.noclipTint->_setZOrder(1000);
+    self->addChild(hax.noclipTint);
     // moved to PlayLayer::init
     // if (hax.getModuleEnabled("start_pos_switcher")) {
     //     self->createSwitcher();

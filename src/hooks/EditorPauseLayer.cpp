@@ -19,10 +19,14 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
         if (objHack) objectLimit = INCREASED_OBJECT_LIMIT;
         int objectCount = getObjectCount(editLayer);
     
+        CCLabelBMFont* counterLabel;
+        
         const char* thething = CCString::createWithFormat("%i/%i objects", objectCount, objectLimit)->getCString();
-        if (objHack && hax.getModuleEnabled("16k_fix")) thething = CCString::createWithFormat("%i objects", objectCount)->getCString();
+        if (objHack && hax.getModuleEnabled("16k_fix")) 
+            counterLabel = CCLabelBMFont::create(CCString::createWithFormat("%i objects", objectCount)->getCString(), "goldFont.fnt");
+        else
+            counterLabel = CCLabelBMFont::create(CCString::createWithFormat("%i/%i objects", objectCount, objectLimit)->getCString(), "goldFont.fnt");
 
-        auto counterLabel = CCLabelBMFont::create(thething, "goldFont.fnt");
         counterLabel->setScale(0.5f);
         counterLabel->setAnchorPoint({0.f, 0.5f});
         counterLabel->setPosition(ccp(10, winSize.height - 15));

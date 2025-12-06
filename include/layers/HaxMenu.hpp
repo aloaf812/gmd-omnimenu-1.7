@@ -21,7 +21,8 @@ protected:
     void addButton(const char* label, float fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector);
     // void addButtonRight(const char* label, float fontSize, float yOffset, CCObject* target, SEL_MenuHandler selector);
     void onCategory(ModuleCategory category);
-    void onGameplay();
+    void onPlayer();
+    void onVisual();
     void onEditor();
     void onBypass();
     void onInformational();

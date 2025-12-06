@@ -6,11 +6,7 @@
 #include "HaxManager.hpp"
 
 CCSprite* createInfoSprite() {
-#if GAME_VERSION < 7
-    return CCSprite::create("GJ_infoIcon.png");
-#else
-    return CCSprite::createWithSpriteFrameName("GJ_infoIcon.png");
-#endif
+    return CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
 }
 ccColor3B hsvToRgb(float h, float s, float v) {
     int i = int(h / 60) % 6;

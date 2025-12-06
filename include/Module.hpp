@@ -1,7 +1,8 @@
 #pragma once
 
 enum class ModuleCategory {
-    Gameplay = 0,
+    Player = 0,
+    Visual = 7,
     Editor = 1,
     Bypass = 2,
     Informational = 3,

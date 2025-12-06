@@ -207,11 +207,6 @@ THE SOFTWARE.
 #include "CCDrawingPrimitives.h"
 #include "CCScheduler.h"
 
-// http
-#include "extensions/HttpClient.h"
-#include "extensions/HttpRequest.h"
-#include "extensions/HttpResponse.h"
-
 // control utils
 #include "extensions/CCControlExtension/CCControlUtils.h"
 

@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(menu)
 
-set(VERSIONS 3 4 5)
+set(VERSIONS 1 2 3 4 5)
 
 add_library(menu SHARED src/main.cc src/layers/HaxMenu.cpp src/version/VersionUtils.cpp src/Utils.cpp)
 
@@ -23,10 +23,16 @@ target_link_libraries(menu dobby)
 
 add_definitions(-DGAME_VERSION=${GAME_VERSION})
 if (NOT GAME_VERSION IN_LIST VERSIONS)
-    message(FATAL_ERROR "GAME_VERSION needs to be defined. The possible values are: 3 (1.22), 4 (1.3), 5 (1.41)")
+    message(FATAL_ERROR "GAME_VERSION needs to be defined. The possible values are: 1 (1.02), 2 (1.11), 3 (1.22), 4 (1.3), 5 (1.41)")
 endif()
 
-if(GAME_VERSION EQUAL 3)
+if(GAME_VERSION EQUAL 1)
+    message("Linking with 1.0") 
+    target_link_libraries(menu ${CMAKE_CURRENT_SOURCE_DIR}/src/version/1.0/libgame.so log android)
+elseif(GAME_VERSION EQUAL 2)
+    message("Linking with 1.1") 
+    target_link_libraries(menu ${CMAKE_CURRENT_SOURCE_DIR}/src/version/1.1/libgame.so log android)
+elseif(GAME_VERSION EQUAL 3)
     message("Linking with 1.2") 
     target_link_libraries(menu ${CMAKE_CURRENT_SOURCE_DIR}/src/version/1.2/libgame.so log android)
 elseif(GAME_VERSION EQUAL 4)

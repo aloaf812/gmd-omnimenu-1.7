@@ -55,20 +55,6 @@ UILayer* getUILayer() {
     return getUILayer(getPlayLayer());
 }
 
-GJLevelType getLevelType(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(GJLevelType, level, GJGameLevel__m_levelType);
-}
-void setLevelType(GJGameLevel* level, GJLevelType type) {
-    MEMBER_BY_OFFSET(GJLevelType, level, GJGameLevel__m_levelType) = type;
-}
-
-bool getLevelVerified(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(bool, level, GJGameLevel__m_isVerified);
-}
-void setLevelVerified(GJGameLevel* level, bool isVerified) {
-    MEMBER_BY_OFFSET(bool, level, GJGameLevel__m_isVerified) = isVerified;
-}
-
 double getXVelocity(PlayerObject* player) {
     return MEMBER_BY_OFFSET(double, player, PlayerObject__m_xVelocity);
 }
@@ -99,18 +85,6 @@ void addYStart(PlayerObject* player, double adder) {
     MEMBER_BY_OFFSET(double, player, PlayerObject__m_yStart) += adder;
 }
 
-int getLevelNormalPercent(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(int, level, GJGameLevel__m_normalPercent);
-}
-int getLevelPracticePercent(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(int, level, GJGameLevel__m_practicePercent);
-}
-void setLevelNormalPercent(GJGameLevel* level, int percent) {
-    MEMBER_BY_OFFSET(int, level, GJGameLevel__m_normalPercent) = percent;
-}
-void setLevelPracticePercent(GJGameLevel* level, int percent) {
-    MEMBER_BY_OFFSET(int, level, GJGameLevel__m_practicePercent) = percent;
-}
 float getCurrentPercentageF(PlayLayer* playLayer) {
     PlayerObject* player = getPlayer(playLayer);
     float percent = (player->getPositionX() / MEMBER_BY_OFFSET(float, playLayer, PlayLayer__m_lastX)) * 100.0; // from destroyPlayer
@@ -128,31 +102,8 @@ int getCurrentPercentage() {
     return getCurrentPercentage(getPlayLayer());
 }
 
-int getLevelAttempts(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(int, level, GJGameLevel__m_attempts);
-}
-void setLevelAttempts(GJGameLevel* level, int attempts) {
-    MEMBER_BY_OFFSET(int, level, GJGameLevel__m_attempts) = attempts;
-}
-
 GJGameLevel* getInfoLayerLevel(LevelInfoLayer* infoLayer) {
     return MEMBER_BY_OFFSET(GJGameLevel*, infoLayer, LevelInfoLayer__m_level);
-}
-
-int getLevelID(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(int, level, GJGameLevel__m_levelID);
-}
-void setLevelID(GJGameLevel* level, int levelID) {
-    MEMBER_BY_OFFSET(int, level, GJGameLevel__m_levelID) = levelID;
-}
-std::string getLevelName(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(std::string, level, GJGameLevel__m_levelName);
-}
-std::string getLevelUsername(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(std::string, level, GJGameLevel__m_username);
-}
-int getLevelUserID(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(int, level, GJGameLevel__m_userID);
 }
 
 template <typename T>
@@ -321,9 +272,9 @@ void setZoomBypass(bool enable) {
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(zoom_bypass_max_2)),
-#if GAME_VERSION == GV_1_2 || GAME_VERSION == GV_1_3
+#if GAME_VERSION < GV_1_4
             std::vector<uint8_t>({0x63, 0xe7}).data(),
-#elif GAME_VERSION == GV_1_4
+#else
             std::vector<uint8_t>({0x5e, 0xe7}).data(),
 #endif
             2 // B
@@ -369,12 +320,11 @@ LevelEditorLayer* getUIEditorLayer(EditorUI* uiLayer) {
 GJGameLevel* getCellLevel(CCNode* cell) {
     return MEMBER_BY_OFFSET(GJGameLevel*, cell, LevelCell__m_level);
 }
+#if GAME_VERSION > GV_1_0
 int getCommentID(CCNode* comment) {
     return MEMBER_BY_OFFSET(int, comment, GJComment__m_commentID);
 }
-std::string getLevelString(GJGameLevel* level) {
-    return MEMBER_BY_OFFSET(std::string, level, GJGameLevel__m_levelString);
-}
+#endif
 GJGameLevel* getEditLayerLevel(CCLayer* editLayer) {
     return MEMBER_BY_OFFSET(GJGameLevel*, editLayer, EditLevelLayer__m_level);
 }
@@ -403,12 +353,21 @@ CCParticleSystem* getBGParticles(PlayLayer* playLayer) {
 CCParticleSystem* getObjectParticles(void* object) {
     return MEMBER_BY_OFFSET(CCParticleSystem*, object, GameObject__m_particles);
 }
+#if GAME_VERSION > GV_1_0
 CCArray* getLocalLevels(LocalLevelManager* lolman) {
     return MEMBER_BY_OFFSET(CCArray*, lolman, LocalLevelManager__m_localLevels);
 }
 CCArray* getLocalLevels() {
     return getLocalLevels(LocalLevelManager::sharedState());
 }
+#else
+CCArray* getLocalLevels(GameLevelManager* glman) {
+    return MEMBER_BY_OFFSET(CCArray*, glman, GameLevelManager__m_localLevels);
+}
+CCArray* getLocalLevels() {
+    return getLocalLevels(GameLevelManager::sharedState());
+}
+#endif
 bool getObjectUseAudioScale(void* object) {
     return MEMBER_BY_OFFSET(bool, object, GameObject__m_useAudioScale);
 }
@@ -556,6 +515,9 @@ cocos2d::extension::CCControlColourPicker* getColorPicker(ColorPickerPopup* popu
     return MEMBER_BY_OFFSET(cocos2d::extension::CCControlColourPicker*, popup, ColorPickerPopup__m_colorWheel);
 }
 
+int getCharLimit(CCTextInputNode* node) {
+    return MEMBER_BY_OFFSET(int, node, CCTextInputNode__m_charLimit);
+}
 void setCharLimit(CCTextInputNode* node, int limit) {
     MEMBER_BY_OFFSET(int, node, CCTextInputNode__m_charLimit) = limit;
 }
@@ -609,3 +571,9 @@ LevelSettingsObject* getEditorSettingsObject(LevelEditorLayer* lel) {
 void setEditorSettingsObject(LevelEditorLayer* lel, LevelSettingsObject* settings) {
     MEMBER_BY_OFFSET(LevelSettingsObject*, lel, LevelEditorLayer__m_settings) = settings;
 }
+
+#if GAME_VERSION < GV_1_2
+std::string getAllowedChars(CCTextInputNode* input) {
+    return MEMBER_BY_OFFSET(std::string, input, CCTextInputNode__m_allowedChars);
+}
+#endif

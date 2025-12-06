@@ -39,16 +39,6 @@
 /**/ #define GameObject__m_type                0x2bc /**/ // GameObject::getType
 /**/ #define GameObject__m_useAudioScale       0x2f0 /**/ // GameObject::getUseAudioScale
 /**/ #define GJComment__m_commentID            0x130 /**/ // GJComment::getCommentID
-/**/ #define GJGameLevel__m_attempts           0x164 /**/ // GJGameLevel::getAttempts
-/**/ #define GJGameLevel__m_isVerified         0x159 /**/ // GJGameLevel::getIsVerified
-/**/ #define GJGameLevel__m_levelID            0x128 /**/ // GJGameLevel::getLevelID
-/**/ #define GJGameLevel__m_levelName          0x12c /**/ // GJGameLevel::getLevelName
-/**/ #define GJGameLevel__m_levelString        0x134 /**/ // GJGameLevel::getLevelString
-/**/ #define GJGameLevel__m_levelType          0x1a8 /**/ // GJGameLevel::getLevelType
-/**/ #define GJGameLevel__m_normalPercent      0x168 /**/ // GJGameLevel::getNormalPercent
-/**/ #define GJGameLevel__m_practicePercent    0x16c /**/ // GJGameLevel::getPracticePercent
-/**/ #define GJGameLevel__m_userID             0x13c /**/ // GJGameLevel::getUserID
-/**/ #define GJGameLevel__m_username           0x138 /**/ // GJGameLevel::getUserName
 /**/ #define LevelCell__m_level                0x180 /**/ // LevelCell::loadFromLevel
 /**/ #define LevelEditorLayer__m_batchNode     0x140 /**/ // LevelEditorLayer::createObject (1st function call after GameObject::createObject)
 /**/ #define LevelEditorLayer__m_gameLayer     0x158 /**/ // LevelEditorLayer::getGameLayer

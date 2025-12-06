@@ -3,22 +3,25 @@
 #include "GJGameLevel.hpp"
 #include "FLAlertLayer.hpp"
 #include "CCMenuItemSpriteExtra.hpp"
+#include "LevelTools.hpp"
 #include <algorithm>
 
 void LevelInfoLayer::onViewLevelInfo() {
     GJGameLevel* level = getInfoLayerLevel(this);
-    std::string s = getLevelString(level);
+    std::string s = level->m_sLevelString;
     std::string::difference_type count = std::count(s.begin(), s.end(), ';');
     int objectCount = std::max(0, static_cast<int>(count) - 1);
     CCString* flAlertInsides = CCString::createWithFormat(
-        "<cy>%s</c> by <cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cl>Level ID</c>: %i\n<cb>User ID</c>: %i\n<cz>Object Count</c>: %i",
-        getLevelName(level).c_str(),
-        getLevelUsername(level).c_str(),
-        getLevelAttempts(level),
-        getLevelNormalPercent(level),
-        getLevelPracticePercent(level),
-        getLevelID(level),
-        getLevelUserID(level),
+        "<cy>%s</c> by <cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cy>Audio Track</c>: %s (ID %i)\n<cl>Level ID</c>: %i\n<cb>User ID</c>: %i\n<cz>Object Count</c>: %i",
+        level->m_sLevelName.c_str(),
+        level->m_sUserName.c_str(),
+        level->m_nAttempts,
+        level->m_nNormalPercent,
+        level->m_nPracticePercent,
+        LevelTools::getAudioTitle(level->m_nAudioTrack),
+        level->m_nAudioTrack,
+        level->m_nLevelID,
+        level->m_nUserID,
         objectCount
     );
     FLAlertLayer::create(
@@ -32,7 +35,7 @@ void LevelInfoLayer::onViewLevelInfo() {
 }
 void LevelInfoLayer::onExport() {
     GJGameLevel* level = getInfoLayerLevel(this);
-    std::string name = getLevelName(level);
+    std::string name = level->m_sLevelName;
     name += ".gmd";
     JNIEnv* env = getEnv();
     if (!env || env == nullptr) {

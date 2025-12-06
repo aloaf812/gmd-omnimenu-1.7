@@ -111,13 +111,14 @@ bool HaxMenu::init(CCLayer* referrer) {
     ));
     // modMenu->setPosition(ccp(winSize.width - 75, 0));
 
-    addButton(" Gameplay ", 14, 80, this, menu_selector(HaxMenu::onGameplay));
-    addButton(" Editor ", 14, 60, this, menu_selector(HaxMenu::onEditor));
-    addButton(" Bypass ", 14, 40, this, menu_selector(HaxMenu::onBypass));
-    addButton(" Informational ", 14, 20, this, menu_selector(HaxMenu::onInformational));
-    addButton(" Universal ", 14, 0, this, menu_selector(HaxMenu::onUniversal));
-    addButton(" Label ", 14, -20, this, menu_selector(HaxMenu::onLabel));
-    addButton(" Particles ", 14, -40, this, menu_selector(HaxMenu::onParticles));
+    addButton(" Player ", 14, 80, this, menu_selector(HaxMenu::onPlayer));
+    addButton(" Visual ", 14, 60, this, menu_selector(HaxMenu::onVisual));
+    addButton(" Editor ", 14, 40, this, menu_selector(HaxMenu::onEditor));
+    addButton(" Bypass ", 14, 20, this, menu_selector(HaxMenu::onBypass));
+    addButton(" Informational ", 14, 0, this, menu_selector(HaxMenu::onInformational));
+    addButton(" Universal ", 14, -20, this, menu_selector(HaxMenu::onUniversal));
+    addButton(" Label ", 14, -40, this, menu_selector(HaxMenu::onLabel));
+    addButton(" Particles ", 14, -60, this, menu_selector(HaxMenu::onParticles));
 
     setTouchEnabled(true);
     setKeypadEnabled(true);
@@ -129,8 +130,13 @@ bool HaxMenu::init(CCLayer* referrer) {
     return true;
 }
 
-void HaxMenu::setColorAtIndex(int index) {
+void HaxMenu::setColorAtIndex(int ind) {
+    int index = ind + 1;
+    if (ind == 7) index = 1;
+    else if (ind == 0) index = 0;
+
     static_cast<CCLabelTTF*>(static_cast<CCMenuItemLabel*>(this->catButtons->objectAtIndex(index))->getLabel())->setColor(color);
+
     for (int i = 0; i < this->catButtons->count(); i++) {
         if (i == index) continue;
         static_cast<CCLabelTTF*>(static_cast<CCMenuItemLabel*>(this->catButtons->objectAtIndex(i))->getLabel())->setColor(ccWHITE);
@@ -147,8 +153,11 @@ void HaxMenu::addButton(const char* text, float fontSize, float yOffset, CCObjec
     item->setAnchorPoint({0, 0.5});
     item->setPosition(ccp(-25, 10 + yOffset));
 }
-void HaxMenu::onGameplay() {
-    onCategory(ModuleCategory::Gameplay);
+void HaxMenu::onPlayer() {
+    onCategory(ModuleCategory::Player);
+}
+void HaxMenu::onVisual() {
+    onCategory(ModuleCategory::Visual);
 }
 void HaxMenu::onEditor() {
     onCategory(ModuleCategory::Editor);
@@ -204,8 +213,13 @@ void HaxMenu::onCategory(ModuleCategory category) {
         Module* mod = it->second;
         if (mod->category != category) continue;
 
+#if GAME_VERSION > GV_1_0
         auto toggleOn = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
         auto toggleOff = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
+#else
+        auto toggleOn = CCSprite::create("GJ_checkOn.png");
+        auto toggleOff = CCSprite::create("GJ_checkOff.png");
+#endif
 
         auto checkbox = CCMenuItemToggler::create(toggleOn, toggleOff, this, menu_selector(HaxMenu::toggler));
         checkbox->toggle(!mod->enabled);
@@ -240,7 +254,7 @@ void HaxMenu::onCategory(ModuleCategory category) {
         this->udidBtn = udidBtn;
     }
 }
- // if you see this dm "dfdfdcsxxs" to unsimply on discord
+ // if you see this dm "dfdfdcsxxs" to scarfolk.resident on discord
 
 void HaxMenu::onUDID() {
     std::string udid = getPlayerUDID();
@@ -288,6 +302,11 @@ void HaxMenu::modInfo(CCObject* sender) {
     )->show();
 }
 void HaxMenu::onPih(CCObject* sender) {
+    CCLog("CCObject: %x", sizeof(CCObject));
+    CCLog("CCPoint: %x", sizeof(CCPoint));
+    CCLog("CCNode: %x", sizeof(CCNode));
+    CCLog("CCLayer: %x", sizeof(CCLayer));
+
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     CCSprite* pih = CCSprite::create("pih.png");
