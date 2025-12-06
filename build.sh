@@ -7,7 +7,7 @@ if [ ! -v NDK_ROOT ]; then
 fi
 
 if [ ! -v GAME_VERSION ]; then
-    echo "GAME_VERSION is not set. Acceptable values are: 3 (1.22), 5 (1.41)"
+    echo "GAME_VERSION is not set. Acceptable values are: 1 (1.02), 2 (1.11), 3 (1.22), 4 (1.3), 5 (1.41)"
     exit
 fi
 
