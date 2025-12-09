@@ -39,7 +39,7 @@ void EditorUI_zoomOut(EditorUI* self) {
     if (hax.getModuleEnabled("zoom_bypass")) {
         cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(self));
         CCLog("%f", gameLayer->getScale());
-        if (gameLayer->getScale() > 0.1f) TRAM_EditorUI_zoomOut(self);
+        if (gameLayer->getScale() > 0.11f) TRAM_EditorUI_zoomOut(self);
     } else {
         TRAM_EditorUI_zoomOut(self);
     }
@@ -49,7 +49,7 @@ void EditorUI::zoomOutExtra() {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("zoom_bypass")) {
         cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(this));
-        if (gameLayer->getScale() > 0.1f) this->zoomOut();
+        if (gameLayer->getScale() > 0.11f) this->zoomOut();
     } else {
         this->zoomOut();
     }
@@ -294,6 +294,13 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
         fuckingArray->addObject(self->getCreateBtn("square_d_07_001.png", 4));
     #elif GAME_VERSION == GV_1_4
         fuckingArray->addObject(self->getCreateBtn("edit_eTintObjBtn_001.png", 4)); // obj trigger
+    #endif
+    #if GAME_VERSION >= GV_1_5
+        fuckingArray->addObject(self->getCreateBtn("portal_10_back_001.png", 4)); // weird ufo object thing removed in 2.0
+    #endif
+    #if GAME_VERSION == GV_1_5
+        fuckingArray->addObject(self->getCreateBtn("d_cloud_05_001.png", 4)); // small cloud
+        fuckingArray->addObject(self->getCreateBtn("d_art_01_001.png", 4)); // small diamond rod
     #endif
 #endif
 
