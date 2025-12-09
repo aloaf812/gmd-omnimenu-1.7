@@ -702,4 +702,7 @@ bool getShowProgressBar() {
     GameManager* gman = GameManager::sharedState();
     return MEMBER_BY_OFFSET(bool, gman, GameManager__m_showProgressBar);
 }
+CCMenuItemSpriteExtra* getZoomOutButton(EditorUI* uiLayer) {
+    return MEMBER_BY_OFFSET(CCMenuItemSpriteExtra*, uiLayer, EditorUI__m_zoomOutButton);
+}
 #endif

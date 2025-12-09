@@ -32,6 +32,7 @@ void EditorUI_constrainGameLayerPosition(void* self) {
     TRAM_EditorUI_constrainGameLayerPosition(self);
 }
 
+#if GAME_VERSION < GV_1_5
 void (*TRAM_EditorUI_zoomOut)(EditorUI* self);
 void EditorUI_zoomOut(EditorUI* self) {
     HaxManager& hax = HaxManager::sharedState();
@@ -43,6 +44,17 @@ void EditorUI_zoomOut(EditorUI* self) {
         TRAM_EditorUI_zoomOut(self);
     }
 }
+#else
+void EditorUI::zoomOutExtra() {
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled("zoom_bypass")) {
+        cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(this));
+        if (gameLayer->getScale() > 0.1f) this->zoomOut();
+    } else {
+        this->zoomOut();
+    }
+}
+#endif
 
 #if GAME_VERSION < GV_1_5
 const auto cyan = ccc3(0, 255, 255);
@@ -124,6 +136,9 @@ bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
     HaxManager& hax = HaxManager::sharedState();
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
+#if GAME_VERSION >= GV_1_5
+    getZoomOutButton(self)->setTarget(self, menu_selector(EditorUI::zoomOutExtra));
+#endif
     if (hax.getModuleEnabled("delete_selected")) {
         CCMenu* delMenu = CCMenu::create();
         self->addChild(delMenu);
@@ -617,9 +632,11 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI26constrainGameLayerPositionEv",
         reinterpret_cast<void*>(EditorUI_constrainGameLayerPosition),
         reinterpret_cast<void**>(&TRAM_EditorUI_constrainGameLayerPosition));
+#if GAME_VERSION < GV_1_5
     Omni::hook("_ZN8EditorUI7zoomOutEv",
         reinterpret_cast<void*>(EditorUI_zoomOut),
         reinterpret_cast<void**>(&TRAM_EditorUI_zoomOut));
+#endif
     Omni::hook("_ZN8EditorUI4initEP16LevelEditorLayer",
         reinterpret_cast<void*>(EditorUI_init),
         reinterpret_cast<void**>(&TRAM_EditorUI_init));

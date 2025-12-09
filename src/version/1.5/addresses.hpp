@@ -26,6 +26,9 @@
 /**/ #define EditorUI__m_selectedObject        0x250 /**/ // EditorUI::selectObject
 /**/ #define EditorUI__m_selectedObjects       0x180 /**/ // EditorUI::deselectAll 
 /**/ #define EditorUI__m_unkFloat              0x158 /**/ // EditorUI::setupCreateMenu (at the bottom)
+
+/**/ #define EditorUI__m_zoomOutButton         0x1a0 /**/ // EditorUI::init
+
 /**/ #define GameManager__m_playLayer          0x150 /**/ // GameManager::getPlayLayer
 /**/ #define GameManager__m_playerName         0x168 /**/ // GameManager::getPlayerName
 /**/ #define GameManager__m_playerUDID         0x164 /**/ // GameManager::getPlayerUDID

@@ -13,6 +13,7 @@ class EditorUI : public cocos2d::CCLayer
 public:
     static EditorUI* create();
     bool init();
+    void zoomOut();
 
 // #if GAME_VERSION < 7
 //     void keyBackClicked();
@@ -25,6 +26,7 @@ public:
     void updateCreateMenu();
 #else
     void updateCreateMenu(bool);
+    void zoomOutExtra();
 #endif
     CreateMenuItem* getCreateBtn(const char*, int);
 #if GAME_VERSION < GV_1_5

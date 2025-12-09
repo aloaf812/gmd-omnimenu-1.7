@@ -184,4 +184,5 @@ void setProfanityBypass(bool enable);
 void setBlockVerify(bool enable);
 std::vector<uint8_t> uintptrToBytes(uintptr_t value);
 bool getShowProgressBar();
+CCMenuItemSpriteExtra* getZoomOutButton(EditorUI* uiLayer);
 #endif
