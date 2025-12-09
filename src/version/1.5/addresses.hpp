@@ -88,7 +88,7 @@
 /**/ #define basicstring_assign             0x2A6ED0 /**/ // differs between versions :/
 /**/ #define global_order_of_arrival        0x41402C /**/ // CCNode::reorderChild
 /**/ #define __CCTextInputNode_setCharLimit 0x126366 /**/
-/**/ #define __CCTextInputNode_setProfanity 0x126366 /**/ // CCTextInputNode::setProfanityFilter
+/**/ #define __CCTextInputNode_setProfanity 0x126378 /**/ // CCTextInputNode::setProfanityFilter
 /**/ #define __GameManager_isColorUnlocked  0x1361C0 /**/ // fuck dobbyhook fuck this stupid game fuck everyone kill 7 billion people
 /**/ #define __GameManager_isIconUnlocked   0x136118 /**/ // fuck dobbyhook fuck this stupid game fuck everyone kill 7 billion people
 /**/ #define __GJGameLevel_setIsVerified    0x154974 /**/
