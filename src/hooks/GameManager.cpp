@@ -1,13 +1,6 @@
 #include "hook.hpp"
 #include "GameManager.hpp"
 
-bool (*TRAM_GameManager_isColorUnlocked)(GameManager* self, int idx, bool secondary);
-bool GameManager_isColorUnlocked(GameManager* self, int idx, bool secondary) {
-    HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("unlock_icons")) {
-        return true;
-    } else return TRAM_GameManager_isColorUnlocked(self, idx, secondary);
-}
 #if GAME_VERSION < GV_1_4
 bool (*TRAM_GameManager_isIconUnlocked)(GameManager* self, int idx);
 bool GameManager_isIconUnlocked(GameManager* self, int idx) {
@@ -15,6 +8,13 @@ bool GameManager_isIconUnlocked(GameManager* self, int idx) {
     if (hax.getModuleEnabled("unlock_icons")) {
         return true;
     } else return TRAM_GameManager_isIconUnlocked(self, idx);
+}
+bool (*TRAM_GameManager_isColorUnlocked)(GameManager* self, int idx, bool secondary);
+bool GameManager_isColorUnlocked(GameManager* self, int idx, bool secondary) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled("unlock_icons")) {
+        return true;
+    } else return TRAM_GameManager_isColorUnlocked(self, idx, secondary);
 }
 #endif
 // void (*TRAM_GameManager_reportPercentageForLevel)(GameManager* self, int level, int percentage, bool practice);
@@ -64,16 +64,14 @@ void GameManager_reportAchievementWithID(void* self, const char* ach, int percen
 //     TRAM_GameManager_createAndAddParticle(self, a1, file, a2, a3);
 // }
 void GameManager_om() {
-    Omni::hook("_ZN11GameManager15isColorUnlockedEib",
-        reinterpret_cast<void*>(GameManager_isColorUnlocked),
-        reinterpret_cast<void**>(&TRAM_GameManager_isColorUnlocked));
-    CCLog("c orig ptr = %p", *TRAM_GameManager_isColorUnlocked);
-    CCLog("c searchable ptr = %p", reinterpret_cast<uintptr_t>(*TRAM_GameManager_isColorUnlocked) - reinterpret_cast<uintptr_t>(Omni::getHandle()));
 #if GAME_VERSION < GV_1_4
     Omni::hook(
         "_ZN11GameManager14isIconUnlockedEi",
         reinterpret_cast<void*>(GameManager_isIconUnlocked),
         reinterpret_cast<void**>(&TRAM_GameManager_isIconUnlocked));
+    Omni::hook("_ZN11GameManager15isColorUnlockedEib",
+        reinterpret_cast<void*>(GameManager_isColorUnlocked),
+        reinterpret_cast<void**>(&TRAM_GameManager_isColorUnlocked));
 #endif
     Omni::hook(
 #if GAME_VERSION < GV_1_3

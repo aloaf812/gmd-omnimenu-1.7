@@ -3,7 +3,7 @@
 
 
 
-#define MENU_VERSION "0.85"
+#define MENU_VERSION "0.86"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 

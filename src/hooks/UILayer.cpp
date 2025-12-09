@@ -15,6 +15,14 @@ std::string ToString(T val)
     stream << val;
     return stream.str();
 }
+template <typename T>
+std::string ToString(T val, int precision)
+{
+    std::stringstream stream;
+    stream.precision(precision);
+    stream << val;
+    return stream.str();
+}
 
 void UILayer::createLabel() {
     HaxManager& hax = HaxManager::sharedState();
@@ -99,10 +107,17 @@ void UILayer::updateLabel() {
         labelText += ToString(hax.frameCount);
         labelText += "\n";
     }
-    if (hax.getModuleEnabled("label_noclip_deaths") && hax.getModuleEnabled("noclip")) {
-        labelText += "NoClip Deaths: ";
-        labelText += ToString(hax.deaths);
-        labelText += "\n";
+    if (hax.getModuleEnabled("noclip")) {    
+        if (hax.getModuleEnabled("label_noclip_accuracy")) {
+            labelText += "NoClip Accuracy: ";
+            labelText += ToString(hax.noclipAccuracy, 4);
+            labelText += "%\n";
+        }
+        if (hax.getModuleEnabled("label_noclip_deaths")) {
+            labelText += "NoClip Deaths: ";
+            labelText += ToString(hax.deaths);
+            labelText += "\n";
+        }
     }
     auto player = getPlayer();
     if (player) {
@@ -244,7 +259,7 @@ void UILayer::createPercentageLabel() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
     auto percentageLabel = CCLabelBMFont::create("0%", "bigFont.fnt");
-    percentageLabel->setPosition(ccp(winSize.width / 2, winSize.height - 10));
+    percentageLabel->setPosition(ccp(winSize.width / 2, winSize.height - 7.5));
     percentageLabel->setScale(0.5f);
     hax.percentageLabel = percentageLabel;
     addChild(percentageLabel, 10000);

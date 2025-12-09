@@ -11,4 +11,5 @@ public:
 
     void onViewLevelInfo();
     void onExport();
+    void onComment();
 };

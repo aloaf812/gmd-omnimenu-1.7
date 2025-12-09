@@ -79,7 +79,12 @@ bool LevelEditorLayer_init(LevelEditorLayer* self, GJGameLevel* level) {
         void** vtable = *(void***)self;
         void (LevelEditorLayer::* ptr)(float) = &LevelEditorLayer::update;
         void* offset = *(void**)&ptr;
+#if GAME_VERSION < GV_1_5
+        // this crashes on 1.5
         vtable[((uintptr_t)offset)/sizeof(void*)] = (void*)&LevelEditorLayer_update;
+#else
+        DobbyCodePatch(&vtable[((uintptr_t)offset)/sizeof(void*)], uintptrToBytes((uintptr_t)&LevelEditorLayer_update).data(), 4);
+#endif
         CCLog("update schedule");
         self->scheduleUpdate();
     }

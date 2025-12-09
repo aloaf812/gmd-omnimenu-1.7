@@ -35,8 +35,21 @@ public:
     int m_nLikes; // 0x170
     int m_nDislikes; // 0x174
     int m_nLevelLength; // 0x178
+#if GAME_VERSION > GV_1_4
+    int m_nFeatureScore; // 0x17c
+#endif
+#if GAME_VERSION > GV_1_2
+    bool m_bIsDemon; // 0x180
+    int m_nStars; // 0x184
+#endif
+#if GAME_VERSION > GV_1_4
+    int m_bDontSave; // 0x188
+#endif
     cocos2d::CCPoint m_obLastCameraPos; // 0x17c
     float m_fLastEditorZoom; // 0x19c
+#if GAME_VERSION > GV_1_4
+    int m_nLastBuildPage; // 0x1b0
+#endif
     GJLevelType m_eLevelType; // 0x1a0
     int m_nM_ID; // 0x1a4
 

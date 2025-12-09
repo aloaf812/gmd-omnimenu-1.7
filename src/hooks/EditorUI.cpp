@@ -37,6 +37,7 @@ void EditorUI_zoomOut(EditorUI* self) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("zoom_bypass")) {
         cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(self));
+        CCLog("%f", gameLayer->getScale());
         if (gameLayer->getScale() > 0.1f) TRAM_EditorUI_zoomOut(self);
     } else {
         TRAM_EditorUI_zoomOut(self);
@@ -89,41 +90,6 @@ void EditorUI::onDuplicate() {
     }
 }
 
-bool (*TRAM_EditorUI_init)(EditorUI* self, LevelEditorLayer* lel);
-bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
-    if (!TRAM_EditorUI_init(self, lel)) return false;
-    HaxManager& hax = HaxManager::sharedState();
-    auto director = CCDirector::sharedDirector();
-    auto winSize = director->getWinSize();
-    if (hax.getModuleEnabled("delete_selected")) {
-        CCMenu* delMenu = CCMenu::create();
-        self->addChild(delMenu);
-
-        delMenu->setPosition(ccp(125, winSize.height - 20));
-        CCSprite* delSelSpr = CCSprite::create("GJ_trashBtn.png");
-        CCMenuItemSpriteExtra* delSelBtn = CCMenuItemSpriteExtra::create(delSelSpr, delSelSpr, self, menu_selector(EditorUI::onDeleteSelected));
-
-        delMenu->addChild(delSelBtn);
-    }
-    if (hax.getModuleEnabled("copy_paste")) {
-
-        CCMenu* btnMenu = CCMenu::create();
-        self->addChild(btnMenu);
-
-#if GAME_VERSION == GV_1_4
-        auto y = winSize.height - 120;
-#else
-        auto y = winSize.height - 70;
-#endif
-        btnMenu->setPosition(ccp(winSize.width - 27, y));
-        CCSprite* copySpr = CCSprite::create("GJ_copyBtn.png");
-        CCMenuItemSpriteExtra* copyBtn = CCMenuItemSpriteExtra::create(copySpr, copySpr, self, menu_selector(EditorUI::onDuplicate));
-
-        btnMenu->addChild(copyBtn);
-    }
-    return true;
-}
-
 void EditorUI::onDeleteSelected() {
     GameObject* selObj = getSelectedObject(this);
     CCArray* selectedObjects = getSelectedObjects(this);
@@ -141,6 +107,62 @@ void EditorUI::onDeleteSelected() {
     }
 }
 #endif // GAME_VERSION < GV_1_5
+
+// #if GAME_VERSION < GV_1_6
+// void EditorUI_keyBackClicked(EditorUI* self) {
+//     CCLog("HELLO WE COME IN PEA");
+//     HaxManager& hax = HaxManager::sharedState();
+//     if (hax.getModuleEnabled("back_button_pause")) {
+//         self->onPause();
+//     }
+// }
+// #endif
+
+bool (*TRAM_EditorUI_init)(EditorUI* self, LevelEditorLayer* lel);
+bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
+    if (!TRAM_EditorUI_init(self, lel)) return false;
+    HaxManager& hax = HaxManager::sharedState();
+    auto director = CCDirector::sharedDirector();
+    auto winSize = director->getWinSize();
+    if (hax.getModuleEnabled("delete_selected")) {
+        CCMenu* delMenu = CCMenu::create();
+        self->addChild(delMenu);
+
+        delMenu->setPosition(ccp(125, winSize.height - 20));
+        CCSprite* delSelSpr = CCSprite::create("GJ_trashBtn.png");
+        CCMenuItemSpriteExtra* delSelBtn = CCMenuItemSpriteExtra::create(delSelSpr, delSelSpr, self, menu_selector(EditorUI::onDeleteSelected));
+
+        delMenu->addChild(delSelBtn);
+    }
+#if GAME_VERSION < GV_1_5
+    if (hax.getModuleEnabled("copy_paste")) {
+
+        CCMenu* btnMenu = CCMenu::create();
+        self->addChild(btnMenu);
+
+#if GAME_VERSION == GV_1_4
+        auto y = winSize.height - 120;
+#else
+        auto y = winSize.height - 70;
+#endif
+        btnMenu->setPosition(ccp(winSize.width - 27, y));
+        CCSprite* copySpr = CCSprite::create("GJ_copyBtn.png");
+        CCMenuItemSpriteExtra* copyBtn = CCMenuItemSpriteExtra::create(copySpr, copySpr, self, menu_selector(EditorUI::onDuplicate));
+
+        btnMenu->addChild(copyBtn);
+    }
+#endif
+
+// #if GAME_VERSION < GV_1_6
+//     self->setKeypadEnabled(true);
+//     void** vtable = *(void***)self;
+//     void (EditorUI::* ptrBack)(void) = &EditorUI::keyBackClicked;
+//     void* offsetBack = *(void**)&ptrBack;
+//     vtable[((uintptr_t)offsetBack)/sizeof(void*)] = (void*)&EditorUI_keyBackClicked;
+// #endif
+
+    return true;
+}
 
 #if GAME_VERSION < GV_1_6
     void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
@@ -160,6 +182,9 @@ void EditorUI::onDeleteSelected() {
 
             auto delSPBtn = CCMenuItemSpriteExtra::create(delSPSpr, delSPSpr, self, menu_selector(EditorUI::onDeleteStartPos));
             menu->addChild(delSPBtn);
+#if GAME_VERSION == GV_1_5
+            menu->alignItemsHorizontallyWithPadding(10);
+#endif 
         }
     }
     void EditorUI::onDeleteStartPos() {
@@ -219,6 +244,9 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
 #elif GAME_VERSION == GV_1_4
         fuckingArray->insertObject(sep1, 74);
         fuckingArray->insertObject(sep2, 86);
+#elif GAME_VERSION == GV_1_5
+        fuckingArray->insertObject(sep1, 105);
+        fuckingArray->insertObject(sep2, 117);
 #endif
 
         CCNode* unlistedSeparator = CCNode::create();
@@ -258,7 +286,11 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
         setCreateButtonBar(self, newBar);
 
         self->addChild(newBar, 11);
+#if GAME_VERSION < GV_1_5
         self->updateCreateMenu();
+#else
+        self->updateCreateMenu(false);
+#endif
     }
 }
 // credit to akqanile/adelfa
@@ -435,6 +467,7 @@ void EditorUI_createMoveMenu(EditorUI* self) {
 
 
 
+#if GAME_VERSION < GV_1_5
         btn = self->getSpriteButton2("edit_upBtn3_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100001);
         buttons->addObject(btn);
@@ -447,6 +480,20 @@ void EditorUI_createMoveMenu(EditorUI* self) {
         btn = self->getSpriteButton2("edit_rightBtn3_001.png", menu_selector(EditorUI::moveObjectCall2), nullptr, 0.9);
         btn->setTag(100004);
         buttons->addObject(btn);
+#else
+        btn = self->getSpriteButton("edit_upBtn3_001.png", menu_selector(EditorUI::moveObjectCall), nullptr, 0.9);
+        btn->setTag(11);
+        buttons->addObject(btn);
+        btn = self->getSpriteButton("edit_downBtn3_001.png", menu_selector(EditorUI::moveObjectCall), nullptr, 0.9);
+        btn->setTag(12);
+        buttons->addObject(btn);
+        btn = self->getSpriteButton("edit_leftBtn3_001.png", menu_selector(EditorUI::moveObjectCall), nullptr, 0.9);
+        btn->setTag(9);
+        buttons->addObject(btn);
+        btn = self->getSpriteButton("edit_rightBtn3_001.png", menu_selector(EditorUI::moveObjectCall), nullptr, 0.9);
+        btn->setTag(10);
+        buttons->addObject(btn);
+#endif
 
 
 
@@ -481,16 +528,32 @@ void EditorUI_createMoveMenu(EditorUI* self) {
 
 
         btn = self->getSpriteButton("edit_flipXBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
+#if GAME_VERSION < GV_1_5
         btn->setTag(9);
+#else
+        btn->setTag(13);
+#endif
         buttons->addObject(btn);
         btn = self->getSpriteButton("edit_flipYBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
+#if GAME_VERSION < GV_1_5
         btn->setTag(10);
+#else
+        btn->setTag(14);
+#endif
         buttons->addObject(btn);
         btn = self->getSpriteButton("edit_cwBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
+#if GAME_VERSION < GV_1_5
         btn->setTag(11);
+#else
+        btn->setTag(15);
+#endif
         buttons->addObject(btn);
         btn = self->getSpriteButton("edit_ccwBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
+#if GAME_VERSION < GV_1_5
         btn->setTag(12);
+#else
+        btn->setTag(16);
+#endif
         buttons->addObject(btn);
 
 
@@ -557,11 +620,9 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI7zoomOutEv",
         reinterpret_cast<void*>(EditorUI_zoomOut),
         reinterpret_cast<void**>(&TRAM_EditorUI_zoomOut));
-#if GAME_VERSION < GV_1_5
     Omni::hook("_ZN8EditorUI4initEP16LevelEditorLayer",
         reinterpret_cast<void*>(EditorUI_init),
         reinterpret_cast<void**>(&TRAM_EditorUI_init));
-#endif
 #if GAME_VERSION < GV_1_6
     Omni::hook("_ZN8EditorUI15setupDeleteMenuEv",
         reinterpret_cast<void*>(EditorUI_setupDeleteMenu),

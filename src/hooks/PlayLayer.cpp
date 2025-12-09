@@ -7,13 +7,16 @@ void (*TRAM_PlayLayer_destroyPlayer)(PlayLayer* self);
 void PlayLayer_destroyPlayer(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("noclip") || hax.getModuleEnabled("instant_complete")) {
-        if (hax.lastDeadFrame < hax.frameCount - 1) {
+        if (hax.lastDeadFrame < hax.frameCount)
+            hax.deadFrames++;
+
+        if (hax.lastDeadFrame < hax.frameCount - 1)
             hax.deaths++;
-        }
+
         hax.lastDeadFrame = hax.frameCount;
         getPlayLayerHazards(self)->removeAllObjects(); // the humble noclip lag fix
 
-        if (hax.getModuleEnabled("noclip_tint_on_death")) {
+        if (hax.getModuleEnabled("noclip_tint_on_death") && !hax.completed) {
             hax.noclipTint->setOpacity(100);
         }
         return;
@@ -70,6 +73,7 @@ void PlayLayer_levelComplete(PlayLayer* self) {
         hax.bestRunStart = hax.startPercent;
         hax.bestRunEnd = 100;
     }
+    hax.completed = true;
     TRAM_PlayLayer_levelComplete(self);
     // bandaid fix
     if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
@@ -87,6 +91,9 @@ void PlayLayer_resetLevel(PlayLayer* self) {
     hax.frameCount = 0;
     hax.deaths = 0;
     hax.clicks = 0;
+    hax.deadFrames = 0;
+    hax.noclipAccuracy = 100;
+    hax.completed = false;
     if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
         auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
         int seekTime = 0;
@@ -190,6 +197,13 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         } else {
             hax.percentageLabel->setString(CCString::createWithFormat("%i%%", getCurrentPercentage(self))->getCString());
         }
+#if GAME_VERSION >= GV_1_5
+        if (getShowProgressBar()) {
+            hax.percentageLabel->setPositionX(winSize.width / 2 + 110);
+        } else {
+            hax.percentageLabel->setPositionX(winSize.width / 2);
+        }
+#endif
     } else {
         if (hax.percentageLabel && hax.percentageLabel != nullptr && hax.percentageLabel->isVisible())
             hax.percentageLabel->setVisible(false);
@@ -243,6 +257,9 @@ void PlayLayer_update(PlayLayer* self, float dt) {
     if (hax.lastDeadFrame < hax.frameCount - 1) {
         hax.noclipTint->setOpacity(0);
     }
+    if (hax.frameCount > 0 && !hax.completed) {
+        hax.noclipAccuracy = static_cast<float>(hax.frameCount - hax.deadFrames) / static_cast<float>(hax.frameCount) * 100;
+    }
 }
 bool (*TRAM_PlayLayer_init)(PlayLayer* self, GJGameLevel* level);
 bool PlayLayer_init(PlayLayer* self, GJGameLevel* level) {
@@ -265,6 +282,24 @@ void PlayLayer_shakeCamera(PlayLayer* self, float duration) {
     if (hax.getModuleEnabled("no_shake")) return;
     TRAM_PlayLayer_shakeCamera(self, duration);
 }
+#if GAME_VERSION >= GV_1_5
+void (*TRAM_PlayLayer_toggleProgressbar)(PlayLayer* self);
+void PlayLayer_toggleProgressbar(PlayLayer* self) {
+    TRAM_PlayLayer_toggleProgressbar(self);
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.percentageLabel) {
+        auto director = CCDirector::sharedDirector();
+        auto winSize = director->getWinSize();
+        if (getShowProgressBar()) {
+            hax.percentageLabel->setAnchorPoint({0, 0.5});
+            hax.percentageLabel->setPositionX(winSize.width / 2 + 110);
+        } else {
+            hax.percentageLabel->setAnchorPoint({0.5, 0.5});
+            hax.percentageLabel->setPositionX(winSize.width / 2);
+        }
+    }
+}
+#endif
 // CCParticleSystemQuad* (*TRAM_PlayLayer_createParticle)(void* self, int a1, int a2, const char* file, int a4, tCCPositionType a5);
 // CCParticleSystemQuad* PlayLayer_createParticle(void* self, int a1, int a2, const char* file, int a4, tCCPositionType a5) {
 //     auto particle = TRAM_PlayLayer_createParticle(self, a1, a2, file, a4, a5);
@@ -319,6 +354,11 @@ void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer13levelCompleteEv",
         reinterpret_cast<void*>(PlayLayer_levelComplete),
         reinterpret_cast<void**>(&TRAM_PlayLayer_levelComplete));
+#if GAME_VERSION >= GV_1_5
+    Omni::hook("_ZN9PlayLayer17toggleProgressbarEv",
+        reinterpret_cast<void*>(PlayLayer_toggleProgressbar),
+        reinterpret_cast<void**>(&TRAM_PlayLayer_toggleProgressbar));
+#endif
     // Omni::hook("_ZN9PlayLayer14createParticleEiPKciN7cocos2d15tCCPositionTypeE",
     //     reinterpret_cast<void*>(PlayLayer_createParticle),
     //     reinterpret_cast<void**>(&TRAM_PlayLayer_createParticle));

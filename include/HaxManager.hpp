@@ -66,6 +66,13 @@ public:
     float startPercent;
     bool checkpointsInNormalMode;
     CCLayerColor* noclipTint;
+    int deadFrames;
+    float noclipAccuracy;
+    bool completed;
+
+#if GAME_VERSION > GV_1_4
+    bool blockVerify;
+#endif
 
     Module* getModule(const char* id) {
         return modules.at(std::string(id));
@@ -111,6 +118,12 @@ public:
     void setCheating(bool val) {
         hasCheated = val;
     }
+#if GAME_VERSION > GV_1_4
+    void blockVerifySet(bool val) {
+        setBlockVerify(val);
+        blockVerify = val;
+    }
+#endif
 
     void loadSettingsFromFile() {
         FILE* fp = fopen(MENU_SETTINGS_PATH MENU_SETTINGS, "rb");
@@ -142,6 +155,15 @@ public:
             cocos2d::CCLog("could not make dir: %i", errno);
         }
     }
+#if GAME_VERSION > GV_1_4
+    void update(float dt) {
+        if (isSafeMode()) {
+            if (!blockVerify) blockVerifySet(true);
+        } else if (blockVerify) {
+            blockVerifySet(false);
+        }
+    }
+#endif
     void saveSettingsToFile() {
         makeDirectory();
         FILE* fp = fopen(MENU_SETTINGS_PATH MENU_SETTINGS, "wb");
@@ -179,9 +201,9 @@ public:
         return false;
     }
 
-    // bool setAll(bool value) {
-        
-    // }
+    /* 
+    Resets nearly all variables in the HaxManager. Called upon the creation of HaxManager, and upon the destruction of UILayer. 
+    */
     void resetValues() {
         hasCheated = false;
         cheatIndicatorLabel = nullptr;
@@ -209,6 +231,9 @@ public:
         switcherLabel = nullptr;
         checkpointsInNormalMode = false;
         noclipTint = nullptr;
+        deadFrames = 0;
+        noclipAccuracy = 100;
+        completed = false;
     }
 
 private:
@@ -319,18 +344,18 @@ private:
                 false, ModuleCategory::Visual, [](bool _){})));
 
 
-// #if GAME_VERSION < GV_1_6
-//         modules.insert(std::pair<std::string, Module*>("back_button_pause", new Module(
-//                 "Back Button Pause", 
-//                 "Opens the editor pause menu when pressing the back button on the keypad.", 
-//                 false, ModuleCategory::Editor, [](bool _){})));
-// #endif
 
         // 16k fix code: https://github.com/cierra-kb/legacy-starry-sky/blob/main/src/modules/editor.cpp
         modules.insert(std::pair<std::string, Module*>("16k_fix", new Module(
                 "16K Fix (Read Desc)", 
                 "Fixes a bug where only 16,384 objects can render in the editor by culling the objects. (module by akqanile/Adelfa)\nNOTE: this can be potentially incompatible with vanilla layering, and makes the editor way laggier on dense levels.", 
                 false, ModuleCategory::Editor, [](bool _){})));
+// #if GAME_VERSION < GV_1_6
+//         modules.insert(std::pair<std::string, Module*>("back_button_pause", new Module(
+//                 "Back Button Pause", 
+//                 "Opens the editor pause menu when pressing the back button on the keypad.", 
+//                 false, ModuleCategory::Editor, [](bool _){})));
+// #endif
 #if GAME_VERSION < GV_1_5
         modules.insert(std::pair<std::string, Module*>("copy_paste", new Module(
                 "Copy & Paste", 
@@ -342,7 +367,7 @@ private:
                 "Delete Selected", 
                 "Adds a button that removes the selected objects.", 
 #else
-                "2.0 Delete Selected",
+                "Delete Selected (2.0)",
                 "Moves Delete Selected next to the Undo/Redo buttons.",
 #endif
                 false, ModuleCategory::Editor, [](bool _){})));
@@ -384,7 +409,11 @@ private:
                 false, ModuleCategory::Editor, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("object_hack", new Module(
                 "Object Limit Bypass", 
-                "Sets the object limit to the 32-bit integer limit, or to 16,384 if 16k Fix is not enabled.", 
+#if GAME_VERSION < GV_1_5
+                "Sets the object limit to the 32-bit integer limit, or to 16,384 if 16k Fix is not enabled.",
+#else
+                "Removes the object limit.",
+#endif
                 false, ModuleCategory::Editor, [](bool _){
                     if (_) {
                         HaxManager& hax = HaxManager::sharedState();
@@ -425,11 +454,19 @@ private:
         modules.insert(std::pair<std::string, Module*>("swear_filter_bypass", new Module(
                 "Swear Filter Bypass", 
                 "Allows you to use profanities in textboxes.", 
-                false, ModuleCategory::Bypass, [](bool _){})));
+                false, ModuleCategory::Bypass, [](bool _){
+#if GAME_VERSION > GV_1_4
+                    setProfanityBypass(_);
+#endif                       
+                })));
         modules.insert(std::pair<std::string, Module*>("text_length_bypass", new Module(
                 "Text Length Bypass", 
                 "Allows you to write an unlimited amount of characters in any textbox.", 
-                false, ModuleCategory::Bypass, [](bool _){})));
+                false, ModuleCategory::Bypass, [](bool _){
+#if GAME_VERSION > GV_1_4
+                   setCharLimitBypass(_);
+#endif
+                })));
         modules.insert(std::pair<std::string, Module*>("unlock_icons", new Module(
                 "Unlock Icons", 
                 "Unlocks all icons and colors in the Icon Kit.", 
@@ -564,6 +601,10 @@ private:
                 "Jumps", 
                 "Displays the current jump count.", 
                 false, ModuleCategory::Label, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("label_noclip_accuracy", new Module(
+                "NoClip Accuracy", 
+                "If NoClip is enabled, displays how accurately the level has been played thus far.", 
+                false, ModuleCategory::Label, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("label_noclip_deaths", new Module(
                 "NoClip Deaths", 
                 "If NoClip is enabled, displays the amount of times you would have died.", 
@@ -633,6 +674,9 @@ private:
                 true, ModuleCategory::Particles, [](bool _){})));
 
         lastCategory = ModuleCategory::Player;
+#if GAME_VERSION > GV_1_4
+        blockVerify = false;
+#endif
 
         resetValues();
     }

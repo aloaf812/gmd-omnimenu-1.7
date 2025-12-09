@@ -21,7 +21,11 @@ public:
     void deselectAll();
     void selectObject(GameObject*);
     void onDeleteSelected();
+#if GAME_VERSION < GV_1_5
     void updateCreateMenu();
+#else
+    void updateCreateMenu(bool);
+#endif
     CreateMenuItem* getCreateBtn(const char*, int);
 #if GAME_VERSION < GV_1_5
     GameObject* duplicateObject(GameObject* obj, void* getSaveString);

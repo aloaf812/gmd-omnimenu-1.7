@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(ANDROID_ABI armeabi)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(menu)
 
-set(VERSIONS 1 2 3 4 5)
+set(VERSIONS 1 2 3 4 5 6)
 
 add_library(menu SHARED src/main.cc src/layers/HaxMenu.cpp src/version/VersionUtils.cpp src/Utils.cpp)
 
@@ -23,7 +22,13 @@ target_link_libraries(menu dobby)
 
 add_definitions(-DGAME_VERSION=${GAME_VERSION})
 if (NOT GAME_VERSION IN_LIST VERSIONS)
-    message(FATAL_ERROR "GAME_VERSION needs to be defined. The possible values are: 1 (1.02), 2 (1.11), 3 (1.22), 4 (1.3), 5 (1.41)")
+    message(FATAL_ERROR "GAME_VERSION needs to be defined. The possible values are: 1 (1.02), 2 (1.11), 3 (1.22), 4 (1.3), 5 (1.41), 6 (1.51)")
+endif()
+
+if(GAME_VERSION LESS 6)
+    set(ANDROID_ABI armeabi)
+else()
+    set(ANDROID_ABI armeabi-v7a)
 endif()
 
 if(GAME_VERSION EQUAL 1)
@@ -41,6 +46,9 @@ elseif(GAME_VERSION EQUAL 4)
 elseif(GAME_VERSION EQUAL 5)
     message("Linking with 1.4")
     target_link_libraries(menu ${CMAKE_CURRENT_SOURCE_DIR}/src/version/1.4/libgame.so log android)
+elseif(GAME_VERSION EQUAL 6)
+    message("Linking with 1.5")
+    target_link_libraries(menu ${CMAKE_CURRENT_SOURCE_DIR}/src/version/1.5/libgame.so log android)
 endif()
 
 target_include_directories(menu PRIVATE

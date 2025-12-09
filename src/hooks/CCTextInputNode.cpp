@@ -1,12 +1,20 @@
 #include "hook.hpp"
 #include "CCTextInputNode.hpp"
 
+#if GAME_VERSION < GV_1_5
 void (*TRAM_CCTextInputNode_setCharLimit)(void* self, int charLimit);
 void CCTextInputNode_setCharLimit(void* self, int charLimit) {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("text_length_bypass")) return;
     TRAM_CCTextInputNode_setCharLimit(self, charLimit);
 }
+void (*TRAM_CCTextInputNode_setProfanityFilter)(CCTextInputNode* self, bool profanityFilter);
+void CCTextInputNode_setProfanityFilter(CCTextInputNode* self, bool profanityFilter) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled("swear_filter_bypass")) return;
+    TRAM_CCTextInputNode_setProfanityFilter(self, profanityFilter);
+}
+#endif
 void (*TRAM_CCTextInputNode_updateLabel)(CCTextInputNode* self, char* text);
 void CCTextInputNode_updateLabel(CCTextInputNode* self, char* text) {
     HaxManager& hax = HaxManager::sharedState();
@@ -14,12 +22,6 @@ void CCTextInputNode_updateLabel(CCTextInputNode* self, char* text) {
         self->setAllowedChars(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
     }
     TRAM_CCTextInputNode_updateLabel(self, text);
-}
-void (*TRAM_CCTextInputNode_setProfanityFilter)(CCTextInputNode* self, bool profanityFilter);
-void CCTextInputNode_setProfanityFilter(CCTextInputNode* self, bool profanityFilter) {
-    HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("swear_filter_bypass")) return;
-    TRAM_CCTextInputNode_setProfanityFilter(self, profanityFilter);
 }
 
 #if GAME_VERSION < GV_1_2
@@ -80,15 +82,17 @@ bool CCTextInputNode_onTextFieldInsertText(CCTextInputNode* self, CCTextFieldTTF
 #endif
 
 void CCTextInputNode_om() {
+#if GAME_VERSION < GV_1_5
     Omni::hook("_ZN15CCTextInputNode12setCharLimitEi",
         reinterpret_cast<void*>(CCTextInputNode_setCharLimit),
         reinterpret_cast<void**>(&TRAM_CCTextInputNode_setCharLimit));
-    Omni::hook("_ZN15CCTextInputNode11updateLabelEPKc",
-        reinterpret_cast<void*>(CCTextInputNode_updateLabel),
-        reinterpret_cast<void**>(&TRAM_CCTextInputNode_updateLabel));
     Omni::hook("_ZN15CCTextInputNode18setProfanityFilterEb",
         reinterpret_cast<void*>(CCTextInputNode_setProfanityFilter),
         reinterpret_cast<void**>(&TRAM_CCTextInputNode_setProfanityFilter));
+#endif
+    Omni::hook("_ZN15CCTextInputNode11updateLabelEPKc",
+        reinterpret_cast<void*>(CCTextInputNode_updateLabel),
+        reinterpret_cast<void**>(&TRAM_CCTextInputNode_updateLabel));
 #if GAME_VERSION < GV_1_2
     Omni::hook("_ZN15CCTextInputNode21onTextFieldInsertTextEPN7cocos2d14CCTextFieldTTFEPKci",
         reinterpret_cast<void*>(CCTextInputNode_onTextFieldInsertText),

@@ -31,6 +31,9 @@ void CCScheduler_update(CCScheduler* self, float dt) {
         hax.fpsCounter = 0;
     }
     TRAM_CCScheduler_update(self, dt);
+#if GAME_VERSION > GV_1_4
+    hax.update(dt);
+#endif
 }
 
 void CCScheduler_om() {

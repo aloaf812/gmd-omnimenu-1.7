@@ -31,6 +31,7 @@
 #include "hooks/CCControlColourPicker.cpp"
 #include "hooks/LevelBrowserLayer.cpp"
 #include "hooks/GJGarageLayer.cpp"
+#include "hooks/EndPortalObject.cpp"
 
 void initialize_hooks() {
     PlayLayer_om();
@@ -70,4 +71,5 @@ void initialize_hooks() {
 #if GAME_VERSION > GV_1_2
     GJGarageLayer_om();
 #endif
+    EndPortalObject_om();
 }

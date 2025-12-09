@@ -4,6 +4,7 @@
 #include "FLAlertLayer.hpp"
 #include "CCMenuItemSpriteExtra.hpp"
 #include "LevelTools.hpp"
+// #include "ShareCommentLayer.hpp"
 #include <algorithm>
 
 void LevelInfoLayer::onViewLevelInfo() {
@@ -12,7 +13,11 @@ void LevelInfoLayer::onViewLevelInfo() {
     std::string::difference_type count = std::count(s.begin(), s.end(), ';');
     int objectCount = std::max(0, static_cast<int>(count) - 1);
     CCString* flAlertInsides = CCString::createWithFormat(
+#if GAME_VERSION < GV_1_5
         "<cy>%s</c> by <cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cy>Audio Track</c>: %s (ID %i)\n<cl>Level ID</c>: %i\n<cb>User ID</c>: %i\n<cz>Object Count</c>: %i",
+#else
+        "<cy>%s</c> by <cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cy>Audio Track</c>: %s (ID %i)\n<cl>Level ID</c>: %i\n<cb>User ID</c>: %i\n<cy>Feature Score</c>: %i\n<cz>Object Count</c>: %i",
+#endif
         level->m_sLevelName.c_str(),
         level->m_sUserName.c_str(),
         level->m_nAttempts,
@@ -22,6 +27,9 @@ void LevelInfoLayer::onViewLevelInfo() {
         level->m_nAudioTrack,
         level->m_nLevelID,
         level->m_nUserID,
+#if GAME_VERSION >= GV_1_5
+        level->m_nFeatureScore,
+#endif
         objectCount
     );
     FLAlertLayer::create(
@@ -33,6 +41,9 @@ void LevelInfoLayer::onViewLevelInfo() {
         300.f
     )->show();
 }
+// void LevelInfoLayer::onComment() {
+//     ShareCommentLayer::create(getInfoLayerLevel(this))->show();
+// }
 void LevelInfoLayer::onExport() {
     GJGameLevel* level = getInfoLayerLevel(this);
     std::string name = level->m_sLevelName;
@@ -98,6 +109,12 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         self->addChild(infoMenu, 1001);
         infoMenu->addChild(infoBtn);
         infoMenu->setPosition(ccp(25.f, 25.f));
+
+        // auto commentSpr = CCSprite::createWithSpriteFrameName("GJ_achBtn_001.png");
+        // auto commentBtn = CCMenuItemSpriteExtra::create(commentSpr, commentSpr, self, menu_selector(LevelInfoLayer::onComment));
+        // commentBtn->setSizeMult(1.5f);
+        // infoMenu->addChild(commentBtn);
+        // commentBtn->setPosition(ccp(0.f, 50.f));
     }
 #if GAME_VERSION < GV_1_3
     if (hax.getModuleEnabled("show_difficulty")) {

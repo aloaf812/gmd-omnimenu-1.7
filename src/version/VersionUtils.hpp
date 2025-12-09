@@ -177,3 +177,11 @@ void setEditorSettingsObject(LevelEditorLayer* lel, LevelSettingsObject* setting
 #if GAME_VERSION < GV_1_2
 std::string getAllowedChars(CCTextInputNode* input);
 #endif
+
+#if GAME_VERSION >= GV_1_5
+void setCharLimitBypass(bool enable);
+void setProfanityBypass(bool enable);
+void setBlockVerify(bool enable);
+std::vector<uint8_t> uintptrToBytes(uintptr_t value);
+bool getShowProgressBar();
+#endif

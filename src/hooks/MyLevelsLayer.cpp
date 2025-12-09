@@ -35,6 +35,12 @@ void MyLevelsLayer::loadLevel(GJGameLevel* level) {
     }
     level->m_nLevelID = 0;
     level->m_eLevelType = GJLevelType::Editor;
+#ifdef FORCE_AUTO_SAFE_MODE
+    level->m_bIsVerified = false;
+#if GAME_VERSION > GV_1_2
+    level->m_nStars = 0;
+#endif
+#endif
     getLocalLevels()->addObject(level);
     // this delay is necessary. TODO come up with a better solution?
     runAction(CCSequence::create(
