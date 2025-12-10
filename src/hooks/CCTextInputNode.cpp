@@ -50,7 +50,7 @@ bool CCTextInputNode_onTextFieldInsertText(CCTextInputNode* self, CCTextFieldTTF
         std::string allowed = getAllowedChars(self);
 
         int limiter = strlen(text);
-        if (!hax.getModuleEnabled("") && getCharLimit(self) < limiter) limiter = getCharLimit(self);
+        if (!hax.getModuleEnabled("text_length_bypass") && getCharLimit(self) < limiter) limiter = getCharLimit(self);
 
         int newLen = 0;
 
