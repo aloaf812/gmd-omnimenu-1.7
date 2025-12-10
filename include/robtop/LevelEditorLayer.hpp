@@ -20,4 +20,7 @@ public:
     void addToSection(GameObject* object);
     void addToUndoList(UndoObject*);
     void removeObject(GameObject*);
+#if GAME_VERSION >= GV_1_6
+    void addObjectFromString(std::string);
+#endif
 };

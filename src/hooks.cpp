@@ -48,7 +48,9 @@ void initialize_hooks() {
     CCString_om();
     EditorPauseLayer_om();
     CCNode_om();
+#if GAME_VERSION < GV_1_6
     LevelSelectLayer_om();
+#endif
     LevelCell_om();
 #if GAME_VERSION > GV_1_0
     CommentCell_om();

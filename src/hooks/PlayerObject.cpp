@@ -60,6 +60,13 @@ void PlayerObject_hitGround(PlayerObject* self, bool b1) {
         if (l1 && l1 != nullptr) l1->stopSystem();
     }
 }
+#if GAME_VERSION >= GV_1_5
+void (*TRAM_PlayerObject_playBurstEffect)(PlayerObject* self);
+void PlayerObject_playBurstEffect(PlayerObject* self) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled("particle_burst")) TRAM_PlayerObject_playBurstEffect(self);
+}
+#endif
 
 void PlayerObject_om() {
     Omni::hook("_ZN12PlayerObject14activateStreakEv",
@@ -82,4 +89,9 @@ void PlayerObject_om() {
     Omni::hook("_ZN12PlayerObject9hitGroundEb",
         reinterpret_cast<void*>(PlayerObject_hitGround),
         reinterpret_cast<void**>(&TRAM_PlayerObject_hitGround));
+#if GAME_VERSION >= GV_1_5
+    Omni::hook("_ZN12PlayerObject15playBurstEffectEv",
+        reinterpret_cast<void*>(PlayerObject_playBurstEffect),
+        reinterpret_cast<void**>(&TRAM_PlayerObject_playBurstEffect));
+#endif
 }

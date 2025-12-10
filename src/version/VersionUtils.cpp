@@ -188,11 +188,11 @@ void setObjectLimit(int limit) {
         reinterpret_cast<void*>(get_address(object_limit)),
         toBytesLE(limit).data(), 4
     );
-#elif GAME_VERSION == GV_1_5
+#else
     if (limit > OBJECT_LIMIT) {
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(object_limit)),
-            std::vector<uint8_t>({0xe0}).data(), 2
+            std::vector<uint8_t>({0xe0}).data(), 1
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(object_limit_duplicate)),
@@ -201,17 +201,31 @@ void setObjectLimit(int limit) {
     } else {
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(object_limit)),
-            std::vector<uint8_t>({0xdd}).data(), 2
+#if GAME_VERSION == GV_1_5
+            std::vector<uint8_t>({0xdd}).data(), 1
+#elif GAME_VERSION == GV_1_6
+            std::vector<uint8_t>({0xdb}).data(), 1
+#endif
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(object_limit_duplicate)),
+#if GAME_VERSION == GV_1_5
             std::vector<uint8_t>({0xdd}).data(), 1
+#elif GAME_VERSION == GV_1_6
+            std::vector<uint8_t>({0xdb}).data(), 1
+#endif
         );
     }
 #endif
 }
 void setFreeBuild(bool enable) {
     if (!enable) {
+#if GAME_VERSION >= GV_1_6
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_x_min)),
+            std::vector<uint8_t>({0x00, 0x80, 0x96, 0x43}).data(), 4 // 301
+        );
+#endif
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(move_x_max)),
             std::vector<uint8_t>({0x00, 0x60, 0xEA, 0x46}).data(), 4 // 30000
@@ -242,6 +256,12 @@ void setFreeBuild(bool enable) {
             std::vector<uint8_t>({0x00, 0x00, 0xD2, 0x42}).data(), 4 // 105
         );
     } else {
+#if GAME_VERSION >= GV_1_6
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(move_x_min)),
+            std::vector<uint8_t>({0x00, 0x00, 0x80, 0x3f}).data(), 4 // 1
+        );
+#endif
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(move_x_max)),
             std::vector<uint8_t>(ARM_FLOAT_INF).data(), 4
@@ -600,13 +620,15 @@ void setIconHack(bool enable) {
             std::vector<uint8_t>({0x30, 0xb5, 0x85, 0xb0}).data(), 4
 #elif GAME_VERSION == GV_1_5
             std::vector<uint8_t>({0x13, 0xb5, 0x12, 0xb9}).data(), 4
+#elif GAME_VERSION == GV_1_6
+            std::vector<uint8_t>({0x13, 0xb5, 0x0a, 0xb9}).data(), 4
 #endif
         );
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(__GameManager_isColorUnlocked)),
 #if GAME_VERSION == GV_1_4
             std::vector<uint8_t>({0x30, 0xb5, 0x85, 0xb0}).data(), 4
-#elif GAME_VERSION == GV_1_5
+#elif GAME_VERSION >= GV_1_5
             std::vector<uint8_t>({0x13, 0xb5, 0x01, 0x24}).data(), 4
 #endif
         );
@@ -684,7 +706,11 @@ void setBlockVerify(bool enable) {
     } else {
         DobbyCodePatch(
             reinterpret_cast<void*>(get_address(__GJGameLevel_setIsVerified)),
+#if GAME_VERSION == GV_1_5
             std::vector<uint8_t>({0x80, 0xf8, 0x59, 0x11}).data(), 2
+#elif GAME_VERSION == GV_1_6
+            std::vector<uint8_t>({0x80, 0xf8, 0x5d, 0x11}).data(), 2
+#endif
         );
     }
 }
@@ -704,5 +730,20 @@ bool getShowProgressBar() {
 }
 CCMenuItemSpriteExtra* getZoomOutButton(EditorUI* uiLayer) {
     return MEMBER_BY_OFFSET(CCMenuItemSpriteExtra*, uiLayer, EditorUI__m_zoomOutButton);
+}
+#endif
+#if GAME_VERSION >= GV_1_6
+void setClubstepBypass(bool enable) {
+    if (enable) {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(clubstep_bypass)),
+            std::vector<uint8_t>({0xe0}).data(), 1
+        );
+    } else {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(clubstep_bypass)),
+            std::vector<uint8_t>({0xdd}).data(), 1
+        );
+    }
 }
 #endif

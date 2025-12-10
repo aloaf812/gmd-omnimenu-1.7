@@ -323,6 +323,19 @@ void PlayLayer_toggleProgressbar(PlayLayer* self) {
 //     if (hax.getModuleEnabled("no_particles")) particles->setVisible(false);
 //     return particles;
 // }
+#if GAME_VERSION >= GV_1_6
+void (*TRAM_PlayLayer_spawnParticle)(PlayLayer* self, const char* particleName, int a3, tCCPositionType type, CCPoint position);
+void PlayLayer_spawnParticle(PlayLayer* self, const char* particleName, int a3, tCCPositionType type, CCPoint position) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (!hax.getModuleEnabled("particle_destructible_blocks") && !strcmp(particleName, "glassDestroy01.plist"))
+        return;
+
+    if (!hax.getModuleEnabled("particle_secret_coins") && !strcmp(particleName, "coinPickupEffect.plist"))
+        return;
+
+    TRAM_PlayLayer_spawnParticle(self, particleName, a3, type, position);
+}
+#endif
 
 void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer13destroyPlayerEv", 
@@ -358,6 +371,11 @@ void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer17toggleProgressbarEv",
         reinterpret_cast<void*>(PlayLayer_toggleProgressbar),
         reinterpret_cast<void**>(&TRAM_PlayLayer_toggleProgressbar));
+#endif
+#if GAME_VERSION >= GV_1_6
+    Omni::hook("_ZN9PlayLayer13spawnParticleEPKciN7cocos2d15tCCPositionTypeENS2_7CCPointE",
+        reinterpret_cast<void*>(PlayLayer_spawnParticle),
+        reinterpret_cast<void**>(&TRAM_PlayLayer_spawnParticle));
 #endif
     // Omni::hook("_ZN9PlayLayer14createParticleEiPKciN7cocos2d15tCCPositionTypeE",
     //     reinterpret_cast<void*>(PlayLayer_createParticle),

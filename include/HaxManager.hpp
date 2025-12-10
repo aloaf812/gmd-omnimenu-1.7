@@ -403,10 +403,12 @@ private:
                     setEditButton(_);
                 })));
 #endif
+#if GAME_VERSION < GV_1_6
         modules.insert(std::pair<std::string, Module*>("object_counter", new Module(
                 "Object Counter", 
                 "Displays the object count of the level in the editor pause menu.", 
                 false, ModuleCategory::Editor, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("object_hack", new Module(
                 "Object Limit Bypass", 
 #if GAME_VERSION < GV_1_5
@@ -467,6 +469,14 @@ private:
                    setCharLimitBypass(_);
 #endif
                 })));
+#if GAME_VERSION >= GV_1_6
+        modules.insert(std::pair<std::string, Module*>("unlock_clubstep", new Module(
+                "Unlock Clubstep", 
+                "Allows you to play Clubstep without getting 20 secret coins.", 
+                false, ModuleCategory::Bypass, [](bool _){
+                    setClubstepBypass(_);
+                })));
+#endif
         modules.insert(std::pair<std::string, Module*>("unlock_icons", new Module(
                 "Unlock Icons", 
                 "Unlocks all icons and colors in the Icon Kit.", 
@@ -501,8 +511,13 @@ private:
                 false, ModuleCategory::Informational, [](bool _){})));
 #endif
         modules.insert(std::pair<std::string, Module*>("view_level_stats", new Module(
+#if GAME_VERSION < GV_1_6
                 "View Level Stats", 
-                "Adds a menu button that displays some information about the level, such as your attempt count on it.", 
+                "Adds a menu button that displays some information about the level, such as your attempt count on it.",
+#else
+                "View More Stats", 
+                "Displays more stats about the level, and adds the ability to view stats for local levels.",
+#endif
                 false, ModuleCategory::Informational, [](bool _){})));
 
 
@@ -632,10 +647,22 @@ private:
                 "Background",
                 "Toggles the visibility of the particles that appear all over the background in the ship or UFO gamemode.", 
                 true, ModuleCategory::Particles, [](bool _){})));
+#if GAME_VERSION >= GV_1_5
+        modules.insert(std::pair<std::string, Module*>("particle_burst", new Module(
+                "Burst",
+                "Toggles the visibility of the particles that appear when the UFO jumps.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("particle_death_effect", new Module(
                 "Death Effect",
                 "Toggles the visibility of the particles that appear when the player dies.", 
                 true, ModuleCategory::Particles, [](bool _){})));
+#if GAME_VERSION >= GV_1_6
+        modules.insert(std::pair<std::string, Module*>("particle_destructible_blocks", new Module(
+                "Destructible Blocks",
+                "Toggles the visibility of the particles that appear when colliding with destructible blocks.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+#endif
         // modules.insert(std::pair<std::string, Module*>("particle_end_wall", new Module(
         //         "End Wall",
         //         "Toggles the visibility of the particles that are emitted by the end wall.", 
@@ -660,6 +687,12 @@ private:
                 "Objects",
                 "Toggles the visibility of the particles that are emitted by objects, such as portals, pads and orbs.", 
                 true, ModuleCategory::Particles, [](bool _){})));
+#if GAME_VERSION >= GV_1_6
+        modules.insert(std::pair<std::string, Module*>("particle_secret_coins", new Module(
+                "Secret Coins",
+                "Toggles the visibility of the particles that appear when colliding with secret coinbs.", 
+                true, ModuleCategory::Particles, [](bool _){})));
+#endif
         modules.insert(std::pair<std::string, Module*>("particle_ship_fire", new Module(
                 "Ship Fire",
                 "Toggles the visibility of the particles that appear behind the ship.", 

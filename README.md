@@ -2,7 +2,7 @@
 
 Mod Menu for older versions of Geometry Dash (pre-1.9).
 
-Currently works for versions 1.0 - 1.51.
+Currently works for versions 1.02 - 1.6.
 
 ## Special Thanks
 - [**akqanile (Adelfa)**](https://github.com/cierra-kb) - 100 KB fix, font size calculator, lots of help with issues. He is regarded as the god of tradmodding for a reason.
@@ -12,7 +12,7 @@ Currently works for versions 1.0 - 1.51.
 - HJFod - BetterEdit code (particularly the RGB Color Inputs)
 
 ## Build Instructions
-Note: the minimum Android version is currently KitKat (4.4). Android 14+ devices won't work without solutions like Shizuku.
+Note: the minimum Android version is currently KitKat (4.4). Android 14+ devices won't work without solutions like Shizuku or Virtual Master.
 
 0. NOTE: You should remove the build folder reguarly.
 1. [Download and run APK Editor Studio](<https://qwertycube.com/apk-editor-studio/download/>)

@@ -7,6 +7,7 @@
 // #include "ShareCommentLayer.hpp"
 #include <algorithm>
 
+#if GAME_VERSION < GV_1_6
 void LevelInfoLayer::onViewLevelInfo() {
     GJGameLevel* level = getInfoLayerLevel(this);
     std::string s = level->m_sLevelString;
@@ -41,6 +42,38 @@ void LevelInfoLayer::onViewLevelInfo() {
         300.f
     )->show();
 }
+#else
+void (*TRAM_LevelInfoLayer_onLevelInfo)(LevelInfoLayer* self);
+void LevelInfoLayer_onLevelInfo(LevelInfoLayer* self) {
+    GJGameLevel* level = getInfoLayerLevel(self);
+    std::string s = level->m_sLevelString;
+    std::string::difference_type count = std::count(s.begin(), s.end(), ';');
+    int objectCount = std::max(0, static_cast<int>(count) - 1);
+    CCString* flAlertInsides = CCString::createWithFormat(
+        "<cy>%s</c> by <cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cl>Total Jumps</c>: %i\n<cp>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cy>Audio Track</c>: %s (ID %i)\n<cr>Level ID</c>: %i\n<cb>User ID</c>: %i\n<cy>Feature Score</c>: %i\n<cz>Object Count</c>: %i",
+        level->m_sLevelName.c_str(),
+        level->m_sUserName.c_str(),
+        level->m_nAttempts,
+        level->m_nJumps,
+        level->m_nNormalPercent,
+        level->m_nPracticePercent,
+        LevelTools::getAudioTitle(level->m_nAudioTrack),
+        level->m_nAudioTrack,
+        level->m_nLevelID,
+        level->m_nUserID,
+        level->m_nFeatureScore,
+        objectCount
+    );
+    FLAlertLayer::create(
+        nullptr,
+        "Level Info",
+        flAlertInsides->getCString(),
+        "OK",
+        nullptr,
+        300.f
+    )->show();
+}
+#endif
 // void LevelInfoLayer::onComment() {
 //     ShareCommentLayer::create(getInfoLayerLevel(this))->show();
 // }
@@ -99,6 +132,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
             exportBtn->setPosition(ccp(0.f, -25.f));
         }
     }
+#if GAME_VERSION < GV_1_6
     if (hax.getModuleEnabled("view_level_stats")) {
         CCMenu* infoMenu = CCMenu::create();
         CCSprite* infoSpr = createInfoSprite();
@@ -116,6 +150,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         // infoMenu->addChild(commentBtn);
         // commentBtn->setPosition(ccp(0.f, 50.f));
     }
+#endif
 #if GAME_VERSION < GV_1_3
     if (hax.getModuleEnabled("show_difficulty")) {
         CCSprite* diffSpr = CCSprite::createWithSpriteFrameName(
@@ -135,4 +170,9 @@ void LevelInfoLayer_om() {
     Omni::hook("_ZN14LevelInfoLayer4initEP11GJGameLevel",
         reinterpret_cast<void*>(LevelInfoLayer_init),
         reinterpret_cast<void**>(&TRAM_LevelInfoLayer_init));
+#if GAME_VERSION >= GV_1_6
+    Omni::hook("_ZN14LevelInfoLayer11onLevelInfoEv",
+        reinterpret_cast<void*>(LevelInfoLayer_onLevelInfo),
+        reinterpret_cast<void**>(&TRAM_LevelInfoLayer_onLevelInfo));
+#endif
 }

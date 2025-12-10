@@ -17,41 +17,61 @@ public:
     std::string m_sLevelDesc; // 0x130
     std::string m_sLevelString; // 0x134
     std::string m_sUserName; // 0x138
-    int m_nUserID; // 0x13c
-    int m_nDifficulty; // 0x140
-    int m_nAudioTrack; // 0x144
-    int m_nRatings; // 0x148
-    int m_nRatingsSum; // 0x14c
-    int m_nDownloads; // 0x150
-    int m_nCompletes; // 0x154
-    bool m_bIsEditable; // 0x158
-    bool m_bIsVerified; // 0x159
-    bool m_bIsUploaded; // 0x15a
-    int m_nLevelVersion; // 0x15c
-    int m_nGameVersion; // 0x160
-    int m_nAttempts; // 0x164
-    int m_nNormalPercent; // 0x168
-    int m_nPracticePercent; // 0x16c
-    int m_nLikes; // 0x170
-    int m_nDislikes; // 0x174
-    int m_nLevelLength; // 0x178
+#if GAME_VERSION >= GV_1_6
+    std::string m_sRecordString; // 0x13c
+#endif
+    int m_nUserID; // 0x140
+    int m_nDifficulty; // 0x144
+    int m_nAudioTrack; // 0x148
+    int m_nRatings; // 0x14c
+    int m_nRatingsSum; // 0x150
+    int m_nDownloads; // 0x154
+    int m_nCompletes; // 0x158
+    bool m_bIsEditable; // 0x15c
+    bool m_bIsVerified; // 0x15d
+    bool m_bIsUploaded; // 0x15e
+    int m_nLevelVersion; // 0x160
+    int m_nGameVersion; // 0x164
+    int m_nAttempts; // 0x168
+#if GAME_VERSION >= GV_1_6
+    int m_nJumps; // 0x16c
+#endif
+    int m_nNormalPercent; // 0x170
+    int m_nPracticePercent; // 0x174
+    int m_nLikes; // 0x178
+    int m_nDislikes; // 0x17c
+    int m_nLevelLength; // 0x180
 #if GAME_VERSION > GV_1_4
-    int m_nFeatureScore; // 0x17c
+    int m_nFeatureScore; // 0x184
 #endif
 #if GAME_VERSION > GV_1_2
     bool m_bIsDemon; // 0x180
     int m_nStars; // 0x184
 #endif
-#if GAME_VERSION > GV_1_4
-    int m_bDontSave; // 0x188
+#if GAME_VERSION >= GV_1_6
+    int m_bAutoLevel; // 0x190
+    int m_nCoins; // 0x194
+    int m_nStarRatings; // 0x198
+    int m_nStarRatingsSum; // 0x19c
+    int m_nMaxStarRatings; // 0x1a0
+    int m_nMinStarRatings; // 0x1a4
+    int m_nDemonVotes; // 0x1a8
 #endif
-    cocos2d::CCPoint m_obLastCameraPos; // 0x17c
-    float m_fLastEditorZoom; // 0x19c
-#if GAME_VERSION > GV_1_4
-    int m_nLastBuildPage; // 0x1b0
+#if GAME_VERSION >= GV_1_5
+    bool m_bDontSave; // 0x188, 0x1ac
 #endif
-    GJLevelType m_eLevelType; // 0x1a0
-    int m_nM_ID; // 0x1a4
+#if GAME_VERSION >= GV_1_6
+    bool m_bIsHidden; // 0x1ad
+    int m_nRequiredCoins; // 0x1b0
+    bool m_bIsUnlocked; // 0x1b4
+#endif
+    cocos2d::CCPoint m_obLastCameraPos; // 0x1b8
+    float m_fLastEditorZoom; // 0x1d8
+#if GAME_VERSION > GV_1_4
+    int m_nLastBuildPage; // 0x1dc
+#endif
+    GJLevelType m_eLevelType; // 0x1e0
+    int m_nM_ID; // 0x1e4
 
     static GJGameLevel* create();
     static GJGameLevel* create(cocos2d::CCDictionary dict);

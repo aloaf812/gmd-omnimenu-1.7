@@ -13,6 +13,7 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
     HaxManager& hax = HaxManager::sharedState();
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
+#if GAME_VERSION < GV_1_6
     if (hax.getModuleEnabled("object_counter")) {
         bool objHack = hax.getModuleEnabled("object_hack");
         auto objectLimit = OBJECT_LIMIT + 1;
@@ -22,7 +23,11 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
         CCLabelBMFont* counterLabel;
         
         const char* thething = CCString::createWithFormat("%i/%i objects", objectCount, objectLimit)->getCString();
+#if GAME_VERSION == GV_1_5
+        if (objHack) 
+#else
         if (objHack && hax.getModuleEnabled("16k_fix")) 
+#endif
             counterLabel = CCLabelBMFont::create(CCString::createWithFormat("%i objects", objectCount)->getCString(), "goldFont.fnt");
         else
             counterLabel = CCLabelBMFont::create(CCString::createWithFormat("%i/%i objects", objectCount, objectLimit)->getCString(), "goldFont.fnt");
@@ -32,6 +37,16 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
         counterLabel->setPosition(ccp(10, winSize.height - 15));
         self->addChild(counterLabel, 1000);
     }
+#else
+    CCObject* obj = self->getChildren()->objectAtIndex(0);
+    auto label = dynamic_cast<CCLabelBMFont*>(obj);
+    if (label && label != nullptr) {
+        if (hax.getModuleEnabled("object_hack")) {
+            int objectCount = getObjectCount(editLayer);
+            label->setString(CCString::createWithFormat("%i objects", objectCount)->getCString(), "goldFont.fnt");
+        }
+    }
+#endif
     CCMenu* btnMenu = CCMenu::create();
     self->addChild(btnMenu, 999);
     btnMenu->setPosition(ccp(0, winSize.height));

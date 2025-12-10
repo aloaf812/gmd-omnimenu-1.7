@@ -38,7 +38,11 @@ void LevelBrowserLayer::loadLevel(GJGameLevel* level) {
     level->m_eLevelType = GJLevelType::Editor;
 #ifdef FORCE_AUTO_SAFE_MODE
     level->m_bIsVerified = false;
+    level->m_bIsDemon = false;
     level->m_nStars = 0;
+#if GAME_VERSION >= GV_1_6
+    level->m_bAutoLevel = false;
+#endif
 #endif
     getLocalLevels()->insertObject(level, 0);
     // this delay is necessary. TODO come up with a better solution?

@@ -10,9 +10,16 @@ void EditLevelLayer::onViewLevelInfo() {
     std::string::difference_type count = std::count(s.begin(), s.end(), ';');
     int objectCount = std::max(0, static_cast<int>(count) - 1);
     CCString* flAlertInsides = CCString::createWithFormat(
+#if GAME_VERSION < GV_1_6
         "<cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cr>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cy>Audio Track</c>: %s (ID %i)\n<cz>Object Count</c>: %i",
+#else
+        "<cy>%s</c>\n<cg>Total Attempts</c>: %i\n<cl>Total Jumps</c>: %i\n<cp>Normal</c>: %i%%\n<co>Practice</c>: %i%%\n<cy>Audio Track</c>: %s (ID %i)\n<cz>Object Count</c>: %i",
+#endif
         level->m_sLevelName.c_str(),
         level->m_nAttempts,
+#if GAME_VERSION >= GV_1_6
+        level->m_nJumps,
+#endif
         level->m_nNormalPercent,
         level->m_nPracticePercent,
         LevelTools::getAudioTitle(level->m_nAudioTrack),

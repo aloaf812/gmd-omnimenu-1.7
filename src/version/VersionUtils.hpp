@@ -186,3 +186,7 @@ std::vector<uint8_t> uintptrToBytes(uintptr_t value);
 bool getShowProgressBar();
 CCMenuItemSpriteExtra* getZoomOutButton(EditorUI* uiLayer);
 #endif
+
+#if GAME_VERSION >= GV_1_6
+void setClubstepBypass(bool enable);
+#endif

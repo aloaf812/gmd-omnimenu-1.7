@@ -13,12 +13,17 @@ bool GJGarageLayer_init(CCLayer* self) {
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();
         auto sprite = CCSprite::createWithSpriteFrameName("GJ_demonIcon_001.png");
-        sprite->setPosition(ccp(winSize.width - 40, winSize.height - 65));
         sprite->setScale(0.8f);
         auto label = CCLabelBMFont::create(CCString::createWithFormat("%i", GameStatsManager::sharedState()->getStat("5"))->getCString(), "bigFont.fnt");
         label->setScale(0.5f);
         label->setAnchorPoint({1, 0.5});
+#if GAME_VERSION < GV_1_6
+        sprite->setPosition(ccp(winSize.width - 40, winSize.height - 65));
         label->setPosition(ccp(winSize.width - 58, winSize.height - 65));
+#else
+        sprite->setPosition(ccp(winSize.width - 40, winSize.height - 92));
+        label->setPosition(ccp(winSize.width - 58, winSize.height - 92));
+#endif
         self->addChild(sprite);
         self->addChild(label);
     }

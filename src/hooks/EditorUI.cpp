@@ -262,6 +262,9 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
 #elif GAME_VERSION == GV_1_5
         fuckingArray->insertObject(sep1, 105);
         fuckingArray->insertObject(sep2, 117);
+#elif GAME_VERSION == GV_1_6
+        fuckingArray->insertObject(sep1, 163);
+        fuckingArray->insertObject(sep2, 175);
 #endif
 
         CCNode* unlistedSeparator = CCNode::create();
@@ -302,9 +305,18 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
         fuckingArray->addObject(self->getCreateBtn("d_cloud_05_001.png", 4)); // small cloud
         fuckingArray->addObject(self->getCreateBtn("d_art_01_001.png", 4)); // small diamond rod
     #endif
+#ifndef FORCE_AUTO_SAFE_MODE
+    #if GAME_VERSION >= GV_1_6
+        fuckingArray->addObject(self->getCreateBtn("secretCoin_01_001.png", 4)); // secret coin
+    #endif
+#endif
 #endif
 
+#if GAME_VERSION < GV_1_6
         EditButtonBar* newBar = EditButtonBar::create(fuckingArray, ccp(winSize.width * 0.5 - 5, getScreenBottom() + getUnkFloat(self) - 6.f));
+#else
+        EditButtonBar* newBar = EditButtonBar::create(fuckingArray, ccp(winSize.width * 0.5 - 5, getScreenBottom() + getUnkFloat(self) - 6.f), true);
+#endif
         setCreateButtonBar(self, newBar);
 
         self->addChild(newBar, 11);
@@ -552,29 +564,37 @@ void EditorUI_createMoveMenu(EditorUI* self) {
         btn = self->getSpriteButton("edit_flipXBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
 #if GAME_VERSION < GV_1_5
         btn->setTag(9);
-#else
+#elif GAME_VERSION == GV_1_5
         btn->setTag(13);
+#else
+        btn->setTag(17);
 #endif
         buttons->addObject(btn);
         btn = self->getSpriteButton("edit_flipYBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
 #if GAME_VERSION < GV_1_5
         btn->setTag(10);
-#else
+#elif GAME_VERSION == GV_1_5
         btn->setTag(14);
+#else
+        btn->setTag(18);
 #endif
         buttons->addObject(btn);
         btn = self->getSpriteButton("edit_cwBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
 #if GAME_VERSION < GV_1_5
         btn->setTag(11);
-#else
+#elif GAME_VERSION == GV_1_5
         btn->setTag(15);
+#else
+        btn->setTag(19);
 #endif
         buttons->addObject(btn);
         btn = self->getSpriteButton("edit_ccwBtn_001.png", menu_selector(EditorUI::transformObjectCall), nullptr, 0.9);
 #if GAME_VERSION < GV_1_5
         btn->setTag(12);
-#else
+#elif GAME_VERSION == GV_1_5
         btn->setTag(16);
+#else
+        btn->setTag(20);
 #endif
         buttons->addObject(btn);
 
@@ -624,7 +644,11 @@ void EditorUI_createMoveMenu(EditorUI* self) {
 
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();
+#if GAME_VERSION < GV_1_6
         EditButtonBar* newBar = EditButtonBar::create(buttons, ccp(winSize.width * 0.5 - 5, getScreenBottom() + getUnkFloat(self) - 6.f));
+#else
+        EditButtonBar* newBar = EditButtonBar::create(buttons, ccp(winSize.width * 0.5 - 5, getScreenBottom() + getUnkFloat(self) - 6.f), false);
+#endif
         setEditButtonBar(self, newBar);
         self->addChild(newBar, 11);
     } else {

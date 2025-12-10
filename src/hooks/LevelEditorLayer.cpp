@@ -115,6 +115,7 @@ void LevelEditorLayer_createObjectsFromSetup(LevelEditorLayer* self, std::string
     ));
     getEditorSettingsObject(self)->retain();
 
+#if GAME_VERSION < GV_1_6
     while (std::getline(ss, split_buffer, ';'))
     {
         std::string objstr = CCString::createWithFormat("%s", split_buffer.c_str())->m_sString;
@@ -130,6 +131,13 @@ void LevelEditorLayer_createObjectsFromSetup(LevelEditorLayer* self, std::string
         if (getObjectType(obj) == 7 && getShouldSpawn(obj))
             getGridLayer(self)->addToEffects(obj);
     }
+#else
+    while (std::getline(ss, split_buffer, ';'))
+    {
+        std::string objstr = CCString::createWithFormat("%s", split_buffer.c_str())->m_sString;
+        self->addObjectFromString(objstr);
+    }
+#endif
 }
 
 void LevelEditorLayer_om() {
