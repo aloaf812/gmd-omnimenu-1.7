@@ -9,6 +9,30 @@
 #include "ButtonSprite.hpp"
 #include "EditButtonBar.hpp"
 
+void updateObjectInfoLabel(EditorUI* self) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (!hax.getModuleEnabled("show_object_info")) return;
+    if (!hax.editorObjectInfo) {
+        CCLog("no EOI");
+        return;
+    }
+    CCLog("update object info label");
+    if (getSelectedObjects(self) && getSelectedObjects(self)->count() > 0) {
+        hax.editorObjectInfo->setString(CCString::createWithFormat(
+            "Objects: %i", getSelectedObjects(self)->count()
+        )->getCString());
+    } else if (getSelectedObject(self)) {
+        auto obj = getSelectedObject(self);
+        hax.editorObjectInfo->setString(CCString::createWithFormat(
+            "Position: (%i, %i)\nRotation: %i\nID: %i\nSection: %i\nType: %i",
+            (int)obj->getPositionX(), (int)obj->getPositionY(), (int)obj->getRotation(),
+            getObjectKey(obj), getSectionIdx(obj), getObjectType(obj)
+        )->getCString());
+    } else {
+        hax.editorObjectInfo->setString("");
+    }
+}
+
 void (*TRAM_EditorUI_showMaxError)(void* self);
 void EditorUI_showMaxError(void* self) {
     HaxManager& hax = HaxManager::sharedState();
@@ -49,7 +73,7 @@ void EditorUI::zoomOutExtra() {
     HaxManager& hax = HaxManager::sharedState();
     if (hax.getModuleEnabled("zoom_bypass")) {
         cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(this));
-        if (gameLayer->getScale() > 0.11f) this->zoomOut();
+        if (gameLayer->getScale() > 0.11f) this->zoomOut(); // value to check against has to be bigger than 0.1 because otherwise it still lets you zoom to 0 anyways
     } else {
         this->zoomOut();
     }
@@ -109,6 +133,7 @@ void EditorUI::onDeleteSelected() {
     if (selObj == nullptr && selectedObjects->count() < 0) return;
 
     if (selObj != nullptr) {
+        this->deselectObject();
         editLayer->removeObject(selObj);
     } else {
         for (int i = 0; i < selectedObjects->count(); i++) {
@@ -117,6 +142,7 @@ void EditorUI::onDeleteSelected() {
         }
         this->deselectAll();
     }
+    updateObjectInfoLabel(this);
 }
 #endif // GAME_VERSION < GV_1_5
 
@@ -168,6 +194,15 @@ bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
     }
 #endif
 
+    if (hax.getModuleEnabled("show_object_info")) {
+        CCLabelBMFont* objInfo = CCLabelBMFont::create("", "chatFont.fnt");
+        objInfo->setAnchorPoint({0, 1});
+        objInfo->setPosition(ccp(15, winSize.height - 45));
+        objInfo->setScale(0.6);
+        self->addChild(objInfo);
+        hax.editorObjectInfo = objInfo;
+    }
+
 // #if GAME_VERSION < GV_1_6
 //     self->setKeypadEnabled(true);
 //     void** vtable = *(void***)self;
@@ -180,43 +215,73 @@ bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
 }
 
 #if GAME_VERSION < GV_1_6
-    void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
-    void EditorUI_setupDeleteMenu(EditorUI* self) {
-        TRAM_EditorUI_setupDeleteMenu(self);
-        HaxManager& hax = HaxManager::sharedState();
-        if (hax.getModuleEnabled("delete_start_pos")) {
-            CCMenu* menu = getEditorUIButtonMenu(self);
+void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
+void EditorUI_setupDeleteMenu(EditorUI* self) {
+    TRAM_EditorUI_setupDeleteMenu(self);
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled("delete_start_pos")) {
+        CCMenu* menu = getEditorUIButtonMenu(self);
 
-            if (!menu || menu == nullptr) { // useless failsafe but i don't like removing those
-                TRAM_EditorUI_setupDeleteMenu(self);
-                menu = getEditorUIButtonMenu(self);
-            }
+        if (!menu || menu == nullptr) { // useless failsafe but i don't like removing those
+            TRAM_EditorUI_setupDeleteMenu(self);
+            menu = getEditorUIButtonMenu(self);
+        }
 
-            auto delSPSpr = ButtonSprite::create("Delete Start Pos", 85, 0, 0.6, false, "bigFont.fnt", "GJ_button_04.png");
-            // delSelSpr->setScale(0.8f);
+        auto delSPSpr = ButtonSprite::create("Delete Start Pos", 85, 0, 0.6, false, "bigFont.fnt", "GJ_button_04.png");
+        // delSelSpr->setScale(0.8f);
 
-            auto delSPBtn = CCMenuItemSpriteExtra::create(delSPSpr, delSPSpr, self, menu_selector(EditorUI::onDeleteStartPos));
-            menu->addChild(delSPBtn);
+        auto delSPBtn = CCMenuItemSpriteExtra::create(delSPSpr, delSPSpr, self, menu_selector(EditorUI::onDeleteStartPos));
+        menu->addChild(delSPBtn);
 #if GAME_VERSION == GV_1_5
-            menu->alignItemsHorizontallyWithPadding(10);
+        menu->alignItemsHorizontallyWithPadding(10);
 #endif 
-        }
     }
-    void EditorUI::onDeleteStartPos() {
-        LevelEditorLayer* editLayer = getUIEditorLayer(this);
-        CCArray* sections = getEditorSections(editLayer);
-        for (int i = 0; i < sections->count(); i++) {
-            auto section = static_cast<CCArray*>(sections->objectAtIndex(i));
-            for (int j = 0; j < section->count(); j++) {
-                auto currObj = static_cast<GameObject*>(section->objectAtIndex(j));
-                CCLog("sidx: %i, idx: %i, id: %i", i, j, getObjectKey(currObj));
-                if (getObjectKey(currObj) == 31) {// start position object ID
-                    editLayer->removeObject(currObj);
-                    j--;
-                }
+}
+void EditorUI::onDeleteStartPos() {
+    LevelEditorLayer* editLayer = getUIEditorLayer(this);
+    CCArray* sections = getEditorSections(editLayer);
+    for (int i = 0; i < sections->count(); i++) {
+        auto section = static_cast<CCArray*>(sections->objectAtIndex(i));
+        for (int j = 0; j < section->count(); j++) {
+            auto currObj = static_cast<GameObject*>(section->objectAtIndex(j));
+            // CCLog("sidx: %i, idx: %i, id: %i", i, j, getObjectKey(currObj));
+            if (getObjectKey(currObj) == 31) {// start position object ID
+                editLayer->removeObject(currObj);
+                j--;
             }
         }
     }
+
+    HaxManager& hax = HaxManager::sharedState();
+    if (!hax.getModuleEnabled("show_object_info")) return;
+
+    auto sel = getSelectedObjects(this);
+    auto selObj = getSelectedObject(this);
+    if (selObj && getObjectKey(selObj) == 31) {
+        this->deselectObject();
+    }
+    if (sel && sel->count() > 0) {
+        for (int i = 0; i < sel->count(); i++) {
+#if GAME_vERSION >= GV_1_5
+            auto currObjUncast = sel->objectAtIndex(i);
+            if (!currObjUncast) {
+                i--;
+                continue;
+            }
+            auto currObj = dynamic_cast<GameObject*>(currObjUncast);
+#else
+            auto currObj = static_cast<GameObject*>(sel->objectAtIndex(i));
+#endif
+            if (currObj && getObjectKey(currObj) == 31) {
+                sel->removeObject(currObj);
+                currObj->setColor(ccWHITE);
+                i--;
+            }
+        }
+    }
+
+    updateObjectInfoLabel(this);
+}
 #endif
 
 void (*TRAM_EditorUI_setupCreateMenu)(EditorUI* self);
@@ -310,7 +375,7 @@ void EditorUI_setupCreateMenu(EditorUI* self) {
         fuckingArray->addObject(self->getCreateBtn("secretCoin_01_001.png", 4)); // secret coin
     #endif
 #endif
-#endif
+#endif // GAME_VERSION >= GV_1_3
 
 #if GAME_VERSION < GV_1_6
         EditButtonBar* newBar = EditButtonBar::create(fuckingArray, ccp(winSize.width * 0.5 - 5, getScreenBottom() + getUnkFloat(self) - 6.f));
@@ -409,6 +474,7 @@ void EditorUI::moveObjectCall2(CCNode* sender) {
     } else {
         this->moveObject(getSelectedObject(this), transform);
     }
+    updateObjectInfoLabel(this);
 }
 void EditorUI::transformObjectCall2(CCNode* sender) {
     if (!getSelectedObject(this) && getSelectedObjects(this)->count() <= 0) return;
@@ -464,6 +530,7 @@ void EditorUI::transformObjectCall2(CCNode* sender) {
         if (tag == 100023) obj->setRotation(0);
         else obj->setRotation(obj->getRotation() + rot);
     }
+    updateObjectInfoLabel(this);
 }
 
 void (*TRAM_EditorUI_createMoveMenu)(EditorUI* self);
@@ -656,6 +723,100 @@ void EditorUI_createMoveMenu(EditorUI* self) {
     }
 }
 
+void (*TRAM_EditorUI_selectObject)(EditorUI* self, GameObject* obj);
+void EditorUI_selectObject(EditorUI* self, GameObject* obj) {
+    TRAM_EditorUI_selectObject(self, obj);
+    updateObjectInfoLabel(self);
+}
+void (*TRAM_EditorUI_selectObjectsInRect)(EditorUI* self, CCRect rect);
+void EditorUI_selectObjectsInRect(EditorUI* self, CCRect rect) {
+    CCLog("select objects in rekt");
+    TRAM_EditorUI_selectObjectsInRect(self, rect);
+    updateObjectInfoLabel(self);
+}
+void (*TRAM_EditorUI_deselectObject)(EditorUI* self);
+void EditorUI_deselectObject(EditorUI* self) {
+    TRAM_EditorUI_deselectObject(self);
+    updateObjectInfoLabel(self);
+}
+void (*TRAM_EditorUI_deselectAll)(EditorUI* self);
+void EditorUI_deselectAll(EditorUI* self) {
+    TRAM_EditorUI_deselectAll(self);
+    updateObjectInfoLabel(self);
+}
+void (*TRAM_EditorUI_moveObjectCall)(EditorUI* self, CCNode* node);
+void EditorUI_moveObjectCall(EditorUI* self, CCNode* node) {
+    TRAM_EditorUI_moveObjectCall(self, node);
+    updateObjectInfoLabel(self);
+}
+void (*TRAM_EditorUI_transformObjectCall)(EditorUI* self, CCNode* node);
+void EditorUI_transformObjectCall(EditorUI* self, CCNode* node) {
+    TRAM_EditorUI_transformObjectCall(self, node);
+    updateObjectInfoLabel(self);
+}
+
+void (*TRAM_EditorUI_destructor)(EditorUI* self);
+void EditorUI_destructor(EditorUI* self) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.editorObjectInfo) {
+        hax.editorObjectInfo->removeFromParentAndCleanup(true);
+    }
+    hax.editorObjectInfo = nullptr;
+    TRAM_EditorUI_destructor(self);
+}
+void (*TRAM_EditorUI_destructor2)(EditorUI* self);
+void EditorUI_destructor2(EditorUI* self) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.editorObjectInfo) {
+        hax.editorObjectInfo->removeFromParentAndCleanup(true);
+    }
+    hax.editorObjectInfo = nullptr;
+    TRAM_EditorUI_destructor2(self);
+}
+
+#if GAME_VERSION >= GV_1_5
+void (*TRAM_EditorUI_onDeleteSelected)(EditorUI* self);
+void EditorUI_onDeleteSelected(EditorUI* self) {
+    TRAM_EditorUI_onDeleteSelected(self);
+    updateObjectInfoLabel(self);
+}
+void (*TRAM_EditorUI_onDuplicate)(EditorUI* self);
+void EditorUI_onDuplicate(EditorUI* self) {
+    TRAM_EditorUI_onDuplicate(self);
+    updateObjectInfoLabel(self);
+}
+#endif
+#if GAME_VERSION >= GV_1_6
+void (*TRAM_EditorUI_onDeleteStartPos)(EditorUI* self);
+void EditorUI_onDeleteStartPos(EditorUI* self) {
+    TRAM_EditorUI_onDeleteStartPos(self);
+    HaxManager& hax = HaxManager::sharedState();
+    if (!hax.getModuleEnabled("show_object_info")) return;
+    
+    auto sel = getSelectedObjects(self);
+    auto selObj = getSelectedObject(self);
+    if (selObj && getObjectKey(selObj) == 31) {
+        self->deselectObject();
+    }
+    if (sel && sel->count() > 0) {
+        for (int i = 0; i < sel->count(); i++) {
+            auto currObjUncast = sel->objectAtIndex(i);
+            if (!currObjUncast) {
+                i--;
+                continue;
+            }
+            auto currObj = dynamic_cast<GameObject*>(currObjUncast);
+            if (currObj && getObjectKey(currObj) == 31) {
+                sel->removeObject(currObj);
+                currObj->setColor(ccWHITE);
+                i--;
+            }
+        }
+    }
+    updateObjectInfoLabel(self);
+}
+#endif
+
 void EditorUI_om() {
     Omni::hook("_ZN8EditorUI12showMaxErrorEv",
         reinterpret_cast<void*>(EditorUI_showMaxError),
@@ -667,6 +828,13 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI7zoomOutEv",
         reinterpret_cast<void*>(EditorUI_zoomOut),
         reinterpret_cast<void**>(&TRAM_EditorUI_zoomOut));
+#else
+    Omni::hook("_ZN8EditorUI16onDeleteSelectedEv",
+        reinterpret_cast<void*>(EditorUI_onDeleteSelected),
+        reinterpret_cast<void**>(&TRAM_EditorUI_onDeleteSelected));
+    Omni::hook("_ZN8EditorUI11onDuplicateEv",
+        reinterpret_cast<void*>(EditorUI_onDuplicate),
+        reinterpret_cast<void**>(&TRAM_EditorUI_onDuplicate));
 #endif
     Omni::hook("_ZN8EditorUI4initEP16LevelEditorLayer",
         reinterpret_cast<void*>(EditorUI_init),
@@ -675,6 +843,10 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI15setupDeleteMenuEv",
         reinterpret_cast<void*>(EditorUI_setupDeleteMenu),
         reinterpret_cast<void**>(&TRAM_EditorUI_setupDeleteMenu));
+#else
+    Omni::hook("_ZN8EditorUI16onDeleteStartPosEv",
+        reinterpret_cast<void*>(EditorUI_onDeleteStartPos),
+        reinterpret_cast<void**>(&TRAM_EditorUI_onDeleteStartPos));
 #endif
     Omni::hook("_ZN8EditorUI15setupCreateMenuEv",
         reinterpret_cast<void*>(EditorUI_setupCreateMenu),
@@ -682,4 +854,31 @@ void EditorUI_om() {
     Omni::hook("_ZN8EditorUI14createMoveMenuEv",
         reinterpret_cast<void*>(EditorUI_createMoveMenu),
         reinterpret_cast<void**>(&TRAM_EditorUI_createMoveMenu));
+    Omni::hook("_ZN8EditorUI12selectObjectEP10GameObject",
+        reinterpret_cast<void*>(EditorUI_selectObject),
+        reinterpret_cast<void**>(&TRAM_EditorUI_selectObject));
+    Omni::hook("_ZN8EditorUI19selectObjectsInRectEN7cocos2d6CCRectE",
+        reinterpret_cast<void*>(EditorUI_selectObjectsInRect),
+        reinterpret_cast<void**>(&TRAM_EditorUI_selectObjectsInRect));
+    Omni::hook("_ZN8EditorUI14deselectObjectEv",
+        reinterpret_cast<void*>(EditorUI_deselectObject),
+        reinterpret_cast<void**>(&TRAM_EditorUI_deselectObject));
+    Omni::hook("_ZN8EditorUI11deselectAllEv",
+        reinterpret_cast<void*>(EditorUI_deselectAll),
+        reinterpret_cast<void**>(&TRAM_EditorUI_deselectAll));
+    Omni::hook("_ZN8EditorUI14moveObjectCallEPN7cocos2d6CCNodeE",
+        reinterpret_cast<void*>(EditorUI_moveObjectCall),
+        reinterpret_cast<void**>(&TRAM_EditorUI_moveObjectCall));
+    Omni::hook("_ZN8EditorUI19transformObjectCallEPN7cocos2d6CCNodeE",
+        reinterpret_cast<void*>(EditorUI_transformObjectCall),
+        reinterpret_cast<void**>(&TRAM_EditorUI_transformObjectCall));
+        
+#if GAME_VERSION < GV_1_5
+    Omni::hook("_ZN8EditorUID1Ev",
+        reinterpret_cast<void*>(EditorUI_destructor),
+        reinterpret_cast<void**>(&TRAM_EditorUI_destructor));
+#endif
+    Omni::hook("_ZN8EditorUID2Ev",
+        reinterpret_cast<void*>(EditorUI_destructor2),
+        reinterpret_cast<void**>(&TRAM_EditorUI_destructor2));
 }

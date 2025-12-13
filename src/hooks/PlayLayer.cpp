@@ -15,10 +15,6 @@ void PlayLayer_destroyPlayer(PlayLayer* self) {
 
         hax.lastDeadFrame = hax.frameCount;
         getPlayLayerHazards(self)->removeAllObjects(); // the humble noclip lag fix
-
-        if (hax.getModuleEnabled("noclip_tint_on_death") && !hax.completed) {
-            hax.noclipTint->setOpacity(100);
-        }
         return;
     }
     float brDiff = hax.bestRunEnd - hax.bestRunStart;
@@ -254,9 +250,14 @@ void PlayLayer_update(PlayLayer* self, float dt) {
     } else {
         getAttemptLabel(self)->setVisible(true);
     }
-    if (hax.lastDeadFrame < hax.frameCount - 1) {
-        hax.noclipTint->setOpacity(0);
+    if (hax.lastDeadFrame < hax.frameCount - 1 || hax.completed || !hax.getModuleEnabled("noclip_tint_on_death") || !hax.getModuleEnabled("noclip")) {
+        hax.ntOpacity -= 1500 * dt;
+        if (hax.ntOpacity < 0) hax.ntOpacity = 0;
+    } else {
+        hax.ntOpacity += 1500 * dt;
+        if (hax.ntOpacity > 100) hax.ntOpacity = 100;
     }
+    hax.noclipTint->setOpacity(static_cast<int>(hax.ntOpacity));
     if (hax.frameCount > 0 && !hax.completed) {
         hax.noclipAccuracy = static_cast<float>(hax.frameCount - hax.deadFrames) / static_cast<float>(hax.frameCount) * 100;
     }
@@ -335,6 +336,20 @@ void PlayLayer_spawnParticle(PlayLayer* self, const char* particleName, int a3, 
 
     TRAM_PlayLayer_spawnParticle(self, particleName, a3, type, position);
 }
+// Safe Mode: secret coins
+void (*TRAM_PlayLayer_processItems)(PlayLayer* self);
+void PlayLayer_processItems(PlayLayer* self) {
+    HaxManager& hax = HaxManager::sharedState();
+#ifdef FORCE_AUTO_SAFE_MODE
+#ifndef STAR_RATED_LEVELS_GRANT_COINS
+    if (getPlayLayerLevel(self)->m_eLevelType != 1) return;
+#else
+    if (getPlayLayerLevel(self)->m_nStars < 1) return;
+#endif
+#endif
+    if (hax.isSafeMode()) return;
+    TRAM_PlayLayer_processItems(self);
+}
 #endif
 
 void PlayLayer_om() {
@@ -376,6 +391,9 @@ void PlayLayer_om() {
     Omni::hook("_ZN9PlayLayer13spawnParticleEPKciN7cocos2d15tCCPositionTypeENS2_7CCPointE",
         reinterpret_cast<void*>(PlayLayer_spawnParticle),
         reinterpret_cast<void**>(&TRAM_PlayLayer_spawnParticle));
+    Omni::hook("_ZN9PlayLayer12processItemsEv",
+        reinterpret_cast<void*>(PlayLayer_processItems),
+        reinterpret_cast<void**>(&TRAM_PlayLayer_processItems));
 #endif
     // Omni::hook("_ZN9PlayLayer14createParticleEiPKciN7cocos2d15tCCPositionTypeE",
     //     reinterpret_cast<void*>(PlayLayer_createParticle),

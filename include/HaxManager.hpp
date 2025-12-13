@@ -69,6 +69,10 @@ public:
     int deadFrames;
     float noclipAccuracy;
     bool completed;
+    int gdShareMessageID;
+    int32_t gdShareData;
+    CCLabelBMFont* editorObjectInfo;
+    float ntOpacity;
 
 #if GAME_VERSION > GV_1_4
     bool blockVerify;
@@ -234,6 +238,7 @@ public:
         deadFrames = 0;
         noclipAccuracy = 100;
         completed = false;
+        ntOpacity = 0;
     }
 
 private:
@@ -324,6 +329,14 @@ private:
                 "No Shake", 
                 "Disables camera shake when completing a level.", 
                 false, ModuleCategory::Visual, [](bool _){})));
+#if GAME_VERSION < GV_1_4
+        modules.insert(std::pair<std::string, Module*>("no_ship_tint", new Module(
+                "No Ship Tint", 
+                "Removes the dark tint of the player's ship.", 
+                false, ModuleCategory::Visual, [](bool _){
+                    setNoShipTint(_);
+                })));
+#endif
         modules.insert(std::pair<std::string, Module*>("no_trail", new Module(
                 "No Trail", 
                 "Disables the player's trail at all times.", 
@@ -429,6 +442,10 @@ private:
         modules.insert(std::pair<std::string, Module*>("rgb_color_inputs", new Module(
                 "RGB Color Inputs", 
                 "Allows you to directly input the RGB values in color selection menus.", 
+                false, ModuleCategory::Editor, [](bool _){})));
+        modules.insert(std::pair<std::string, Module*>("show_object_info", new Module(
+                "Show Object Info", 
+                "Displays info about selected object(s).", 
                 false, ModuleCategory::Editor, [](bool _){})));
         modules.insert(std::pair<std::string, Module*>("unlisted_objects", new Module(
                 "Unlisted Objects", 
@@ -710,6 +727,8 @@ private:
 #if GAME_VERSION > GV_1_4
         blockVerify = false;
 #endif
+        gdShareMessageID = 0;
+        gdShareData = 0;
 
         resetValues();
     }

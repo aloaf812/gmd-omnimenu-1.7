@@ -29,9 +29,52 @@ void LevelBrowserLayer::onImport() {
     env->CallVoidMethod(activity, showPicker);
 }
 
+void LevelBrowserLayer::FLAlert() {
+    HaxManager& hax = HaxManager::sharedState();
+    switch (hax.gdShareMessageID) {
+        case 1:
+            GDSHARE_FL("Error: could not load level");
+            break;
+        case 2:
+            if (hax.gdShareData != 0) {
+                GDSHARE_FL(CCString::createWithFormat(
+                    "Error: level was made for a newer version of Geometry Dash (%s > %s)",
+                    intToReadableGV(hax.gdShareData),
+                    READABLE_GAME_VERSION
+                )->getCString());
+            } else {
+                GDSHARE_FL("Error: level was made for a newer version of Geometry Dash");
+            }
+            break;
+        default:
+            GDSHARE_FL("Unknown error");
+            break;
+    }
+    hax.gdShareMessageID = 0;
+}
+
 void LevelBrowserLayer::loadLevel(GJGameLevel* level) {
+    HaxManager& hax = HaxManager::sharedState();
     if (level == nullptr) {
-        GDSHARE_FL("Error: could not load level");
+        hax.gdShareMessageID = 1;
+        runAction(CCSequence::create(
+            CCDelayTime::create(0.2f),
+            CCCallFunc::create(this, callfunc_selector(LevelBrowserLayer::FLAlert)),
+            nullptr
+        ));
+        // GDSHARE_FL("Error: could not load level");
+        return;
+    }
+    CCLog("1");
+    if (level->m_nGameVersion > GAME_VERSION) {
+        CCLog("too new %i", level->m_nGameVersion);
+        hax.gdShareMessageID = 2;
+        hax.gdShareData = level->m_nGameVersion;
+        runAction(CCSequence::create(
+            CCDelayTime::create(0.2f),
+            CCCallFunc::create(this, callfunc_selector(LevelBrowserLayer::FLAlert)),
+            nullptr
+        ));
         return;
     }
     level->m_nLevelID = 0;

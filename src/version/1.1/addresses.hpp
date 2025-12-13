@@ -38,6 +38,7 @@
 /**/ #define GameObject__m_objectKey           0x310 /**/ // GameObject::getObjectKey
 /**/ #define GameObject__m_particles           0x280 /**/ // GameObject::setOpacity
 /**/ #define GameObject__m_realPosition        0x2c4 /**/ // GameObject::getRealPosition
+/**/ #define GameObject__m_sectionIdx          0x2bc /**/ // GameObject::getSectionIdx
 /**/ #define GameObject__m_shouldSpawn         0x2c0 /**/ // GameObject::getShouldSpawn
 /**/ #define GameObject__m_type                0x2b8 /**/ // GameObject::getType
 /**/ #define GameObject__m_useAudioScale       0x2eb /**/ // GameObject::getUseAudioScale
@@ -93,6 +94,7 @@
 /**/ #define place_y_max                    0x150020 /**/ // EditorUI::onCreateObject - 00 60 9F 44
 /**/ #define place_x_min                    0x150014 /**/ // EditorUI::onCreateObject - 00 80 9D 43
 /**/ #define place_y_min                    0x150018 /**/ // EditorUI::onCreateObject - 00 00 D2 42
+/**/ #define ship_tint                      0x143B64 /**/ // PlayerObject::setColor
 /**/ #define zoom_bypass_max_1              0x14E6D4 /**/ // EditorUI::zoomGameLayer
 /**/ #define zoom_bypass_max_2              0x14E80E /**/ // EditorUI::zoomGameLayer
 /**/ #define zoom_bypass_min                0x14E81C /**/ // EditorUI::zoomGameLayer

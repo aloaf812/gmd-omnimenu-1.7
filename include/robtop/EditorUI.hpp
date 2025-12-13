@@ -20,6 +20,7 @@ public:
 // #endif
     void onPause();
     void deselectAll();
+    void deselectObject();
     void selectObject(GameObject*);
     void onDeleteSelected();
 #if GAME_VERSION < GV_1_5

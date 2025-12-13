@@ -3,17 +3,17 @@
 
 
 
-#define MENU_VERSION "0.87"
+#define MENU_VERSION "0.88"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 
 // You have to replace both of these if necessary
-#define JAVA_PATH_MAIN "com/robtopx/geometry1600"
-#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometry1600
+#define JAVA_PATH_MAIN "com/robtopx/geometryjump"
+#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometryjump
 
 // #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
-#define PING_SPOOFING // Uncomment this to enable a joke feature
-
+#define PING_SPOOFING // Comment this out to disable Pig Spoofing (brutal)
+// #define STAR_RATED_LEVELS_GRANT_COINS // Uncomment this to enable star rated levels granting secret coins even in Force Auto Safe Mode (1.6+)
 
 
 

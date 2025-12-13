@@ -11,4 +11,5 @@ public:
     void onImport();
     void loadLevel(GJGameLevel* level);
     void reload();
+    void FLAlert();
 };

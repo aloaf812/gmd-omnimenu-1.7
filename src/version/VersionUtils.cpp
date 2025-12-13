@@ -747,3 +747,56 @@ void setClubstepBypass(bool enable) {
     }
 }
 #endif
+const char* intToReadableGV(int gv) {
+    switch (gv) {
+        case 1:
+            return "1.0";
+        case 2:
+            return "1.1";
+        case 3:
+            return "1.2";
+        case 4:
+            return "1.3";
+        case 5:
+            return "1.4";
+        case 6:
+            return "1.5";
+        case 7:
+            return "1.6";
+        case 10:
+            return "1.7";
+        case 11:
+            return "1.80";
+        case 18:
+            return "1.81";
+        case 19:
+            return "1.9";
+        case 20:
+            return "2.0";
+        case 21:
+            return "2.1";
+        case 22:
+            return "2.2";
+        default:
+            return "Unknown";
+    }
+}
+#if GAME_VERSION < GV_1_4
+void setNoShipTint(bool enable) {
+    if (enable) {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(ship_tint)),
+            std::vector<uint8_t>({0x00, 0x00, 0x80, 0x3f}).data(), 4
+        );
+    } else {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(get_address(ship_tint)),
+            std::vector<uint8_t>({0xcd, 0xcc, 0x4c, 0x3f}).data(), 4
+        );
+    }
+}
+#endif
+
+int getSectionIdx(GameObject* obj) {
+    return MEMBER_BY_OFFSET(int, obj, GameObject__m_sectionIdx);
+}

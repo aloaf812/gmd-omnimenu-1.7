@@ -190,3 +190,8 @@ CCMenuItemSpriteExtra* getZoomOutButton(EditorUI* uiLayer);
 #if GAME_VERSION >= GV_1_6
 void setClubstepBypass(bool enable);
 #endif
+const char* intToReadableGV(int gv);
+#if GAME_VERSION < GV_1_4
+void setNoShipTint(bool enable);
+#endif
+int getSectionIdx(GameObject* obj);

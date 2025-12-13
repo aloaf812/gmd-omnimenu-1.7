@@ -32,6 +32,7 @@
 /**/ #define GameObject__m_objectKey           0x328 /**/ // GameObject::getObjectKey
 /**/ #define GameObject__m_particles           0x288 /**/ // GameObject::setOpacity
 /**/ #define GameObject__m_realPosition        0x2d4 /**/ // GameObject::getRealPosition
+/**/ #define GameObject__m_sectionIdx          0x2cc /**/ // GameObject::getSectionIdx
 /**/ #define GameObject__m_shouldSpawn         0x2d0 /**/ // GameObject::getShouldSpawn
 /**/ #define GameObject__m_type                0x2c8 /**/ // GameObject::getType
 /**/ #define GameObject__m_useAudioScale       0x2fc /**/ // GameObject::getUseAudioScale
