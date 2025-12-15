@@ -5,20 +5,20 @@
 void (*TRAM_CCTextInputNode_setCharLimit)(void* self, int charLimit);
 void CCTextInputNode_setCharLimit(void* self, int charLimit) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("text_length_bypass")) return;
+    if (hax.getModuleEnabled(ModuleID::TEXT_LENGTH_BYPASS)) return;
     TRAM_CCTextInputNode_setCharLimit(self, charLimit);
 }
 void (*TRAM_CCTextInputNode_setProfanityFilter)(CCTextInputNode* self, bool profanityFilter);
 void CCTextInputNode_setProfanityFilter(CCTextInputNode* self, bool profanityFilter) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("swear_filter_bypass")) return;
+    if (hax.getModuleEnabled(ModuleID::SWEAR_FILTER_BYPASS)) return;
     TRAM_CCTextInputNode_setProfanityFilter(self, profanityFilter);
 }
 #endif
 void (*TRAM_CCTextInputNode_updateLabel)(CCTextInputNode* self, char* text);
 void CCTextInputNode_updateLabel(CCTextInputNode* self, char* text) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("char_filter_bypass")) {
+    if (hax.getModuleEnabled(ModuleID::CHARACTER_FILTER_BYPASS)) {
         self->setAllowedChars(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
     }
     TRAM_CCTextInputNode_updateLabel(self, text);
@@ -38,7 +38,7 @@ void append_char(char*& a, size_t& length, size_t& capacity, char c) {
 bool (*TRAM_CCTextInputNode_onTextFieldInsertText)(CCTextInputNode* self, CCTextFieldTTF* pSender, const char* text, int nLen);
 bool CCTextInputNode_onTextFieldInsertText(CCTextInputNode* self, CCTextFieldTTF* pSender, const char* text, int nLen) {
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("input_bug_fix")) return TRAM_CCTextInputNode_onTextFieldInsertText(self, pSender, text, nLen);
+    if (!hax.getModuleEnabled(ModuleID::INPUT_BUG_FIX)) return TRAM_CCTextInputNode_onTextFieldInsertText(self, pSender, text, nLen);
 
     if (text && strlen(text) > 1) {
         size_t capacity = 32;
@@ -50,7 +50,7 @@ bool CCTextInputNode_onTextFieldInsertText(CCTextInputNode* self, CCTextFieldTTF
         std::string allowed = getAllowedChars(self);
 
         int limiter = strlen(text);
-        if (!hax.getModuleEnabled("text_length_bypass") && getCharLimit(self) < limiter) limiter = getCharLimit(self);
+        if (!hax.getModuleEnabled(ModuleID::TEXT_LENGTH_BYPASS) && getCharLimit(self) < limiter) limiter = getCharLimit(self);
 
         int newLen = 0;
 

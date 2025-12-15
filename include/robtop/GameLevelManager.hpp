@@ -9,4 +9,7 @@ public:
 
     void onUploadLevelCompleted(cocos2d::CCNode* p1, void* p2);
     GJGameLevel* getMainLevel(int id);
+#if GAME_VERSION > GV_1_0
+    void resetTimerForKey(const char* key);
+#endif
 };

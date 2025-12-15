@@ -4,48 +4,48 @@
 void (*TRAM_PlayerObject_activateStreak)(PlayerObject* self);
 void PlayerObject_activateStreak(PlayerObject* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("no_trail")) return;
+    if (hax.getModuleEnabled(ModuleID::NO_TRAIL)) return;
     TRAM_PlayerObject_activateStreak(self);
 }
 void (*TRAM_PlayerObject_updateShipRotation)(PlayerObject* self, float dt);
 void PlayerObject_updateShipRotation(PlayerObject* self, float dt) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("no_rotation")) return;
+    if (hax.getModuleEnabled(ModuleID::NO_ROTATION)) return;
     TRAM_PlayerObject_updateShipRotation(self, dt);
 }
 void (*TRAM_PlayerObject_runRotateAction)(PlayerObject* self);
 void PlayerObject_runRotateAction(PlayerObject* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("no_rotation")) return;
+    if (hax.getModuleEnabled(ModuleID::NO_ROTATION)) return;
     TRAM_PlayerObject_runRotateAction(self);
 }
 void (*TRAM_PlayerObject_runBallRotation2)(PlayerObject* self);
 void PlayerObject_runBallRotation2(PlayerObject* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("no_rotation")) return;
+    if (hax.getModuleEnabled(ModuleID::NO_ROTATION)) return;
     TRAM_PlayerObject_runBallRotation2(self);
 }
 void (*TRAM_PlayerObject_update)(PlayerObject* self, float dt);
 void PlayerObject_update(PlayerObject* self, float dt) {
     TRAM_PlayerObject_update(self, dt);
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("particle_ship_ground")) {
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_SHIP_GROUND)) {
         auto p = getShipGroundParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
-    if (!hax.getModuleEnabled("particle_ship_lift")) {
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_SHIP_LIFT)) {
         auto p = getShipLiftParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
-    if (!hax.getModuleEnabled("particle_ship_fire")) {
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_SHIP_FIRE)) {
         auto p = getShipFireParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
-    if (!hax.getModuleEnabled("particle_ground")) {
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_GROUND)) {
         auto p = getGroundParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
-    if (hax.getModuleEnabled("jump_hack")) {
+    if (hax.getModuleEnabled(ModuleID::JUMP_HACK)) {
         setOnGround(self, true);
     }
 }
@@ -53,7 +53,7 @@ void (*TRAM_PlayerObject_hitGround)(PlayerObject* self, bool b1);
 void PlayerObject_hitGround(PlayerObject* self, bool b1) {
     TRAM_PlayerObject_hitGround(self, b1);
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("particle_landing")) {
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_LANDING)) {
         auto l2 = getLandingParticles2(self);
         if (l2 && l2 != nullptr) l2->stopSystem();
         auto l1 = getLandingParticles(self);
@@ -64,7 +64,7 @@ void PlayerObject_hitGround(PlayerObject* self, bool b1) {
 void (*TRAM_PlayerObject_playBurstEffect)(PlayerObject* self);
 void PlayerObject_playBurstEffect(PlayerObject* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("particle_burst")) TRAM_PlayerObject_playBurstEffect(self);
+    if (hax.getModuleEnabled(ModuleID::PARTICLE_BURST)) TRAM_PlayerObject_playBurstEffect(self);
 }
 #endif
 

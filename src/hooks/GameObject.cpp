@@ -4,18 +4,18 @@
 void (*TRAM_GameObject_addGlow)(void* self);
 void GameObject_addGlow(void* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("no_glow")) return;
+    if (hax.getModuleEnabled(ModuleID::NO_GLOW)) return;
     TRAM_GameObject_addGlow(self);
 }
 void (*TRAM_GameObject_setOpacity)(void* self, GLubyte opacity);
 void GameObject_setOpacity(void* self, GLubyte opacity) {
     TRAM_GameObject_setOpacity(self, opacity);
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("particle_objects")) {
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_OBJECTS)) {
         auto p = getObjectParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
-    if (hax.getModuleEnabled("no_pulse")) {
+    if (hax.getModuleEnabled(ModuleID::NO_PULSE)) {
         setObjectUseAudioScale(self, false);
     }
 }
@@ -24,7 +24,7 @@ CCRect (*TRAM_GameObject_getObjectRect)(GameObject* self, float scaleX, float sc
 CCRect GameObject_getObjectRect(GameObject* self, float scaleX, float scaleY) {
     CCRect objectRect = TRAM_GameObject_getObjectRect(self, scaleX, scaleY);
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("rotation_bug_fix")) return objectRect;
+    if (!hax.getModuleEnabled(ModuleID::ROTATION_BUG_FIX)) return objectRect;
     
     float rotation = std::fabs(self->getRotation());
 

@@ -61,20 +61,20 @@ void LevelEditorLayer_update(LevelEditorLayer* self, float dt) {
 bool (*TRAM_LevelEditorLayer_init)(LevelEditorLayer* self, GJGameLevel* level);
 bool LevelEditorLayer_init(LevelEditorLayer* self, GJGameLevel* level) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("object_hack")) {
-        if (hax.getModuleEnabled("16k_fix"))
+    if (hax.getModuleEnabled(ModuleID::OBJECT_LIMIT_BYPASS)) {
+        if (hax.getModuleEnabled(ModuleID::_16K_FIX))
             setObjectLimit(2147483646);
         else
             setObjectLimit(INCREASED_OBJECT_LIMIT - 1);
     }
     else
         setObjectLimit(OBJECT_LIMIT);
-    setZoomBypass(hax.getModuleEnabled("zoom_bypass"));
-    setFreeBuild(hax.getModuleEnabled("free_build"));
+    setZoomBypass(hax.getModuleEnabled(ModuleID::ZOOM_BYPASS));
+    setFreeBuild(hax.getModuleEnabled(ModuleID::FREE_BUILD));
 
     if (!TRAM_LevelEditorLayer_init(self, level)) return false;
 
-    if (hax.getModuleEnabled("16k_fix")) {
+    if (hax.getModuleEnabled(ModuleID::_16K_FIX)) {
         // https://gist.github.com/netguy204/6097063
         void** vtable = *(void***)self;
         void (LevelEditorLayer::* ptr)(float) = &LevelEditorLayer::update;
@@ -95,7 +95,7 @@ bool LevelEditorLayer_init(LevelEditorLayer* self, GJGameLevel* level) {
 void (*TRAM_LevelEditorLayer_createObjectsFromSetup)(LevelEditorLayer* self, std::string str);
 void LevelEditorLayer_createObjectsFromSetup(LevelEditorLayer* self, std::string str) {
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("16k_fix")) return TRAM_LevelEditorLayer_createObjectsFromSetup(self, str);
+    if (!hax.getModuleEnabled(ModuleID::_16K_FIX)) return TRAM_LevelEditorLayer_createObjectsFromSetup(self, str);
 
     if (str.empty() || str.c_str() == " ")
         return;

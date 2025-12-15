@@ -14,8 +14,8 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 #if GAME_VERSION < GV_1_6
-    if (hax.getModuleEnabled("object_counter")) {
-        bool objHack = hax.getModuleEnabled("object_hack");
+    if (hax.getModuleEnabled(ModuleID::OBJECT_COUNTER)) {
+        bool objHack = hax.getModuleEnabled(ModuleID::OBJECT_LIMIT_BYPASS);
         auto objectLimit = OBJECT_LIMIT + 1;
         if (objHack) objectLimit = INCREASED_OBJECT_LIMIT;
         int objectCount = getObjectCount(editLayer);
@@ -26,7 +26,7 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
 #if GAME_VERSION == GV_1_5
         if (objHack) 
 #else
-        if (objHack && hax.getModuleEnabled("16k_fix")) 
+        if (objHack && hax.getModuleEnabled(ModuleID::_16K_FIX)) 
 #endif
             counterLabel = CCLabelBMFont::create(CCString::createWithFormat("%i objects", objectCount)->getCString(), "goldFont.fnt");
         else
@@ -41,7 +41,7 @@ bool EditorPauseLayer_init(cocos2d::CCLayer* self, LevelEditorLayer* editLayer) 
     CCObject* obj = self->getChildren()->objectAtIndex(0);
     auto label = dynamic_cast<CCLabelBMFont*>(obj);
     if (label && label != nullptr) {
-        if (hax.getModuleEnabled("object_hack")) {
+        if (hax.getModuleEnabled(ModuleID::OBJECT_LIMIT_BYPASS)) {
             int objectCount = getObjectCount(editLayer);
             label->setString(CCString::createWithFormat("%i objects", objectCount)->getCString(), "goldFont.fnt");
         }

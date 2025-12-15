@@ -12,13 +12,13 @@ void (*TRAM_PauseLayer_customSetup)(CCLayer* self);
 void PauseLayer_customSetup(CCLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
 #ifndef FORCE_AUTO_SAFE_MODE
-    if (hax.getModuleEnabled("level_edit")) {
+    if (hax.getModuleEnabled(ModuleID::LEVEL_EDIT)) {
         setEditButton(true);
     } else {
         setEditButton(false);
     }
 #endif
-    if (hax.getModuleEnabled("show_restart_button")) {
+    if (hax.getModuleEnabled(ModuleID::SHOW_RESTART_BUTTON)) {
         setRestartButton(true);
     } else {
         setRestartButton(false);

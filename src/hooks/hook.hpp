@@ -2,6 +2,7 @@
 
 #include <dlfcn.h>  // dlsym, RTLD_NOW
 #include <dobby.h>  // DobbyHook
+#include <fmt/format.h> // fmtlib
 #include "HaxManager.hpp"
 #include <cocos2d.h>
 #include "../version/VersionUtils.hpp"

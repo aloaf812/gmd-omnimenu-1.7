@@ -39,7 +39,7 @@ int cc_wcslen(const unsigned short* str)
 void (*TRAM_CCLabelBMFont_createFontChars)(CCLabelBMFont* self);
 void CCLabelBMFont_createFontChars(CCLabelBMFont* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("font_offset_fix")) {
+    if (hax.getModuleEnabled(ModuleID::FONT_OFFSET_FIX)) {
         int nextFontPositionX = 0;
         int nextFontPositionY = 0;
         unsigned short prev = -1;

@@ -11,7 +11,7 @@
 
 void updateObjectInfoLabel(EditorUI* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("show_object_info")) return;
+    if (!hax.getModuleEnabled(ModuleID::SHOW_OBJECT_INFO)) return;
     if (!hax.editorObjectInfo) {
         CCLog("no EOI");
         return;
@@ -36,7 +36,7 @@ void updateObjectInfoLabel(EditorUI* self) {
 void (*TRAM_EditorUI_showMaxError)(void* self);
 void EditorUI_showMaxError(void* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("object_hack")) {
+    if (hax.getModuleEnabled(ModuleID::OBJECT_LIMIT_BYPASS)) {
         FLAlertLayer::create(
             nullptr,
             "Max Objects",
@@ -52,7 +52,7 @@ void EditorUI_showMaxError(void* self) {
 void (*TRAM_EditorUI_constrainGameLayerPosition)(void* self);
 void EditorUI_constrainGameLayerPosition(void* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("free_scroll")) return;
+    if (hax.getModuleEnabled(ModuleID::FREE_SCROLL)) return;
     TRAM_EditorUI_constrainGameLayerPosition(self);
 }
 
@@ -60,7 +60,7 @@ void EditorUI_constrainGameLayerPosition(void* self) {
 void (*TRAM_EditorUI_zoomOut)(EditorUI* self);
 void EditorUI_zoomOut(EditorUI* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("zoom_bypass")) {
+    if (hax.getModuleEnabled(ModuleID::ZOOM_BYPASS)) {
         cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(self));
         CCLog("%f", gameLayer->getScale());
         if (gameLayer->getScale() > 0.11f) TRAM_EditorUI_zoomOut(self);
@@ -71,7 +71,7 @@ void EditorUI_zoomOut(EditorUI* self) {
 #else
 void EditorUI::zoomOutExtra() {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("zoom_bypass")) {
+    if (hax.getModuleEnabled(ModuleID::ZOOM_BYPASS)) {
         cocos2d::CCLayer* gameLayer = getEditorGameLayer(getUIEditorLayer(this));
         if (gameLayer->getScale() > 0.11f) this->zoomOut(); // value to check against has to be bigger than 0.1 because otherwise it still lets you zoom to 0 anyways
     } else {
@@ -165,7 +165,7 @@ bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
 #if GAME_VERSION >= GV_1_5
     getZoomOutButton(self)->setTarget(self, menu_selector(EditorUI::zoomOutExtra));
 #endif
-    if (hax.getModuleEnabled("delete_selected")) {
+    if (hax.getModuleEnabled(ModuleID::DELETE_SELECTED)) {
         CCMenu* delMenu = CCMenu::create();
         self->addChild(delMenu);
 
@@ -176,7 +176,7 @@ bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
         delMenu->addChild(delSelBtn);
     }
 #if GAME_VERSION < GV_1_5
-    if (hax.getModuleEnabled("copy_paste")) {
+    if (hax.getModuleEnabled(ModuleID::COPY_PASTE)) {
 
         CCMenu* btnMenu = CCMenu::create();
         self->addChild(btnMenu);
@@ -194,7 +194,7 @@ bool EditorUI_init(EditorUI* self, LevelEditorLayer* lel) {
     }
 #endif
 
-    if (hax.getModuleEnabled("show_object_info")) {
+    if (hax.getModuleEnabled(ModuleID::SHOW_OBJECT_INFO)) {
         CCLabelBMFont* objInfo = CCLabelBMFont::create("", "chatFont.fnt");
         objInfo->setAnchorPoint({0, 1});
         objInfo->setPosition(ccp(15, winSize.height - 45));
@@ -219,7 +219,7 @@ void (*TRAM_EditorUI_setupDeleteMenu)(EditorUI* self);
 void EditorUI_setupDeleteMenu(EditorUI* self) {
     TRAM_EditorUI_setupDeleteMenu(self);
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("delete_start_pos")) {
+    if (hax.getModuleEnabled(ModuleID::DELETE_START_POS)) {
         CCMenu* menu = getEditorUIButtonMenu(self);
 
         if (!menu || menu == nullptr) { // useless failsafe but i don't like removing those
@@ -253,7 +253,7 @@ void EditorUI::onDeleteStartPos() {
     }
 
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("show_object_info")) return;
+    if (!hax.getModuleEnabled(ModuleID::SHOW_OBJECT_INFO)) return;
 
     auto sel = getSelectedObjects(this);
     auto selObj = getSelectedObject(this);
@@ -288,7 +288,7 @@ void (*TRAM_EditorUI_setupCreateMenu)(EditorUI* self);
 void EditorUI_setupCreateMenu(EditorUI* self) {
     TRAM_EditorUI_setupCreateMenu(self);
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("unlisted_objects")) {
+    if (hax.getModuleEnabled(ModuleID::UNLISTED_OBJECTS)) {
         CCArray* createBtns = getCreateButtons(self);
         CCArray* fuckingArray = CCArray::create();
         auto director = CCDirector::sharedDirector();
@@ -536,7 +536,7 @@ void EditorUI::transformObjectCall2(CCNode* sender) {
 void (*TRAM_EditorUI_createMoveMenu)(EditorUI* self);
 void EditorUI_createMoveMenu(EditorUI* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("extra_edit_buttons")) {
+    if (hax.getModuleEnabled(ModuleID::EXTRA_EDIT_BUTTONS)) {
         CCArray* buttons = CCArray::create();
 
         CCMenuItemSpriteExtra* btn;
@@ -791,7 +791,7 @@ void (*TRAM_EditorUI_onDeleteStartPos)(EditorUI* self);
 void EditorUI_onDeleteStartPos(EditorUI* self) {
     TRAM_EditorUI_onDeleteStartPos(self);
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("show_object_info")) return;
+    if (!hax.getModuleEnabled(ModuleID::SHOW_OBJECT_INFO)) return;
     
     auto sel = getSelectedObjects(self);
     auto selObj = getSelectedObject(self);

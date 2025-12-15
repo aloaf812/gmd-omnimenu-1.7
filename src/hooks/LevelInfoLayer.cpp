@@ -117,14 +117,14 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         CCMenu* leftMenu = CCMenu::create();
         self->addChild(leftMenu, 1000);
         leftMenu->setPosition(ccp(30.f, winSize.height / 2));
-        if (hax.getModuleEnabled("level_copy")) {
+        if (hax.getModuleEnabled(ModuleID::LEVEL_COPYING)) {
             CCSprite* cloneSpr = cocos2d::CCSprite::create("GJ_duplicateBtn.png");
             CCMenuItemSpriteExtra* cloneBtn = CCMenuItemSpriteExtra::create(cloneSpr, cloneSpr, self, menu_selector(LevelInfoLayer::onClone));
 
             leftMenu->addChild(cloneBtn);
             cloneBtn->setPosition(ccp(0.f, 25.f));
         }
-        if (hax.getModuleEnabled("gdshare")) {
+        if (hax.getModuleEnabled(ModuleID::GDSHARE)) {
             CCSprite* exportSpr = cocos2d::CCSprite::create("gdshare_export.png");
             CCMenuItemSpriteExtra* exportBtn = CCMenuItemSpriteExtra::create(exportSpr, exportSpr, self, menu_selector(LevelInfoLayer::onExport));
 
@@ -133,7 +133,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         }
     }
 #if GAME_VERSION < GV_1_6
-    if (hax.getModuleEnabled("view_level_stats")) {
+    if (hax.getModuleEnabled(ModuleID::VIEW_LEVEL_STATS)) {
         CCMenu* infoMenu = CCMenu::create();
         CCSprite* infoSpr = createInfoSprite();
         CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, self, menu_selector(LevelInfoLayer::onViewLevelInfo));
@@ -152,7 +152,7 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
     }
 #endif
 #if GAME_VERSION < GV_1_3
-    if (hax.getModuleEnabled("show_difficulty")) {
+    if (hax.getModuleEnabled(ModuleID::SHOW_DIFFICULTY)) {
         CCSprite* diffSpr = CCSprite::createWithSpriteFrameName(
             CCString::createWithFormat(
                 "difficulty_%02d_btn_001.png", 

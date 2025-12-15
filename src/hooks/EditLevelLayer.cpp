@@ -70,11 +70,11 @@ bool (*TRAM_EditLevelLayer_init)(EditLevelLayer* self, GJGameLevel* level);
 bool EditLevelLayer_init(EditLevelLayer* self, GJGameLevel* level) {
     HaxManager& hax = HaxManager::sharedState();
 #ifndef FORCE_AUTO_SAFE_MODE
-    if (hax.getModuleEnabled("verify_bypass")) {
+    if (hax.getModuleEnabled(ModuleID::VERIFY_BYPASS)) {
         level->m_bIsVerified = true;
     }
 #endif
-    if (hax.getModuleEnabled("view_level_stats")) {
+    if (hax.getModuleEnabled(ModuleID::VIEW_LEVEL_STATS)) {
         CCMenu* infoMenu = CCMenu::create();
         CCSprite* infoSpr = createInfoSprite();
         CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, self, menu_selector(EditLevelLayer::onViewLevelInfo));
@@ -85,7 +85,7 @@ bool EditLevelLayer_init(EditLevelLayer* self, GJGameLevel* level) {
         infoMenu->addChild(infoBtn);
         infoMenu->setPosition(ccp(25.f, 25.f));
     }
-    if (hax.getModuleEnabled("gdshare")) {
+    if (hax.getModuleEnabled(ModuleID::GDSHARE)) {
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();
         

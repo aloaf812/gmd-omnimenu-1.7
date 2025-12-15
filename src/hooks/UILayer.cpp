@@ -4,25 +4,8 @@
 #include "ButtonSprite.hpp"
 #include "PlayerObject.hpp"
 #include <string>
-#include <sstream>
 #include <ctime>
 #include <iomanip>
-
-template <typename T>
-std::string ToString(T val)
-{
-    std::stringstream stream;
-    stream << val;
-    return stream.str();
-}
-template <typename T>
-std::string ToString(T val, int precision)
-{
-    std::stringstream stream;
-    stream.precision(precision);
-    stream << val;
-    return stream.str();
-}
 
 void UILayer::createLabel() {
     HaxManager& hax = HaxManager::sharedState();
@@ -37,130 +20,92 @@ void UILayer::createLabel() {
     hax.uiLabel = uiLabel;
     updateLabel();
 }
+static time_t cachedSeconds = 0;
+static tm* cachedTm;
 void UILayer::updateLabel() {
     HaxManager& hax = HaxManager::sharedState();
-    std::string labelText = "";
-    if (hax.getModuleEnabled("label_clock")) {
-        time_t now = time(NULL);
-        tm* mytm = localtime(&now);
-        std::stringstream strm;
-        strm << std::setfill('0') << std::setw(2);
-        strm << mytm->tm_hour;
-        strm << ':';
-        strm << std::setfill('0') << std::setw(2);
-        strm << mytm->tm_min;
-        strm << ':';
-        strm << std::setfill('0') << std::setw(2);
-        strm << mytm->tm_sec;
-        labelText += strm.str();
-        labelText += "\n";
+    fmt::internal::MemoryBuffer<char, 500> buf;
+    fmt::BasicWriter<char> writer(buf);
+    time_t now = time(NULL);
+    if (hax.getModuleEnabled(ModuleID::LABEL_CLOCK)) {
+        if (cachedSeconds != now && !cachedTm) {  
+            cachedTm = localtime(&now);
+            cachedSeconds = now;
+        }
+        writer.write("{:02}:{:02}:{:02}\n", cachedTm->tm_hour, cachedTm->tm_min, cachedTm->tm_sec);
     }
-    if (hax.getModuleEnabled("label_fps")) {
-        labelText += "FPS: ";
-        labelText += ToString(hax.fps);
-        labelText += "\n";
+    if (hax.getModuleEnabled(ModuleID::LABEL_FPS)) {
+        writer.write("FPS: {}\n", hax.fps);
     }
-    if (hax.getModuleEnabled("label_attempts_session")) {
-        labelText += "Attempts: ";
-        labelText += ToString(getCurrentAttempts());
-        labelText += "\n";
+    if (hax.getModuleEnabled(ModuleID::LABEL_ATTEMPT_COUNT_SESSION)) {
+        writer.write("Attempts: {}\n", getCurrentAttempts());
     }
-    if (hax.getModuleEnabled("label_attempts_total")) {
-        labelText += "Total Attempts: ";
-        labelText += ToString(getPlayLayerLevel()->m_nAttempts);
-        labelText += "\n";
+    if (hax.getModuleEnabled(ModuleID::LABEL_ATTEMPT_COUNT_TOTAL)) {
+        writer.write("Total Attempts: {}\n", getPlayLayerLevel()->m_nAttempts);
     }
-    if (hax.getModuleEnabled("label_best_run")) {
-        labelText += "Best Run: ";
-        if (hax.getModuleEnabled("show_percentage_decimal")) {
+    if (hax.getModuleEnabled(ModuleID::LABEL_BEST_RUN)) {
+        writer.write("Best Run: ");
+        if (hax.getModuleEnabled(ModuleID::SHOW_PERCENTAGE_DECIMAL)) {
             if (hax.bestRunStart > 0) {
-                labelText += ToString(hax.bestRunStart);
-                labelText += "% - ";
+                writer.write("{:.2f}% - ", hax.bestRunStart);
             }
-            labelText += ToString(hax.bestRunEnd);
+            writer.write("{:.2f}%\n", hax.bestRunEnd);
         } else {
             if (hax.bestRunStart > 0) {
-                labelText += ToString(floorf(hax.bestRunStart));
-                labelText += "% - ";
+                writer.write("{}% - ", floorf(hax.bestRunStart));
             }
-            labelText += ToString(floorf(hax.bestRunEnd));
+            writer.write("{}%\n", floorf(hax.bestRunEnd));
         }
-        labelText += "%\n";
     }
-    if (hax.getModuleEnabled("label_jumps")) {
-        labelText += "Jumps: ";
-        labelText += ToString(getCurrentJumps());
-        labelText += "\n";
+    if (hax.getModuleEnabled(ModuleID::LABEL_JUMPS)) {
+        writer.write("Jumps: {}\n", getCurrentJumps());
     }
-    if (hax.getModuleEnabled("label_clicks")) {
-        labelText += "Clicks: ";
-        labelText += ToString(hax.clicks);
-        labelText += "\n";
+    if (hax.getModuleEnabled(ModuleID::LABEL_CLICKS)) {
+        writer.write("Clicks: {}\n", hax.clicks);
     }
-    if (hax.getModuleEnabled("label_time_spent")) {
-        labelText += "Time Spent: ";
-        labelText += ToString(getClkTimer());
-        labelText += "\n";
+    if (hax.getModuleEnabled(ModuleID::LABEL_TIME_SPENT)) {
+        writer.write("Time Spent: {}\n", getClkTimer());
     }
-    if (hax.getModuleEnabled("label_frames")) {
-        labelText += "Frames: ";
-        labelText += ToString(hax.frameCount);
-        labelText += "\n";
+    if (hax.getModuleEnabled(ModuleID::LABEL_FRAMES)) {
+        writer.write("Frames: {}\n", hax.frameCount);
     }
-    if (hax.getModuleEnabled("noclip")) {    
-        if (hax.getModuleEnabled("label_noclip_accuracy")) {
-            labelText += "NoClip Accuracy: ";
-            labelText += ToString(hax.noclipAccuracy, 4);
-            labelText += "%\n";
+    if (hax.getModuleEnabled(ModuleID::NOCLIP)) {    
+        if (hax.getModuleEnabled(ModuleID::LABEL_NOCLIP_ACCURACY)) {
+            writer.write("NoClip Accuracy: {:.2f}%\n", hax.noclipAccuracy);
         }
-        if (hax.getModuleEnabled("label_noclip_deaths")) {
-            labelText += "NoClip Deaths: ";
-            labelText += ToString(hax.deaths);
-            labelText += "\n";
+        if (hax.getModuleEnabled(ModuleID::LABEL_NOCLIP_DEATHS)) {
+            writer.write("NoClip Deaths: {}\n", hax.deaths);
         }
     }
     auto player = getPlayer();
     if (player) {
-        if (hax.getModuleEnabled("label_player_position")) {
-            labelText += "Player X: ";
-            labelText += ToString(getPlayer()->getPositionX());
-            labelText += "\nPlayer Y: ";
-            labelText += ToString(getPlayer()->getPositionY());
-            labelText += "\n";
+        if (hax.getModuleEnabled(ModuleID::LABEL_PLAYER_POSITION)) {
+            writer.write("Player X: {}\nPlayer Y: {}\n", player->getPositionX(), player->getPositionY());
         }
-        if (hax.getModuleEnabled("label_player_rotation")) {
-            labelText += "Rotation: ";
-            labelText += ToString(getPlayer()->getRotation());
-            labelText += "\n";
+        if (hax.getModuleEnabled(ModuleID::LABEL_PLAYER_ROTATION)) {
+            writer.write("Player Rotation: {}\n", player->getRotation());
         }
-        if (hax.getModuleEnabled("label_pcommand")) {
-            labelText += "X Velocity: ";
-            labelText += ToString(getXVelocity(getPlayer()));
-            labelText += "\nGravity: ";
-            labelText += ToString(getGravity(getPlayer()));
-            labelText += "\nY Velocity: ";
-            labelText += ToString(getYStart(getPlayer()));
-            labelText += "\n";
+        if (hax.getModuleEnabled(ModuleID::LABEL_PCOMMAND)) {
+            writer.write("X Velocity: {}\nGravity: {}\nY Velocity: {}\n", getXVelocity(player), getGravity(player), getYStart(player));
         }
     }
-    hax.uiLabel->setString(labelText.c_str());
+    hax.uiLabel->setString(writer.c_str());
 }
 
 const char* getSwitcherText() {
-    auto startPoses = getStartPositions();
     HaxManager& hax = HaxManager::sharedState();
-    std::stringstream strm;
-    strm << hax.startPosIndex + 1;
-    strm << "/";
-    strm << startPoses->count();
-    return strm.str().c_str();
+    auto startPoses = hax.getStartPositions();
+    return fmt::format("{}/{}", hax.startPosIndex + 1, startPoses->count()).c_str();
 }
 
 void UILayer::createSwitcher() {
-    auto startPoses = getStartPositions();
-    if (startPoses->count() < 1) return;
-
     HaxManager& hax = HaxManager::sharedState();
+    auto startPoses = hax.getStartPositions();
+    if (!startPoses || startPoses == nullptr) return; 
+    if (startPoses->count() < 1) {
+        return;
+    }
+
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
@@ -195,14 +140,14 @@ void UILayer::createSwitcher() {
 
 void UILayer::onBackSP() {
     HaxManager& hax = HaxManager::sharedState();
-    auto startPoses = getStartPositions();
+    auto startPoses = hax.getStartPositions();
     if (hax.startPosIndex > -1) hax.startPosIndex--;
     else hax.startPosIndex = startPoses->count() - 1;
     UILayer::pickStartPos(hax.startPosIndex);
 }
 void UILayer::onForwardSP() {
     HaxManager& hax = HaxManager::sharedState();
-    auto startPoses = getStartPositions();
+    auto startPoses = hax.getStartPositions();
     if (startPoses->count() != 0 && (hax.startPosIndex == -1 || hax.startPosIndex < startPoses->count() - 1)) hax.startPosIndex++;
     else hax.startPosIndex = -1;
     UILayer::pickStartPos(hax.startPosIndex);
@@ -214,7 +159,7 @@ void UILayer::pickStartPos(int ind) {
         getPlayLayer()->removeLastCheckpoint();
     }
     HaxManager& hax = HaxManager::sharedState();
-    auto startPoses = getStartPositions();
+    auto startPoses = hax.getStartPositions();
     if (ind == -1) {
         setStartPos(ccp(0, 105));
         hax.startPercent = 0;
@@ -276,25 +221,25 @@ CCMenuItemSpriteExtra* createPCButton(const char* label, float y, SEL_MenuHandle
 }
 void UILayer::createPCommand() {
     HaxManager& hax = HaxManager::sharedState();
-    auto director = CCDirector::sharedDirector();
-    auto winSize = director->getWinSize();
-    if (!hax.pMenu || hax.pMenu == nullptr) {
+    if (!hax.pMenu) {
+        auto director = CCDirector::sharedDirector();
+        auto winSize = director->getWinSize();
         auto menu = CCMenu::create();
         menu->setPosition(ccp(winSize.width - 30, winSize.height - 40));
         this->addChild(menu, 10000);
         hax.pMenu = menu;
     }
-    if (!hax.pButton1 || hax.pButton1 == nullptr) 
+    if (!hax.pButton1) 
         hax.pButton1 = createPCButton("S+", -55, menu_selector(UILayer::speedUp), this, hax.pMenu);
-    if (!hax.pButton2 || hax.pButton2 == nullptr) 
+    if (!hax.pButton2) 
         hax.pButton2 = createPCButton("S-", -85, menu_selector(UILayer::speedDown), this, hax.pMenu);
-    if (!hax.pButton3 || hax.pButton3 == nullptr) 
+    if (!hax.pButton3) 
         hax.pButton3 = createPCButton("G+", -115, menu_selector(UILayer::gravityUp), this, hax.pMenu);
-    if (!hax.pButton4 || hax.pButton4 == nullptr) 
+    if (!hax.pButton4) 
         hax.pButton4 = createPCButton("G-", -145, menu_selector(UILayer::gravityDown), this, hax.pMenu);
-    if (!hax.pButton5 || hax.pButton5 == nullptr) 
+    if (!hax.pButton5) 
         hax.pButton5 = createPCButton("Y+", -175, menu_selector(UILayer::yStartUp), this, hax.pMenu);
-    if (!hax.pButton6 || hax.pButton6 == nullptr) 
+    if (!hax.pButton6) 
         hax.pButton6 = createPCButton("Y-", -205, menu_selector(UILayer::yStartDown), this, hax.pMenu);
 }
 
@@ -352,13 +297,13 @@ bool UILayer_init(UILayer* self) {
     HaxManager& hax = HaxManager::sharedState();
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
-    if (hax.getModuleEnabled("cheat_indicator")) {
+    if (hax.getModuleEnabled(ModuleID::CHEAT_INDICATOR)) {
         self->createCheatIndicator();
     }
-    if (hax.getModuleEnabled("show_percentage")) {
+    if (hax.getModuleEnabled(ModuleID::SHOW_PERCENTAGE)) {
         self->createPercentageLabel();
     }
-    if (hax.getModuleEnabled("pcommand")) {
+    if (hax.getModuleEnabled(ModuleID::PCOMMAND)) {
         self->createPCommand();
     }
     if (hax.getShowLabel()) {

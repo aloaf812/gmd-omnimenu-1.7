@@ -31,7 +31,7 @@ void GameStatsManager_completedMapPack(void* self, void* mapPack) {
 
     which is why i check for safe_mode only.
     */
-    if (hax.getModuleEnabled("safe_mode")) return;
+    if (hax.getModuleEnabled(ModuleID::SAFE_MODE)) return;
     TRAM_GameStatsManager_completedMapPack(self, mapPack);
 }
 #endif

@@ -11,30 +11,64 @@ enum class ModuleCategory {
     Particles = 6
 };
 
+// class Module {
+// public:
+//     const char* name;
+//     std::string description;
+//     bool enabled;
+//     ModuleCategory category;
+//     void (*onToggle)(bool);
+
+//     Module(const char* name, std::string description, bool defaultEnabled, ModuleCategory category, void (*onToggle)(bool)) {
+//         // this->id = id;
+//         this->name = name;
+//         this->description = description;
+//         this->enabled = defaultEnabled;
+//         this->category = category;
+//         this->onToggle = onToggle;
+//     }
+
+//     bool isEnabled() {
+//         return enabled;
+//     }
+//     void setEnabled(bool value) {
+//         enabled = value;
+//         onToggle(enabled);
+//     }
+//     void toggle() {
+//         setEnabled(!enabled);
+//     }
+// };
+
 class Module {
 public:
-    // const char* id;
+    const char* id;
     const char* name;
     std::string description;
     bool enabled;
     ModuleCategory category;
     void (*onToggle)(bool);
+    bool exists;
 
-    Module(const char* name, std::string description, bool defaultEnabled, ModuleCategory category, void (*onToggle)(bool)) {
-        // this->id = id;
-        this->name = name;
-        this->description = description;
-        this->enabled = defaultEnabled;
-        this->category = category;
-        this->onToggle = onToggle;
-    }
+    Module() = default;
 
-    bool isEnabled() {
-        return enabled;
-    }
+    Module(const char* id,
+           const char* name,
+           std::string description,
+           bool defaultEnabled,
+           ModuleCategory category,
+           void (*onToggle)(bool))
+        : exists(true), // only when explicitly constructed
+          id(id),
+          name(name),
+          description(std::move(description)),
+          enabled(defaultEnabled),
+          category(category),
+          onToggle(onToggle) {}
+    
     void setEnabled(bool value) {
         enabled = value;
-        onToggle(enabled);
+        if (onToggle) onToggle(value);
     }
     void toggle() {
         setEnabled(!enabled);

@@ -545,7 +545,7 @@ bool compareXes(CCObject* p1, CCObject* p2) {
   return getRealPosition(static_cast<GameObject*>(p1)).x < getRealPosition(static_cast<GameObject*>(p2)).x;
 }
 
-CCArray* getStartPositions(PlayLayer* playLayer) {
+CCArray* getStartPositions_(PlayLayer* playLayer) {
     auto sections = getPlaySections(playLayer);
     CCArray* arr = CCArray::create();
     for (int i = 0; i < sections->count(); i++) {
@@ -560,8 +560,8 @@ CCArray* getStartPositions(PlayLayer* playLayer) {
     std::sort(arr->data->arr, arr->data->arr + arr->data->num, compareXes);
     return arr;
 }
-CCArray* getStartPositions() {
-    return getStartPositions(getPlayLayer());
+CCArray* getStartPositions_() {
+    return getStartPositions_(getPlayLayer());
 }
 
 void setStartPos(PlayLayer* playLayer, cocos2d::CCPoint point) {
@@ -596,13 +596,13 @@ void setCharLimit(CCTextInputNode* node, int limit) {
     MEMBER_BY_OFFSET(int, node, CCTextInputNode__m_charLimit) = limit;
 }
 
-#if GAME_VERSION >= GV_1_4
 GJSearchObject* getSearchObject(LevelBrowserLayer* browser) {
     return MEMBER_BY_OFFSET(GJSearchObject*, browser, LevelBrowserLayer__m_searchObject);
 }
 int getSearchType(GJSearchObject* searcher) {
     return MEMBER_BY_OFFSET(int, searcher, GJSearchObject__m_type);
 }
+#if GAME_VERSION >= GV_1_4
 void setIconHack(bool enable) {
     if (enable) {
         DobbyCodePatch(
@@ -800,3 +800,8 @@ void setNoShipTint(bool enable) {
 int getSectionIdx(GameObject* obj) {
     return MEMBER_BY_OFFSET(int, obj, GameObject__m_sectionIdx);
 }
+#if GAME_VERSION < GV_1_1
+CCDictionary* getKeyTimers() {
+    return MEMBER_BY_OFFSET(CCDictionary*, GameLevelManager::sharedState(), GameLevelManager__m_keyTimers);
+}
+#endif

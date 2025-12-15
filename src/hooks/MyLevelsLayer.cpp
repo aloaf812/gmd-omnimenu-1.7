@@ -102,7 +102,7 @@ bool (*TRAM_MyLevelsLayer_init)(MyLevelsLayer* self);
 bool MyLevelsLayer_init(MyLevelsLayer* self) {
     if (!TRAM_MyLevelsLayer_init(self)) return false;
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("gdshare")) {
+    if (hax.getModuleEnabled(ModuleID::GDSHARE)) {
         hax.myLevelsLayer = self;
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();

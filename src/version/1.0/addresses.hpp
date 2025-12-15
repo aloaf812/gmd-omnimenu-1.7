@@ -33,6 +33,7 @@
 /**/ #define EditorUI__m_selectedObjects       0x180 /**/ // EditorUI::deselectAll 
 /**/ #define EditorUI__m_unkFloat              0x158 /**/ // EditorUI::setupCreateMenu (at the bottom)
 
+/**/ #define GameLevelManager__m_keyTimers     0x130 /**/ // GameLevelManager::isTimeValid
 /**/ #define GameLevelManager__m_localLevels   0x150 /**/ // GameLevelManager::getLocalLevels
 
 /**/ #define GameManager__m_playLayer          0x150 /**/ // GameManager::getPlayLayer
@@ -45,6 +46,8 @@
 /**/ #define GameObject__m_shouldSpawn         0x2c0 /**/ // GameObject::getShouldSpawn
 /**/ #define GameObject__m_type                0x2b8 /**/ // GameObject::getType
 /**/ #define GameObject__m_useAudioScale       0x2eb /**/ // GameObject::getUseAudioScale
+/**/ #define GJSearchObject__m_type            0x128 /**/ // GJSearchObject::getType
+/**/ #define LevelBrowserLayer__m_searchObject 0x150 /**/ // LevelBrowserLayer::setSearchObject
 /**/ #define LevelCell__m_level                0x180 /**/ // LevelCell::loadFromLevel
 /**/ #define LevelEditorLayer__m_batchNode     0x140 /**/ // LevelEditorLayer::createObject (1st function call after GameObject::createObject)
 /**/ #define LevelEditorLayer__m_gameLayer     0x158 /**/ // LevelEditorLayer::getGameLayer

@@ -7,52 +7,68 @@
 #include "GameLevelManager.hpp"
 #include "Utils.hpp"
 
+void showRandomMessage() {
+    GameManager* gman = GameManager::sharedState();
+    std::vector<std::string> messages = {
+        "When them <co>fajitas</c> come out <cy>sizzlin'</c>!",
+        "kitto todoku hazu",
+        "I loooove <co>GD Cologne</c>!",
+        "Another Time Then...",
+        "<cl>And we Will End!!</c>",
+        std::string(CCString::createWithFormat(
+            "Hello <cy>%s</c>. You don't know me, but I know you. I want to play a <cr>game</c>.",
+            getPlayerName().c_str()
+        )->getCString()),
+        "no worries I will load a backup so people can restore levels they want via account page. May take a while",
+        "A wild <cy>Prew Davlou</c> appeared!",
+        "i had a dream that the united nations recognized zoink as an independent country",
+        "Guys, PLEASE <cr>STOP</c> calling Me <cy>Greg Heffley</c>. I'm more than just a <cg>STUPID GRAPHIC NOVEL CHARACTER</c>!!! Guys, Look at <cl>the bigger picture</c> here.",
+        "Please do not disrespect other members.",
+        "The person who implemented <cl>SimpleAudioEngine</c> should be considered a <cr>war criminal</c>.",
+        "The family-friendly Christian Geometry Dash mod menu!",
+        "NEVER INHERIT <cb>FLAlertLayer</c>, WORST MISTAKE OF MY LIFE!",
+        "it's just simple <cr>red</c> counting",
+        "i know what you did last night",
+        "Beautiful risings <cy>Pharoah</c>. My temple is calling for its <cy>Pharoah</c>.",
+        "Dude, I know this is unrelated, but I need your help right now.", 
+        std::string(CCString::createWithFormat(
+            "IS THIS A UNDERRATED <cy>%s</c> MASTERPIECE!?",
+            READABLE_GAME_VERSION
+        )->getCString()),
+        "I'm literally older than yo Brainrot Ahhh.",
+        "xD:Call me ...Ring...Ring... hello...What?! ok :D bye mlg",
+        "The community in this game does there difficulty rating sonhorrible",
+        "I got the coin and then i went to the",
+        "I Was happy as hell when I found out stringstream was dead, I cooked for the whole day"
+    };
+    int index = rand() % messages.size();
+    FLAlertLayer::create(
+        nullptr,
+        "Level Info",
+        messages[index].c_str(),
+        "OK",
+        nullptr,
+        300.f
+    )->show();
+}
+
+#if GAME_VERSION >= GV_1_6
+void (*TRAM_LevelSelectLayer_onInfo)(LevelSelectLayer* self);
+void LevelSelectLayer_onInfo(LevelSelectLayer* self) {
+    int levelID = getCurrentScrollIndex(getSelectLayerScroll(self)) + 1;
+    HaxManager& hax = HaxManager::sharedState();
+    if (levelID > LAST_MAIN_LEVEL_ID && hax.getModuleEnabled(ModuleID::VIEW_LEVEL_STATS)) {
+        showRandomMessage();
+        return;
+    }
+    TRAM_LevelSelectLayer_onInfo(self);
+}
+#else
 void LevelSelectLayer::onViewLevelInfo() {
     // GJGameLevel* level = getInfoLayerLevel(this);
     int levelID = getCurrentScrollIndex(getSelectLayerScroll(this)) + 1;
     if (levelID > LAST_MAIN_LEVEL_ID) {
-        GameManager* gman = GameManager::sharedState();
-        std::vector<std::string> messages = {
-            "When them <co>fajitas</c> come out <cy>sizzlin'</c>!",
-            "kitto todoku hazu",
-            "I loooove <co>GD Cologne</c>!",
-            "Another Time Then...",
-            "<cl>And we Will End!!</c>",
-            std::string(CCString::createWithFormat(
-                "Hello <cy>%s</c>. You don't know me, but I know you. I want to play a <cr>game</c>.",
-                getPlayerName().c_str()
-            )->getCString()),
-            "no worries I will load a backup so people can restore levels they want via account page. May take a while",
-            "A wild <cy>Prew Davlou</c> appeared!",
-            "i had a dream that the united nations recognized zoink as an independent country",
-            "Guys, PLEASE <cr>STOP</c> calling Me <cy>Greg Heffley</c>. I'm more than just a <cg>STUPID GRAPHIC NOVEL CHARACTER</c>!!! Guys, Look at <cl>the bigger picture</c> here.",
-            "Please do not disrespect other members.",
-            "The person who implemented <cl>SimpleAudioEngine</c> should be considered a <cr>war criminal</c>.",
-            "The family-friendly Christian Geometry Dash mod menu!",
-            // "Stand with <cl>Ukr</c><cy>aine</c> and <cg>Palestine</c>!" <-- i stand by this but it didn't feel right to have in a mod menu
-            "NEVER INHERIT <cb>FLAlertLayer</c>, WORST MISTAKE OF MY LIFE!",
-            "it's just simple <cr>red</c> counting",
-            "i know what you did last night",
-            "Beautiful risings <cy>Pharoah</c>. My temple is calling for its <cy>Pharoah</c>.",
-            "Dude, I know this is unrelated, but I need your help right now.", 
-            std::string(CCString::createWithFormat(
-                "IS THIS A UNDERRATED <cy>%s</c> MASTERPIECE!?",
-                READABLE_GAME_VERSION
-            )->getCString()),
-            "I'm literally older than yo Brainrot Ahhh.",
-            "#KillSereneNecrosis",
-            "xD:Call me ...Ring...Ring... hello...What?! ok :D bye mlg",
-            "The community in this game does there difficulty rating sonhorrible"
-        };
-        int index = rand() % messages.size();
-        FLAlertLayer::create(
-            nullptr,
-            "Level Info",
-            messages[index].c_str(),
-            "OK",
-            nullptr,
-            300.f
-        )->show();
+        showRandomMessage();
         return;
     }
     GameLevelManager* GLM = GameLevelManager::sharedState();
@@ -79,7 +95,7 @@ bool (*TRAM_LevelSelectLayer_init)(LevelSelectLayer* self, int a);
 bool LevelSelectLayer_init(LevelSelectLayer* self, int a) {
     TRAM_LevelSelectLayer_init(self, a);
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("view_level_stats")) {
+    if (hax.getModuleEnabled(ModuleID::VIEW_LEVEL_STATS)) {
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();
         CCMenu* infoMenu = CCMenu::create();
@@ -94,8 +110,16 @@ bool LevelSelectLayer_init(LevelSelectLayer* self, int a) {
     }
     return true;
 }
+#endif
+
 void LevelSelectLayer_om() {
+#if GAME_VERSION < GV_1_6
     Omni::hook("_ZN16LevelSelectLayer4initEi",
         reinterpret_cast<void*>(LevelSelectLayer_init),
         reinterpret_cast<void**>(&TRAM_LevelSelectLayer_init));
+#else
+    Omni::hook("_ZN16LevelSelectLayer6onInfoEv",
+        reinterpret_cast<void*>(LevelSelectLayer_onInfo),
+        reinterpret_cast<void**>(&TRAM_LevelSelectLayer_onInfo));
+#endif
 }

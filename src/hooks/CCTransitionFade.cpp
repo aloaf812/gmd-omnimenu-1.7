@@ -3,7 +3,7 @@
 void (*TRAM_CCTransitionFade_create)(float duration, CCScene* scene, const ccColor3B& color);
 void CCTransitionFade_create(float duration, CCScene* scene, const ccColor3B& color = ccBLACK) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("fast_menu")) TRAM_CCTransitionFade_create(0.f, scene, color);
+    if (hax.getModuleEnabled(ModuleID::FAST_MENU)) TRAM_CCTransitionFade_create(0.f, scene, color);
     else TRAM_CCTransitionFade_create(duration, scene, color);
 }
 

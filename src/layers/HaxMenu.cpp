@@ -30,7 +30,7 @@ HaxMenu* HaxMenu::create(CCLayer* referrer) {
 
 float HaxMenu::getDuration() {
     auto& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("fast_menu")) return 0.f;
+    if (hax.getModuleEnabled(ModuleID::FAST_MENU)) return 0.f;
     return 0.25f;
 }
 
@@ -122,7 +122,7 @@ bool HaxMenu::init(CCLayer* referrer) {
 
     setTouchEnabled(true);
     setKeypadEnabled(true);
-    referrer->setTouchEnabled(false);
+    // referrer->setTouchEnabled(false);
     // referrer->setScale(0.2f);
 
     onCategory(hax.lastCategory);
@@ -202,16 +202,19 @@ void HaxMenu::onCategory(ModuleCategory category) {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
 
-    std::map<std::string, Module*>::iterator it;
-
     int y = -20;
 
-    for (it = hax.modules.begin(); it != hax.modules.end(); it++)
+    int key = 0;
+    for (Module& record : hax.modules)
     {
-        std::string* key = new std::string; // heap allocation
-        *key = it->first;
-        Module* mod = it->second;
-        if (mod->category != category) continue;
+        if (!record.exists) {
+            key++;
+            continue;
+        }
+        if (record.category != category) {
+            key++;
+            continue;
+        }
 
 #if GAME_VERSION > GV_1_0
         auto toggleOn = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
@@ -222,13 +225,13 @@ void HaxMenu::onCategory(ModuleCategory category) {
 #endif
 
         auto checkbox = CCMenuItemToggler::create(toggleOn, toggleOff, this, menu_selector(HaxMenu::toggler));
-        checkbox->toggle(!mod->enabled);
+        checkbox->toggle(!record.enabled);
         checkbox->setScale(0.5f);
-        checkbox->setUserData(key);
+        checkbox->setTag(key);
         this->modMenu->addChild(checkbox, 1003);
         checkbox->setPosition({-100, winSize.height / 2 + y});
 
-        std::string labelValue = mod->name;
+        std::string labelValue = record.name;
         labelValue += " "; // italics font gets cut off grrrr
         auto label = CCLabelTTF::create(labelValue.c_str(), "Helvetica-Oblique.ttf", 11);
         this->rightParent->addChild(label, 1003);
@@ -240,9 +243,10 @@ void HaxMenu::onCategory(ModuleCategory category) {
         CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(infoSpr, infoSpr, this, menu_selector(HaxMenu::modInfo));
         infoBtn->setSizeMult(1.5f);
         infoBtn->setPosition(ccp(-80 + label->getContentSize().width, winSize.height / 2 + y));
-        infoBtn->setUserData(key);
+        infoBtn->setTag(key);
         this->modMenu->addChild(infoBtn, 1003);
         y -= 16;
+        key++;
     }
     if (category == ModuleCategory::Universal) {
         auto udidSpr = ButtonSprite::create("Copy UDID", 50, 0, 1, false, "bigFont.fnt", "GJ_button_04.png");
@@ -273,12 +277,12 @@ void HaxMenu::onUDID() {
 
 void HaxMenu::toggler(CCObject* sender) {
     CCMenuItem* menuItem = (CCMenuItem *)(sender);
-    std::string* userData = static_cast<std::string*>(menuItem->getUserData());
+    int tag = menuItem->getTag();
     auto& hax = HaxManager::sharedState();
-    hax.getModule(userData->c_str())->toggle();
-    if (!strcmp(userData->c_str(), "ping_spoofing")) {
+    hax.modules[tag].toggle();
+    if (tag == ModuleID::PIG_SPOOFING) {
         GameSoundManager::sharedManager()->playEffect("pih.mp3");
-        hax.getModule(userData->c_str())->toggle();
+        hax.modules[tag].toggle();
         static_cast<CCMenuItemToggler*>(sender)->toggle(true);
         this->runAction(CCSequence::create(
             CCDelayTime::create(0.2f),
@@ -289,13 +293,13 @@ void HaxMenu::toggler(CCObject* sender) {
 }
 void HaxMenu::modInfo(CCObject* sender) {
     CCMenuItem* menuItem = (CCMenuItem *)(sender);
-    std::string* userData = static_cast<std::string*>(menuItem->getUserData());
+    int tag = menuItem->getTag();
     auto& hax = HaxManager::sharedState();
-    Module* mod = hax.getModule(userData->c_str());
+    Module mod = hax.modules[tag];
     FLAlertLayer::create(
         nullptr,
-        mod->name,
-        mod->description.c_str(),
+        mod.name,
+        mod.description.c_str(),
         "OK",
         nullptr,
         300.f

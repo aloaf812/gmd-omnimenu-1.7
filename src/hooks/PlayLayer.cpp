@@ -6,11 +6,11 @@
 void (*TRAM_PlayLayer_destroyPlayer)(PlayLayer* self);
 void PlayLayer_destroyPlayer(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("noclip") || hax.getModuleEnabled("instant_complete")) {
+    if (hax.getModuleEnabled(ModuleID::NOCLIP) || hax.getModuleEnabled(ModuleID::INSTANT_COMPLETE)) {
         if (hax.lastDeadFrame < hax.frameCount)
             hax.deadFrames++;
 
-        if (hax.lastDeadFrame < hax.frameCount - 1)
+        if (hax.lastDeadFrame < hax.frameCount - 1 && !hax.completed)
             hax.deaths++;
 
         hax.lastDeadFrame = hax.frameCount;
@@ -24,7 +24,7 @@ void PlayLayer_destroyPlayer(PlayLayer* self) {
         hax.bestRunEnd = currRun;
     }
     TRAM_PlayLayer_destroyPlayer(self);
-    if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
+    if (hax.getModuleEnabled(ModuleID::PRACTICE_MUSIC_HACK) && getPlayLayerPractice(self)) {
         auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
         audioEngine->pauseBackgroundMusic();
     }
@@ -33,7 +33,7 @@ void PlayLayer_destroyPlayer(PlayLayer* self) {
 void (*TRAM_PlayLayer_togglePracticeMode)(PlayLayer* self, bool toggle);
 void PlayLayer_togglePracticeMode(PlayLayer* self, bool toggle) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self) != toggle) {
+    if (hax.getModuleEnabled(ModuleID::PRACTICE_MUSIC_HACK) && getPlayLayerPractice(self) != toggle) {
         // recreated function basically
         setPlayLayerPractice(self, toggle);
         UILayer* uiLayer = getUILayer(self);
@@ -72,7 +72,7 @@ void PlayLayer_levelComplete(PlayLayer* self) {
     hax.completed = true;
     TRAM_PlayLayer_levelComplete(self);
     // bandaid fix
-    if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
+    if (hax.getModuleEnabled(ModuleID::PRACTICE_MUSIC_HACK) && getPlayLayerPractice(self)) {
         auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
         audioEngine->resumeBackgroundMusic();
     }
@@ -90,7 +90,7 @@ void PlayLayer_resetLevel(PlayLayer* self) {
     hax.deadFrames = 0;
     hax.noclipAccuracy = 100;
     hax.completed = false;
-    if (hax.getModuleEnabled("practice_music") && getPlayLayerPractice(self)) {
+    if (hax.getModuleEnabled(ModuleID::PRACTICE_MUSIC_HACK) && getPlayLayerPractice(self)) {
         auto audioEngine = CocosDenshion::SimpleAudioEngine::sharedEngine();
         int seekTime = 0;
         CCPoint startPos = getStartPos(self);
@@ -115,12 +115,12 @@ void PlayLayer_resetLevel(PlayLayer* self) {
     }
     TRAM_PlayLayer_resetLevel(self);
 #if GAME_VERSION == GV_1_4
-    if (hax.getModuleEnabled("obj_color_fix")) {
+    if (hax.getModuleEnabled(ModuleID::OBJ_COLOR_FIX)) {
         self->tintObjects(ccWHITE, 0.f);
     }
 #endif
     hax.startPercent = getCurrentPercentageF();
-    if (hax.getModuleEnabled("instant_complete")) {
+    if (hax.getModuleEnabled(ModuleID::INSTANT_COMPLETE)) {
         instantComplete(self);
     }
 }
@@ -135,7 +135,7 @@ void PlayLayer_onQuit(PlayLayer* self) {
 void (*TRAM_PlayLayer_toggleFlipped)(void* self, bool p1, bool p2);
 void PlayLayer_toggleFlipped(void* self, bool p1, bool p2) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("no_mirror")) return;
+    if (hax.getModuleEnabled(ModuleID::NO_MIRROR)) return;
     TRAM_PlayLayer_toggleFlipped(self, p1, p2);
 }
 
@@ -145,8 +145,6 @@ void PlayLayer_update(PlayLayer* self, float dt) {
     TRAM_PlayLayer_update(self, dt);
     hax.frameCount++;
     if (hax.quitPlayLayer) return;
-    auto director = CCDirector::sharedDirector();
-    auto winSize = director->getWinSize();
     UILayer* uiLayer = getUILayer(self);
     // force visibility
     if (!getPlayLayerPractice(self) && getPlayLayerCheckpoints(self)->count() > 0) {
@@ -155,7 +153,7 @@ void PlayLayer_update(PlayLayer* self, float dt) {
     } else {
         hax.checkpointsInNormalMode = false;
     }
-    if (hax.getModuleEnabled("cheat_indicator")) {
+    if (hax.getModuleEnabled(ModuleID::CHEAT_INDICATOR)) {
         if (!hax.cheatIndicatorLabel || hax.cheatIndicatorLabel == nullptr) {
             uiLayer->createCheatIndicator();
         } else if (!hax.cheatIndicatorLabel->isVisible())
@@ -182,18 +180,20 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         if (hax.cheatIndicatorLabel && hax.cheatIndicatorLabel != nullptr && hax.cheatIndicatorLabel->isVisible()) 
             hax.cheatIndicatorLabel->setVisible(false);
     }
-    if (hax.getModuleEnabled("show_percentage")) {
+    if (hax.getModuleEnabled(ModuleID::SHOW_PERCENTAGE)) {
         if (!hax.percentageLabel || hax.percentageLabel == nullptr) {
             uiLayer->createPercentageLabel();
         } else if (!hax.percentageLabel->isVisible()) {
             hax.percentageLabel->setVisible(true);
         }
-        if (hax.getModuleEnabled("show_percentage_decimal")) {
+        if (hax.getModuleEnabled(ModuleID::SHOW_PERCENTAGE_DECIMAL)) {
             hax.percentageLabel->setString(CCString::createWithFormat("%.3f%%", getCurrentPercentageF(self))->getCString());
         } else {
             hax.percentageLabel->setString(CCString::createWithFormat("%i%%", getCurrentPercentage(self))->getCString());
         }
 #if GAME_VERSION >= GV_1_5
+        auto director = CCDirector::sharedDirector();
+        auto winSize = director->getWinSize();
         if (getShowProgressBar()) {
             hax.percentageLabel->setPositionX(winSize.width / 2 + 110);
         } else {
@@ -204,16 +204,14 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         if (hax.percentageLabel && hax.percentageLabel != nullptr && hax.percentageLabel->isVisible())
             hax.percentageLabel->setVisible(false);
     }
-    if (hax.getModuleEnabled("pcommand")) {
-        if (!hax.pMenu || !hax.pButton1 || !hax.pButton2 || !hax.pButton3 || !hax.pButton4 || !hax.pButton5 || !hax.pButton6
-        || hax.pMenu == nullptr || hax.pButton1 == nullptr || hax.pButton2 == nullptr || hax.pButton3 == nullptr || hax.pButton4 == nullptr
-        || hax.pButton5 == nullptr || hax.pButton6 == nullptr) {
+    if (hax.getModuleEnabled(ModuleID::PCOMMAND)) {
+        if (!hax.pMenu || !hax.pButton1 || !hax.pButton2 || !hax.pButton3 || !hax.pButton4 || !hax.pButton5 || !hax.pButton6) {
             uiLayer->createPCommand();
         } else if (!hax.pMenu->isVisible()) {
             hax.pMenu->setVisible(true);
         }
     } else {
-        if (hax.pMenu && hax.pMenu != nullptr && hax.pMenu->isVisible()) {
+        if (hax.pMenu && hax.pMenu->isVisible()) {
             hax.pMenu->setVisible(false);
         }
     }
@@ -225,39 +223,54 @@ void PlayLayer_update(PlayLayer* self, float dt) {
         }
         uiLayer->updateLabel();
     } else {
-        if (hax.uiLabel && hax.uiLabel != nullptr && hax.uiLabel->isVisible())
+        if (hax.uiLabel && hax.uiLabel->isVisible())
             hax.uiLabel->setVisible(false);
     }
-    if (hax.getModuleEnabled("start_pos_switcher")) {
-        if (!hax.spSwitcherParent || hax.spSwitcherParent == nullptr) {
+    if (hax.getModuleEnabled(ModuleID::START_POS_SWITCHER)) {
+        if (hax.startPosIndex == -2) {
+            hax.startPositions = getStartPositions_(self);
+            hax.startPositions->retain();
+            hax.startPosIndex = hax.startPositions->count() - 1;
+        }
+        if (!hax.spSwitcherParent) {
             uiLayer->createSwitcher();
         } else if (!hax.spSwitcherParent->isVisible()) {
             hax.spSwitcherParent->setVisible(true);
         }
     } else {
-        if (hax.spSwitcherParent && hax.spSwitcherParent != nullptr && hax.spSwitcherParent->isVisible())
+        if (hax.spSwitcherParent && hax.spSwitcherParent->isVisible())
             hax.spSwitcherParent->setVisible(false);
     }
-    if (hax.getModuleEnabled("instant_complete") && !hax.instantComped) {
+    if (hax.getModuleEnabled(ModuleID::INSTANT_COMPLETE) && !hax.instantComped) {
         instantComplete(self);
     }
-    if (!hax.getModuleEnabled("particle_background")) {
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_BACKGROUND)) {
         auto p = getBGParticles(self);
         if (p && p != nullptr) p->stopSystem();
     }
-    if (hax.getModuleEnabled("hide_attempts")) {
+    if (hax.getModuleEnabled(ModuleID::HIDE_ATTEMPTS)) {
         getAttemptLabel(self)->setVisible(false);
     } else {
         getAttemptLabel(self)->setVisible(true);
     }
-    if (hax.lastDeadFrame < hax.frameCount - 1 || hax.completed || !hax.getModuleEnabled("noclip_tint_on_death") || !hax.getModuleEnabled("noclip")) {
-        hax.ntOpacity -= 1500 * dt;
-        if (hax.ntOpacity < 0) hax.ntOpacity = 0;
+    if (hax.getModuleEnabled(ModuleID::NOCLIP_TINT_ON_DEATH) && hax.getModuleEnabled(ModuleID::NOCLIP)) {
+        if (hax.lastDeadFrame < hax.frameCount - 1 || hax.completed) {
+            hax.ntOpacity -= 1500 * dt;
+            if (hax.ntOpacity < 0) hax.ntOpacity = 0;
+        } else {
+            hax.ntOpacity += 1500 * dt;
+            if (hax.ntOpacity > 100) hax.ntOpacity = 100;
+        }
+        int intOp = static_cast<int>(hax.ntOpacity);
+        int currOp = hax.noclipTint->getOpacity();
+        if (currOp != intOp) {
+            hax.noclipTint->setOpacity(intOp);
+        }
     } else {
-        hax.ntOpacity += 1500 * dt;
-        if (hax.ntOpacity > 100) hax.ntOpacity = 100;
+        if (hax.noclipTint->getOpacity() > 0) {
+            hax.noclipTint->setOpacity(0);
+        }
     }
-    hax.noclipTint->setOpacity(static_cast<int>(hax.ntOpacity));
     if (hax.frameCount > 0 && !hax.completed) {
         hax.noclipAccuracy = static_cast<float>(hax.frameCount - hax.deadFrames) / static_cast<float>(hax.frameCount) * 100;
     }
@@ -266,13 +279,16 @@ bool (*TRAM_PlayLayer_init)(PlayLayer* self, GJGameLevel* level);
 bool PlayLayer_init(PlayLayer* self, GJGameLevel* level) {
     if (!TRAM_PlayLayer_init(self, level)) return false;
     HaxManager& hax = HaxManager::sharedState();
-    hax.startPosIndex = getStartPositions(self)->count() - 1;
     hax.startPercent = getCurrentPercentageF();
-    if (hax.getModuleEnabled("hide_attempts")) {
+    if (hax.getModuleEnabled(ModuleID::HIDE_ATTEMPTS)) {
         getAttemptLabel(self)->setVisible(false);
     }
     hax.quitPlayLayer = false;
-    if (hax.getModuleEnabled("start_pos_switcher")) {
+    hax.startPosIndex = -2;
+    if (hax.getModuleEnabled(ModuleID::START_POS_SWITCHER)) {
+        hax.startPositions = getStartPositions_(self);
+        hax.startPositions->retain();
+        hax.startPosIndex = hax.startPositions->count() - 1;
         getUILayer(self)->createSwitcher();
     }
     return true;
@@ -280,7 +296,7 @@ bool PlayLayer_init(PlayLayer* self, GJGameLevel* level) {
 void (*TRAM_PlayLayer_shakeCamera)(PlayLayer* self, float duration);
 void PlayLayer_shakeCamera(PlayLayer* self, float duration) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("no_shake")) return;
+    if (hax.getModuleEnabled(ModuleID::NO_SHAKE)) return;
     TRAM_PlayLayer_shakeCamera(self, duration);
 }
 #if GAME_VERSION >= GV_1_5
@@ -328,10 +344,10 @@ void PlayLayer_toggleProgressbar(PlayLayer* self) {
 void (*TRAM_PlayLayer_spawnParticle)(PlayLayer* self, const char* particleName, int a3, tCCPositionType type, CCPoint position);
 void PlayLayer_spawnParticle(PlayLayer* self, const char* particleName, int a3, tCCPositionType type, CCPoint position) {
     HaxManager& hax = HaxManager::sharedState();
-    if (!hax.getModuleEnabled("particle_destructible_blocks") && !strcmp(particleName, "glassDestroy01.plist"))
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_DESTRUCTIBLE_BLOCKS) && !strcmp(particleName, "glassDestroy01.plist"))
         return;
 
-    if (!hax.getModuleEnabled("particle_secret_coins") && !strcmp(particleName, "coinPickupEffect.plist"))
+    if (!hax.getModuleEnabled(ModuleID::PARTICLE_SECRET_COINS) && !strcmp(particleName, "coinPickupEffect.plist"))
         return;
 
     TRAM_PlayLayer_spawnParticle(self, particleName, a3, type, position);
@@ -342,7 +358,7 @@ void PlayLayer_processItems(PlayLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
 #ifdef FORCE_AUTO_SAFE_MODE
 #ifndef STAR_RATED_LEVELS_GRANT_COINS
-    if (getPlayLayerLevel(self)->m_eLevelType != 1) return;
+    if (getPlayLayerLevel(self)->m_eLevelType != GJLevelType::Local) return;
 #else
     if (getPlayLayerLevel(self)->m_nStars < 1) return;
 #endif

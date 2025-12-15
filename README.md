@@ -10,6 +10,7 @@ Currently works for versions 1.02 - 1.6.
 - Hris69 - betatested on Android 4.4. Also got me started with tradmodding in general. Without him, this mod menu wouldn't exist.
 - Nikolyas, Caster, Tabbi - betatesters
 - HJFod - BetterEdit code (particularly the RGB Color Inputs)
+- iAndy_HD - Helping out with fmtlib
 
 ## Build Instructions
 Note: the minimum Android version is currently KitKat (4.4). Android 14+ devices won't work without solutions like Shizuku or Virtual Master.

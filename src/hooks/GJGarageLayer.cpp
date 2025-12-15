@@ -6,10 +6,10 @@ bool (*TRAM_GJGarageLayer_init)(CCLayer* self);
 bool GJGarageLayer_init(CCLayer* self) {
     HaxManager& hax = HaxManager::sharedState();
 #if GAME_VERSION >= GV_1_4
-    setIconHack(hax.getModuleEnabled("unlock_icons"));
+    setIconHack(hax.getModuleEnabled(ModuleID::UNLOCK_ICONS));
 #endif
     if (!TRAM_GJGarageLayer_init(self)) return false;
-    if (hax.getModuleEnabled("demons_in_garage")) {
+    if (hax.getModuleEnabled(ModuleID::DEMONS_IN_GARAGE)) {
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();
         auto sprite = CCSprite::createWithSpriteFrameName("GJ_demonIcon_001.png");

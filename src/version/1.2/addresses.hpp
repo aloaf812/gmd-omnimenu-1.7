@@ -40,6 +40,8 @@
 /**/ #define GameObject__m_type                0x2bc /**/ // GameObject::getType
 /**/ #define GameObject__m_useAudioScale       0x2ef /**/ // GameObject::getUseAudioScale
 /**/ #define GJComment__m_commentID            0x130 /**/ // GJComment::getCommentID
+/**/ #define GJSearchObject__m_type            0x128 /**/ // GJSearchObject::getType
+/**/ #define LevelBrowserLayer__m_searchObject 0x154 /**/ // LevelBrowserLayer::setSearchObject
 /**/ #define LevelCell__m_level                0x180 /**/ // LevelCell::loadFromLevel
 /**/ #define LevelEditorLayer__m_batchNode     0x140 /**/ // LevelEditorLayer::createObject (1st function call after GameObject::createObject)
 /**/ #define LevelEditorLayer__m_gameLayer     0x158 /**/ // LevelEditorLayer::getGameLayer

@@ -99,12 +99,25 @@ void LevelBrowserLayer::loadLevel(GJGameLevel* level) {
 void LevelBrowserLayer::reload() {
     CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, LevelBrowserLayer::scene(getSearchObject(this))));
 }
+#endif
+
+void LevelBrowserLayer::onRefresh() {
+    auto searcher = getSearchObject(this);
+    if (!searcher) return;
+#if GAME_VERSION > GV_1_0
+    GameLevelManager::sharedState()->resetTimerForKey(searcher->getKey());
+#else
+    getKeyTimers()->removeObjectForKey(searcher->getKey());
+#endif
+    this->loadPage(searcher);
+}
 
 bool (*TRAM_LevelBrowserLayer_init)(LevelBrowserLayer* self, GJSearchObject* searcher);
 bool LevelBrowserLayer_init(LevelBrowserLayer* self, GJSearchObject* searcher) {
     if (!TRAM_LevelBrowserLayer_init(self, searcher)) return false;
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("gdshare") && getSearchType(searcher) == 98) {
+#if GAME_VERSION >= GV_1_4
+    if (hax.getModuleEnabled(ModuleID::GDSHARE) && getSearchType(searcher) == 98) {
         hax.levelBrowserLayer = self;
         auto director = CCDirector::sharedDirector();
         auto winSize = director->getWinSize();
@@ -116,6 +129,18 @@ bool LevelBrowserLayer_init(LevelBrowserLayer* self, GJSearchObject* searcher) {
         importMenu->addChild(importBtn);
         importMenu->setPosition(ccp(winSize.width - 30.f, 90.f));
     }
+#endif
+    if (hax.getModuleEnabled(ModuleID::PAGE_REFRESH) && getSearchType(searcher) != 98 && getSearchType(searcher) != 99) {
+        auto director = CCDirector::sharedDirector();
+        auto winSize = director->getWinSize();
+        CCMenu* refreshMenu = CCMenu::create();
+        CCSprite* refreshSpr = CCSprite::createWithSpriteFrameName("GJ_updateBtn_001.png");
+        CCMenuItemSpriteExtra* refreshBtn = CCMenuItemSpriteExtra::create(refreshSpr, refreshSpr, self, menu_selector(LevelBrowserLayer::onRefresh));
+
+        self->addChild(refreshMenu, 1000);
+        refreshMenu->addChild(refreshBtn);
+        refreshMenu->setPosition(ccp(winSize.width - 30.f, 30.f));
+    }
     return true;
 }
 
@@ -124,5 +149,3 @@ void LevelBrowserLayer_om() {
         reinterpret_cast<void*>(LevelBrowserLayer_init),
         reinterpret_cast<void**>(&TRAM_LevelBrowserLayer_init));
 }
-
-#endif

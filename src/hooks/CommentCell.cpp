@@ -4,7 +4,7 @@ void (*TRAM_CommentCell_loadFromComment)(CCNode* self, CCNode* comment);
 void CommentCell_loadFromComment(CCNode* self, CCNode* comment) {
     TRAM_CommentCell_loadFromComment(self, comment);
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("comment_ids")) {
+    if (hax.getModuleEnabled(ModuleID::COMMENT_IDS)) {
         auto idLabel = CCLabelBMFont::create(CCString::createWithFormat("#%i", getCommentID(comment))->getCString(), "chatFont.fnt");
         idLabel->setAnchorPoint({1, 0.5});
         idLabel->setScale(0.5f);

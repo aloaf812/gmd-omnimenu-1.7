@@ -138,8 +138,8 @@ CCLabelBMFont* getAttemptLabel(PlayLayer* layer);
 CCLabelBMFont* getAttemptLabel();
 CCArray* getPlaySections(PlayLayer* playLayer);
 CCArray* getPlaySections();
-CCArray* getStartPositions(PlayLayer* playLayer);
-CCArray* getStartPositions();
+CCArray* getStartPositions_(PlayLayer* playLayer);
+CCArray* getStartPositions_();
 void setStartPos(PlayLayer* playLayer, CCPoint point);
 void setStartPos(CCPoint point);
 CCPoint getRealPosition(GameObject* object);
@@ -155,9 +155,9 @@ void setCharLimit(CCTextInputNode* node, int limit);
 void setEditButton(bool enable);
 void setRestartButton(bool enable);
 
-#if GAME_VERSION >= GV_1_4
 GJSearchObject* getSearchObject(LevelBrowserLayer* browser);
 int getSearchType(GJSearchObject* searcher);
+#if GAME_VERSION >= GV_1_4
 void setIconHack(bool enable);
 #endif
 
@@ -195,3 +195,7 @@ const char* intToReadableGV(int gv);
 void setNoShipTint(bool enable);
 #endif
 int getSectionIdx(GameObject* obj);
+
+#if GAME_VERSION < GV_1_1
+CCDictionary* getKeyTimers();
+#endif

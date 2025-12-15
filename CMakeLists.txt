@@ -15,10 +15,12 @@ set(DOBBY_DEBUG OFF CACHE INTERNAL "" FORCE)
 set(DOBBY_GENERATE_SHARED OFF CACHE INTERNAL "" FORCE)
 add_definitions(-DLOGGING_DISABLE -DNDEBUG)
 add_subdirectory(vendor/Dobby)
+add_subdirectory(vendor/fmt)
 
 target_compile_options(menu PUBLIC -fdebug-prefix-map=${CMAKE_SOURCE_DIR}=.)
 
 target_link_libraries(menu dobby)
+target_link_libraries(menu fmt)
 
 add_definitions(-DGAME_VERSION=${GAME_VERSION})
 if (NOT GAME_VERSION IN_LIST VERSIONS)
@@ -66,4 +68,5 @@ target_include_directories(menu PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/layers
     ${CMAKE_CURRENT_SOURCE_DIR}/src/hooks
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/version)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/version
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/fmt)

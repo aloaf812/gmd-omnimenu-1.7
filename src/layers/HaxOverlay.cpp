@@ -29,7 +29,7 @@ HaxOverlay* HaxOverlay::create(CCLayer* referrer) {
 
 float HaxOverlay::getDuration() {
     auto& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("fast_menu")) return 0.f;
+    if (hax.getModuleEnabled(ModuleID::FAST_MENU)) return 0.f;
     return 0.25f;
 }
 

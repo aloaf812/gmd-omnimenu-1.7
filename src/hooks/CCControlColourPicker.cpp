@@ -169,7 +169,7 @@ bool (*TRAM_CCControlColourPicker_init)(extension::CCControlColourPicker* self);
 bool CCControlColourPicker_init(extension::CCControlColourPicker* self) {
     if (!TRAM_CCControlColourPicker_init(self)) return false;
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("rgb_color_inputs")) {
+    if (hax.getModuleEnabled(ModuleID::RGB_COLOR_INPUTS)) {
         auto widget = RGBColorInputs::create(self);
         widget->setupDelegates();
         widget->setTag(RGBCOLORINPUTS_TAG);
@@ -188,7 +188,7 @@ void (*TRAM_CCControlColourPicker_updateHueAndControlPicker)(extension::CCContro
 void CCControlColourPicker_updateHueAndControlPicker(extension::CCControlColourPicker* self) {
     TRAM_CCControlColourPicker_updateHueAndControlPicker(self);
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("rgb_color_inputs")) {
+    if (hax.getModuleEnabled(ModuleID::RGB_COLOR_INPUTS)) {
         _ccColor3B color = self->getColorValue();
         if (!self->getParent()) return;
         auto child = self->getParent()->getChildByTag(RGBCOLORINPUTS_TAG);
@@ -196,9 +196,9 @@ void CCControlColourPicker_updateHueAndControlPicker(extension::CCControlColourP
         auto widget = static_cast<RGBColorInputs*>(child);
         if (!widget->getParent()) self->getParent()->addChild(widget);
         widget->ignore = true;
-        widget->redInput->setString(ToString(static_cast<unsigned int>(color.r)).c_str());
-        widget->greenInput->setString(ToString(static_cast<unsigned int>(color.g)).c_str());
-        widget->blueInput->setString(ToString(static_cast<unsigned int>(color.b)).c_str());
+        widget->redInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.r))).c_str());
+        widget->greenInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.g))).c_str());
+        widget->blueInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.b))).c_str());
         widget->ignore = false;
     }
 }
@@ -207,7 +207,7 @@ void (*TRAM_CCControlColourPicker_colourSliderValueChanged)(extension::CCControl
 void CCControlColourPicker_colourSliderValueChanged(extension::CCControlColourPicker* self, CCObject* sender, unsigned int controlEvent) {
     TRAM_CCControlColourPicker_colourSliderValueChanged(self, sender, controlEvent);
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("rgb_color_inputs")) {
+    if (hax.getModuleEnabled(ModuleID::RGB_COLOR_INPUTS)) {
         _ccColor3B color = self->getColorValue();
         if (!self->getParent()) return;
         auto child = self->getParent()->getChildByTag(RGBCOLORINPUTS_TAG);
@@ -215,9 +215,9 @@ void CCControlColourPicker_colourSliderValueChanged(extension::CCControlColourPi
         auto widget = static_cast<RGBColorInputs*>(child);
         if (!widget->getParent()) self->getParent()->addChild(widget);
         widget->ignore = true;
-        widget->redInput->setString(ToString(static_cast<unsigned int>(color.r)).c_str());
-        widget->greenInput->setString(ToString(static_cast<unsigned int>(color.g)).c_str());
-        widget->blueInput->setString(ToString(static_cast<unsigned int>(color.b)).c_str());
+        widget->redInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.r))).c_str());
+        widget->greenInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.g))).c_str());
+        widget->blueInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.b))).c_str());
         widget->ignore = false;
     }
 }
@@ -225,7 +225,7 @@ void (*TRAM_CCControlColourPicker_hueSliderValueChanged)(extension::CCControlCol
 void CCControlColourPicker_hueSliderValueChanged(extension::CCControlColourPicker* self, CCObject* sender, unsigned int controlEvent) {
     TRAM_CCControlColourPicker_hueSliderValueChanged(self, sender, controlEvent);
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("rgb_color_inputs")) {
+    if (hax.getModuleEnabled(ModuleID::RGB_COLOR_INPUTS)) {
         _ccColor3B color = self->getColorValue();
         if (!self->getParent()) return;
         auto child = self->getParent()->getChildByTag(RGBCOLORINPUTS_TAG);
@@ -233,9 +233,9 @@ void CCControlColourPicker_hueSliderValueChanged(extension::CCControlColourPicke
         auto widget = static_cast<RGBColorInputs*>(child);
         if (!widget->getParent()) self->getParent()->addChild(widget);
         widget->ignore = true;
-        widget->redInput->setString(ToString(static_cast<unsigned int>(color.r)).c_str());
-        widget->greenInput->setString(ToString(static_cast<unsigned int>(color.g)).c_str());
-        widget->blueInput->setString(ToString(static_cast<unsigned int>(color.b)).c_str());
+        widget->redInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.r))).c_str());
+        widget->greenInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.g))).c_str());
+        widget->blueInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.b))).c_str());
         widget->ignore = false;
     }
 }
@@ -244,7 +244,7 @@ bool (*TRAM_ColorSelectPopup_init)(ColorSelectPopup* self, GameObject* obj);
 bool ColorSelectPopup_init(ColorSelectPopup* self, GameObject* obj) {
     if (!TRAM_ColorSelectPopup_init(self, obj)) return false;
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("rgb_color_inputs")) {
+    if (hax.getModuleEnabled(ModuleID::RGB_COLOR_INPUTS)) {
         auto colorPicker = getColorPicker(self);
         auto widget = static_cast<RGBColorInputs*>(colorPicker->getChildByTag(RGBCOLORINPUTS_TAG));
         widget->removeFromParentAndCleanup(false);
@@ -252,9 +252,9 @@ bool ColorSelectPopup_init(ColorSelectPopup* self, GameObject* obj) {
         _ccColor3B color = self->getColorValue();
 
         widget->ignore = true;
-        widget->redInput->setString(ToString(static_cast<unsigned int>(color.r)).c_str());
-        widget->greenInput->setString(ToString(static_cast<unsigned int>(color.g)).c_str());
-        widget->blueInput->setString(ToString(static_cast<unsigned int>(color.b)).c_str());
+        widget->redInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.r))).c_str());
+        widget->greenInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.g))).c_str());
+        widget->blueInput->setString(fmt::format("{}", (static_cast<unsigned int>(color.b))).c_str());
         widget->ignore = false;
     }
     return true;
@@ -264,7 +264,7 @@ bool (*TRAM_ColorPickerPopup_init)(ColorPickerPopup* self);
 bool ColorPickerPopup_init(ColorPickerPopup* self) {
     if (!TRAM_ColorPickerPopup_init(self)) return false;
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("rgb_color_inputs")) {
+    if (hax.getModuleEnabled(ModuleID::RGB_COLOR_INPUTS)) {
         auto colorPicker = getColorPicker(self);
         auto widget = colorPicker->getChildByTag(RGBCOLORINPUTS_TAG);
         widget->removeFromParentAndCleanup(false);

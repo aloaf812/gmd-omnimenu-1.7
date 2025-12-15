@@ -4,7 +4,7 @@
 void (*TRAM_setBackgroundMusicTimeJNI)(float time);
 void setBackgroundMusicTimeJNI(float time) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled("music_bug_fix")) {
+    if (hax.getModuleEnabled(ModuleID::MUSIC_BUG_FIX)) {
         seekBackgroundMusicTo(floorf(time * 1000));
     } else TRAM_setBackgroundMusicTimeJNI(time);
 }

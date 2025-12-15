@@ -22,6 +22,102 @@ enum class CheatIndicatorColor {
     Red
 };
 
+
+
+enum ModuleID {
+    _100_KB_FIX,
+    _16K_FIX,
+    AUTO_SAFE_MODE,
+    CHARACTER_FILTER_BYPASS,
+    CHEAT_INDICATOR,
+    COMMENT_IDS,
+    COPY_PASTE,
+    DELETE_SELECTED,
+    DELETE_START_POS,
+    DEMONS_IN_GARAGE,
+    EXTRA_EDIT_BUTTONS,
+    FAST_MENU,
+    FONT_OFFSET_FIX,
+    FORCE_VISIBILITY,
+    FREE_BUILD,
+    FREE_SCROLL,
+    GDSHARE,
+    LEVEL_COPYING,
+    LEVEL_EDIT,
+    HIDE_ATTEMPTS,
+    INSTANT_COMPLETE,
+    INPUT_BUG_FIX,
+    JUMP_HACK,
+
+    LABEL_ATTEMPT_COUNT_SESSION,
+    LABEL_ATTEMPT_COUNT_TOTAL,
+    LABEL_BEST_RUN,
+    LABEL_CLICKS,
+    LABEL_CLOCK,
+    LABEL_FPS,
+    LABEL_FRAMES,
+    LABEL_JUMPS,
+    LABEL_NOCLIP_ACCURACY,
+    LABEL_NOCLIP_DEATHS,
+    LABEL_PCOMMAND,
+    LABEL_PLAYER_POSITION,
+    LABEL_PLAYER_ROTATION,
+    LABEL_TIME_SPENT,
+
+    LEVEL_IDS_IN_SEARCH,
+    MUSIC_BUG_FIX,
+    NOCLIP,
+    NOCLIP_TINT_ON_DEATH,
+    NO_GLOW,
+    NO_MIRROR,
+    NO_PULSE,
+    NO_ROTATION,
+    NO_SHAKE,
+    NO_SHIP_TINT,
+    NO_TRAIL,
+    OBJ_COLOR_FIX,
+    OBJECT_COUNTER,
+    OBJECT_LIMIT_BYPASS,
+    PAGE_REFRESH,
+
+    PARTICLE_BACKGROUND,
+    PARTICLE_BURST,
+    PARTICLE_DEATH_EFFECT,
+    PARTICLE_DESTRUCTIBLE_BLOCKS,
+    PARTICLE_END_WALL,
+    PARTICLE_FIREWORKS,
+    PARTICLE_GROUND,
+    PARTICLE_LANDING,
+    PARTICLE_LEVEL_COMPLETION,
+    PARTICLE_OBJECTS,
+    PARTICLE_SECRET_COINS,
+    PARTICLE_SHIP_FIRE,
+    PARTICLE_SHIP_GROUND,
+    PARTICLE_SHIP_LIFT,
+
+    PCOMMAND,
+    PIG_SPOOFING,
+    PRACTICE_MUSIC_HACK,
+    RGB_COLOR_INPUTS,
+    ROTATION_BUG_FIX,
+    SAFE_MODE,
+    SHOW_DIFFICULTY,
+    SHOW_PERCENTAGE,
+    SHOW_PERCENTAGE_DECIMAL,
+    SHOW_OBJECT_INFO,
+    SHOW_RESTART_BUTTON,
+    START_POS_SWITCHER,
+    SWEAR_FILTER_BYPASS,
+    TEXT_LENGTH_BYPASS,
+    UNLISTED_OBJECTS,
+    UNLOCK_CLUBSTEP,
+    UNLOCK_ICONS,
+    VERIFY_BYPASS,
+    VIEW_LEVEL_STATS,
+    ZOOM_BYPASS,
+    MODULE_COUNT
+};
+
 class HaxManager {
 
 public:
@@ -29,7 +125,8 @@ public:
         static HaxManager instance;
         return instance;
     }
-    std::map<std::string, Module*> modules;
+    // std::map<std::string, Module*> modules;
+    std::array<Module, MODULE_COUNT> modules;
     cocos2d::CCLabelBMFont* cheatIndicatorLabel;
     cocos2d::CCLabelBMFont* percentageLabel;
     ModuleCategory lastCategory;
@@ -73,49 +170,52 @@ public:
     int32_t gdShareData;
     CCLabelBMFont* editorObjectInfo;
     float ntOpacity;
+    CCArray* startPositions;
 
 #if GAME_VERSION > GV_1_4
     bool blockVerify;
 #endif
 
-    Module* getModule(const char* id) {
-        return modules.at(std::string(id));
+    bool getModuleEnabled(ModuleID id) {
+        return modules[id].enabled;
     }
-    bool getModuleEnabled(const char* id) {
-        return getModule(id)->enabled;
+    void setModuleEnabled(ModuleID id, bool enabled) {
+        modules[id].enabled = enabled;
+        modules[id].onToggle(enabled);
     }
     bool getLeftLILButtons() {
-        return getModuleEnabled("level_copy") || getModuleEnabled("gdshare");
+        return getModuleEnabled(ModuleID::LEVEL_COPYING) || getModuleEnabled(ModuleID::GDSHARE);
     }
 
     CheatIndicatorColor getCheatIndicatorColor() {
-        if (getModuleEnabled("noclip") || 
-        getModuleEnabled("instant_complete") || 
+        if (getModuleEnabled(ModuleID::NOCLIP) || 
+        getModuleEnabled(ModuleID::INSTANT_COMPLETE) || 
         checkpointsInNormalMode || 
-        getModuleEnabled("jump_hack") || 
+        getModuleEnabled(ModuleID::JUMP_HACK) || 
         pSpeedModified != 0 || pGravityModified != 0 || pYStartModified != 0) return CheatIndicatorColor::Red;
         if (hasCheated) return CheatIndicatorColor::Orange;
 #ifndef FORCE_AUTO_SAFE_MODE
-        if (getModuleEnabled("level_edit")) return CheatIndicatorColor::Yellow;
+        if (getModuleEnabled(ModuleID::LEVEL_EDIT)) return CheatIndicatorColor::Yellow;
 #endif 
         return CheatIndicatorColor::Green;
     }
 
     bool getShowLabel() {
         return (
-            getModuleEnabled("label_attempts_session") ||
-            getModuleEnabled("label_attempts_total") ||
-            getModuleEnabled("label_best_run") ||
-            getModuleEnabled("label_clicks") ||
-            getModuleEnabled("label_clock") ||
-            getModuleEnabled("label_fps") ||
-            getModuleEnabled("label_frames") ||
-            getModuleEnabled("label_jumps") ||
-            getModuleEnabled("label_noclip_deaths") ||
-            getModuleEnabled("label_pcommand") ||
-            getModuleEnabled("label_player_position") ||
-            getModuleEnabled("label_player_rotation") ||
-            getModuleEnabled("label_time_spent")
+            getModuleEnabled(ModuleID::LABEL_ATTEMPT_COUNT_SESSION) ||
+            getModuleEnabled(ModuleID::LABEL_ATTEMPT_COUNT_TOTAL) ||
+            getModuleEnabled(ModuleID::LABEL_BEST_RUN) ||
+            getModuleEnabled(ModuleID::LABEL_CLICKS) ||
+            getModuleEnabled(ModuleID::LABEL_CLOCK) ||
+            getModuleEnabled(ModuleID::LABEL_FPS) ||
+            getModuleEnabled(ModuleID::LABEL_FRAMES) ||
+            getModuleEnabled(ModuleID::LABEL_JUMPS) ||
+            getModuleEnabled(ModuleID::LABEL_NOCLIP_ACCURACY) ||
+            getModuleEnabled(ModuleID::LABEL_NOCLIP_DEATHS) ||
+            getModuleEnabled(ModuleID::LABEL_PCOMMAND) ||
+            getModuleEnabled(ModuleID::LABEL_PLAYER_POSITION) ||
+            getModuleEnabled(ModuleID::LABEL_PLAYER_ROTATION) ||
+            getModuleEnabled(ModuleID::LABEL_TIME_SPENT)
         );
     }
 
@@ -144,12 +244,10 @@ public:
 
         fclose(fp);
 
-        std::map<std::string, Module*>::iterator it;
-        for (it = modules.begin(); it != modules.end(); it++) {
-            const char* id = it->first.c_str();
-            Module* mod = it->second;
-            if (doc.HasMember(id) && doc[id].IsBool()) {
-                mod->setEnabled(doc[id].GetBool());
+        for (Module& record : modules) {
+            if (!record.exists) continue;
+            if (doc.HasMember(record.id) && doc[record.id].IsBool()) {
+                record.setEnabled(doc[record.id].GetBool());
             }
         }
     }
@@ -180,9 +278,15 @@ public:
             rapidjson::Document document;
             document.SetObject();
             rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
-            for (it = modules.begin(); it != modules.end(); it++) {
-                rapidjson::Value jsonKey(it->first.c_str(), static_cast<rapidjson::SizeType>(it->first.length()), allocator);
-                document.AddMember(jsonKey, getModuleEnabled(it->first.c_str()), allocator);
+            int key = 0;
+            for (const auto& record : modules) {
+                if (!record.exists) {
+                    key++;
+                    continue;
+                }
+                rapidjson::Value jsonKey(record.id, static_cast<rapidjson::SizeType>(strlen(record.id)), allocator);
+                document.AddMember(jsonKey, getModuleEnabled(static_cast<ModuleID>(key)), allocator);
+                key++;
             }
             rapidjson::StringBuffer buffer;
             rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -194,15 +298,23 @@ public:
         }
     }
     bool isSafeMode() {
-        if (getModuleEnabled("safe_mode")) return true;
+        if (getModuleEnabled(ModuleID::SAFE_MODE)) return true;
 #ifndef FORCE_AUTO_SAFE_MODE
-        if (!getModuleEnabled("auto_safe_mode")) return false;
+        if (!getModuleEnabled(ModuleID::AUTO_SAFE_MODE)) return false;
 #endif
         CheatIndicatorColor color = getCheatIndicatorColor();
         if (color == CheatIndicatorColor::Red || color == CheatIndicatorColor::Orange)
             return true;
 
         return false;
+    }
+
+    CCArray* getStartPositions() {
+        if (startPositions) return startPositions;
+        if (!getPlayLayer()) return nullptr;
+        startPositions = getStartPositions_();
+        startPositions->retain();
+        return startPositions;
     }
 
     /* 
@@ -239,130 +351,153 @@ public:
         noclipAccuracy = 100;
         completed = false;
         ntOpacity = 0;
+        startPositions = nullptr;
     }
 
 private:
     HaxManager() {
-        modules.insert(std::pair<std::string, Module*>("instant_complete", new Module(
-                "Instant Complete", 
-                "Completes the level as soon as it is entered.", 
-                false, ModuleCategory::Player, [](bool _){
-                    HaxManager& hax = HaxManager::sharedState();
-                    if (_) hax.setCheating(true);
-                })));
-        modules.insert(std::pair<std::string, Module*>("jump_hack", new Module(
-                "Jump Hack", 
-                "Allows the player to jump in the air indefinitely.", 
-                false, ModuleCategory::Player, [](bool _){
-                    HaxManager& hax = HaxManager::sharedState();
-                    if (_) hax.setCheating(true);
-                })));
-        modules.insert(std::pair<std::string, Module*>("music_bug_fix", new Module(
-                "Music Bug Fix", 
-                "Makes music seeking work properly more often.", 
-                true, ModuleCategory::Player, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("noclip", new Module(
-                "NoClip", 
-                "Prevents the player from dying.", 
-                false, ModuleCategory::Player, [](bool _){
-                    HaxManager& hax = HaxManager::sharedState();
-                    if (_) hax.setCheating(true);
-                })));
-        modules.insert(std::pair<std::string, Module*>("no_mirror", new Module(
-                "No Mirror", 
-                "Disables mirror portals.", 
-                false, ModuleCategory::Player, [](bool _){
-                    HaxManager& hax = HaxManager::sharedState();
-                    if (_) hax.setCheating(true);
-                })));
-        modules.insert(std::pair<std::string, Module*>("pcommand", new Module(
-                "pCommand", 
-                "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (NOTE: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 
-                false, ModuleCategory::Player, [](bool _){})));
+        modules[ModuleID::INSTANT_COMPLETE] = Module(
+            "instant_complete",
+            "Instant Complete", 
+            "Completes the level as soon as it is entered.", 
+            false, ModuleCategory::Player, [](bool _){
+                HaxManager& hax = HaxManager::sharedState();
+                if (_) hax.setCheating(true);
+            });
+        modules[ModuleID::JUMP_HACK] = Module(
+            "jump_hack",
+            "Jump Hack", 
+            "Allows the player to jump in the air indefinitely.", 
+            false, ModuleCategory::Player, [](bool _){
+                HaxManager& hax = HaxManager::sharedState();
+                if (_) hax.setCheating(true);
+            });
+        modules[ModuleID::MUSIC_BUG_FIX] = Module(
+            "music_bug_fix",
+            "Music Bug Fix", 
+            "Makes music seeking work properly more often.", 
+            true, ModuleCategory::Player, [](bool _){});
+        modules[ModuleID::NOCLIP] = Module(
+            "noclip",
+            "NoClip", 
+            "Prevents the player from dying.", 
+            false, ModuleCategory::Player, [](bool _){
+                HaxManager& hax = HaxManager::sharedState();
+                if (_) hax.setCheating(true);
+            });
+        modules[ModuleID::NO_MIRROR] = Module(
+            "no_mirror",
+            "No Mirror", 
+            "Disables mirror portals.", 
+            false, ModuleCategory::Player, [](bool _){
+                HaxManager& hax = HaxManager::sharedState();
+                if (_) hax.setCheating(true);
+            });
+        modules[ModuleID::PCOMMAND] = Module(
+            "pcommand",
+            "pCommand", 
+            "Re-enables the unused \"pCommand\" functionality, which allows you to alter your speed, gravity and jump height. (NOTE: Some creative liberties had to be taken with the controls. This module is not entirely accurate to how pCommand actually worked.)", 
+            false, ModuleCategory::Player, [](bool _){});
 #if GAME_VERSION < GV_1_2
-        modules.insert(std::pair<std::string, Module*>("rotation_bug_fix", new Module(
-                "Rotation Bug Fix", 
-                "Makes it so hitboxes rotate properly along with the object. (module by akqanile/Adelfa)\nNOTE: toggling this mid-attempt counts as cheating.", 
-                false, ModuleCategory::Player, [](bool _){
-                    HaxManager& hax = HaxManager::sharedState();
-                    hax.setCheating(true);
-                })));
+        modules[ModuleID::ROTATION_BUG_FIX] = Module(
+            "rotation_bug_fix",
+            "Rotation Bug Fix", 
+            "Makes it so hitboxes rotate properly along with the object. (module by akqanile/Adelfa)\nNOTE: toggling this mid-attempt counts as cheating.", 
+            false, ModuleCategory::Player, [](bool _){
+                HaxManager& hax = HaxManager::sharedState();
+                hax.setCheating(true);
+            });
 #endif
-        modules.insert(std::pair<std::string, Module*>("practice_music", new Module(
-                "Practice Music Hack", 
-                "Plays the normal level music in practice mode.", 
-                false, ModuleCategory::Player, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("show_restart_button", new Module(
-                "Show Restart Button", 
-                "Adds the restart button to the pause menu of all levels", 
-                false, ModuleCategory::Player, [](bool _){
-                    setRestartButton(_);
-                })));
-        modules.insert(std::pair<std::string, Module*>("start_pos_switcher", new Module(
-                "Start Pos Switcher", 
-                "Adds the ability to switch between start positions on the fly.", 
-                false, ModuleCategory::Player, [](bool _){})));
+        modules[ModuleID::PRACTICE_MUSIC_HACK] = Module(
+            "practice_music",
+            "Practice Music Hack", 
+            "Plays the normal level music in practice mode.", 
+            false, ModuleCategory::Player, [](bool _){});
+        modules[ModuleID::SHOW_RESTART_BUTTON] = Module(
+            "show_restart_button",
+            "Show Restart Button", 
+            "Adds the restart button to the pause menu of all levels", 
+            false, ModuleCategory::Player, [](bool _){
+                setRestartButton(_);
+            });
+        modules[ModuleID::START_POS_SWITCHER] = Module(
+            "start_pos_switcher",
+            "Start Pos Switcher", 
+            "Adds the ability to switch between start positions on the fly.", 
+            false, ModuleCategory::Player, [](bool _){});
 
 
 
-        modules.insert(std::pair<std::string, Module*>("hide_attempts", new Module(
-                "Hide Attempts", 
-                "Hides the attempts label while playing.", 
-                false, ModuleCategory::Visual, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("noclip_tint_on_death", new Module(
-                "NoClip Tint On Death", 
-                "Tints the screen red when the player dies with NoClip enabled.", 
-                false, ModuleCategory::Visual, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_glow", new Module(
-                "No Glow", 
-                "Disables object glow. (Note: Will only apply after re-entering the level)", 
-                false, ModuleCategory::Visual, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_pulse", new Module(
-                "No Pulse", 
-                "Disables object pulses.", 
-                false, ModuleCategory::Visual, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_rotation", new Module(
-                "No Rotation", 
-                "Prevents the player from rotating.", 
-                false, ModuleCategory::Visual, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("no_shake", new Module(
-                "No Shake", 
-                "Disables camera shake when completing a level.", 
-                false, ModuleCategory::Visual, [](bool _){})));
+        modules[ModuleID::HIDE_ATTEMPTS] = Module(
+            "hide_attempts",
+            "Hide Attempts", 
+            "Hides the attempts label while playing.", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::NOCLIP_TINT_ON_DEATH] = Module(
+            "noclip_tint_on_death",
+            "NoClip Tint On Death", 
+            "Tints the screen red when the player dies with NoClip enabled.", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::NO_GLOW] = Module(
+            "no_glow",
+            "No Glow", 
+            "Disables object glow. (Note: Will only apply after re-entering the level)", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::NO_PULSE] = Module(
+            "no_pulse",
+            "No Pulse", 
+            "Disables object pulses.", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::NO_ROTATION] = Module(
+            "no_rotation",
+            "No Rotation", 
+            "Prevents the player from rotating.", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::NO_SHAKE] = Module(
+            "no_shake",
+            "No Shake", 
+            "Disables camera shake when completing a level.", 
+            false, ModuleCategory::Visual, [](bool _){});
 #if GAME_VERSION < GV_1_4
-        modules.insert(std::pair<std::string, Module*>("no_ship_tint", new Module(
-                "No Ship Tint", 
-                "Removes the dark tint of the player's ship.", 
-                false, ModuleCategory::Visual, [](bool _){
-                    setNoShipTint(_);
-                })));
+        modules[ModuleID::NO_SHIP_TINT] = Module(
+            "no_ship_tint",
+            "No Ship Tint", 
+            "Removes the dark tint of the player's ship.", 
+            false, ModuleCategory::Visual, [](bool _){
+                setNoShipTint(_);
+            });
 #endif
-        modules.insert(std::pair<std::string, Module*>("no_trail", new Module(
-                "No Trail", 
-                "Disables the player's trail at all times.", 
-                false, ModuleCategory::Visual, [](bool _){})));
+        modules[ModuleID::NO_TRAIL] = Module(
+            "no_trail",
+            "No Trail", 
+            "Disables the player's trail at all times.", 
+            false, ModuleCategory::Visual, [](bool _){});
 #if GAME_VERSION == GV_1_4
-        modules.insert(std::pair<std::string, Module*>("obj_color_fix", new Module(
-                "Obj Color Fix", 
-                "Fixes the Object color not resetting to white after death.", 
-                false, ModuleCategory::Visual, [](bool _){})));
+        modules[ModuleID::OBJ_COLOR_FIX] = Module(
+            "obj_color_fix",
+            "Obj Color Fix", 
+            "Fixes the Object color not resetting to white after death.", 
+            false, ModuleCategory::Visual, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("show_percentage", new Module(
-                "Show Percentage", 
-                "Displays the percentage the player is currently at.", 
-                false, ModuleCategory::Visual, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("show_percentage_decimal", new Module(
-                "Decimal Percentage", 
-                "Puts 3 decimal places after the percentage if you have Show Percentage enabled and in the Best Run label.", 
-                false, ModuleCategory::Visual, [](bool _){})));
+        modules[ModuleID::SHOW_PERCENTAGE] = Module(
+            "show_percentage",
+            "Show Percentage", 
+            "Displays the percentage the player is currently at.", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::SHOW_PERCENTAGE_DECIMAL] = Module(
+            "show_percentage_decimal",
+            "Decimal Percentage", 
+            "Puts 3 decimal places after the percentage if you have Show Percentage enabled and in the Best Run label.", 
+            false, ModuleCategory::Visual, [](bool _){});
 
 
 
         // 16k fix code: https://github.com/cierra-kb/legacy-starry-sky/blob/main/src/modules/editor.cpp
-        modules.insert(std::pair<std::string, Module*>("16k_fix", new Module(
-                "16K Fix (Read Desc)", 
-                "Fixes a bug where only 16,384 objects can render in the editor by culling the objects. (module by akqanile/Adelfa)\nNOTE: this can be potentially incompatible with vanilla layering, and makes the editor way laggier on dense levels.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+        modules[ModuleID::_16K_FIX] = Module(
+            "16k_fix",
+            "16K Fix (Read Desc)", 
+            "Fixes a bug where only 16,384 objects can render in the editor by culling the objects. (module by akqanile/Adelfa)\nNOTE: this can be potentially incompatible with vanilla layering, and makes the editor way laggier on dense levels.", 
+            false, ModuleCategory::Editor, [](bool _){});
 // #if GAME_VERSION < GV_1_6
 //         modules.insert(std::pair<std::string, Module*>("back_button_pause", new Module(
 //                 "Back Button Pause", 
@@ -370,358 +505,426 @@ private:
 //                 false, ModuleCategory::Editor, [](bool _){})));
 // #endif
 #if GAME_VERSION < GV_1_5
-        modules.insert(std::pair<std::string, Module*>("copy_paste", new Module(
-                "Copy & Paste", 
-                "Adds a button that duplicates the selected objects.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+        modules[ModuleID::COPY_PASTE] = Module(
+            "copy_paste",
+            "Copy & Paste", 
+            "Adds a button that duplicates the selected objects.", 
+            false, ModuleCategory::Editor, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("delete_selected", new Module(
+        modules[ModuleID::DELETE_SELECTED] = Module(
+            "delete_selected",
 #if GAME_VERSION < GV_1_5
-                "Delete Selected", 
-                "Adds a button that removes the selected objects.", 
+            "Delete Selected", 
+            "Adds a button that removes the selected objects.", 
 #else
-                "Delete Selected (2.0)",
-                "Moves Delete Selected next to the Undo/Redo buttons.",
+            "Delete Selected (2.0)",
+            "Moves Delete Selected next to the Undo/Redo buttons.",
 #endif
-                false, ModuleCategory::Editor, [](bool _){})));
+            false, ModuleCategory::Editor, [](bool _){});
 #if GAME_VERSION < GV_1_6
-        modules.insert(std::pair<std::string, Module*>("delete_start_pos", new Module(
-                "Delete Start Pos", 
-                "Adds a button that removes all start positions in the level.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+        modules[ModuleID::DELETE_START_POS] = Module(
+            "delete_start_pos",
+            "Delete Start Pos", 
+            "Adds a button that removes all start positions in the level.", 
+            false, ModuleCategory::Editor, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("extra_edit_buttons", new Module(
-                "Extra Edit Buttons", 
-                "Adds extra buttons to the edit tab that allow you to control objects more precisely.", 
-                false, ModuleCategory::Editor, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("free_build", new Module(
-                "Free Build", 
-                "Removes the constraints for placing and moving objects in the editor.", 
-                false, ModuleCategory::Editor, [](bool _){
-                    setFreeBuild(_);
-                })));
-        modules.insert(std::pair<std::string, Module*>("free_scroll", new Module(
-                "Free Scroll", 
-                "Removes the constraints for camera position in the editor.", 
-                false, ModuleCategory::Editor, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("level_copy", new Module(
-                "Level Copying", 
-                "Adds a button to copy any level.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+        modules[ModuleID::EXTRA_EDIT_BUTTONS] = Module(
+            "extra_edit_buttons",
+            "Extra Edit Buttons", 
+            "Adds extra buttons to the edit tab that allow you to control objects more precisely.", 
+            false, ModuleCategory::Editor, [](bool _){});
+        modules[ModuleID::FREE_BUILD] = Module(
+            "free_build",
+            "Free Build", 
+            "Removes the constraints for placing and moving objects in the editor.", 
+            false, ModuleCategory::Editor, [](bool _){
+                setFreeBuild(_);
+            });
+        modules[ModuleID::FREE_SCROLL] = Module(
+            "free_scroll",
+            "Free Scroll", 
+            "Removes the constraints for camera position in the editor.", 
+            false, ModuleCategory::Editor, [](bool _){});
+        modules[ModuleID::LEVEL_COPYING] = Module(
+            "level_copy",
+            "Level Copying", 
+            "Adds a button to copy any level.", 
+            false, ModuleCategory::Editor, [](bool _){});
 #ifndef FORCE_AUTO_SAFE_MODE
-        modules.insert(std::pair<std::string, Module*>("level_edit", new Module(
-                "Level Edit", 
-                "Allows you to locally edit any level.", 
-                false, ModuleCategory::Editor, [](bool _){
-                    setEditButton(_);
-                })));
+        modules[ModuleID::LEVEL_EDIT] = Module(
+            "level_edit",
+            "Level Edit", 
+            "Allows you to locally edit any level.", 
+            false, ModuleCategory::Editor, [](bool _){
+                setEditButton(_);
+            });
 #endif
 #if GAME_VERSION < GV_1_6
-        modules.insert(std::pair<std::string, Module*>("object_counter", new Module(
-                "Object Counter", 
-                "Displays the object count of the level in the editor pause menu.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+        modules[ModuleID::OBJECT_COUNTER] = Module(
+            "object_counter",
+            "Object Counter", 
+            "Displays the object count of the level in the editor pause menu.", 
+            false, ModuleCategory::Editor, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("object_hack", new Module(
-                "Object Limit Bypass", 
+        modules[ModuleID::OBJECT_LIMIT_BYPASS] = Module(
+            "object_hack",
+            "Object Limit Bypass", 
 #if GAME_VERSION < GV_1_5
-                "Sets the object limit to the 32-bit integer limit, or to 16,384 if 16k Fix is not enabled.",
+            "Sets the object limit to the 32-bit integer limit, or to 16,384 if 16k Fix is not enabled.",
 #else
-                "Removes the object limit.",
+            "Removes the object limit.",
 #endif
-                false, ModuleCategory::Editor, [](bool _){
-                    if (_) {
-                        HaxManager& hax = HaxManager::sharedState();
-                        if (hax.getModuleEnabled("16k_fix"))
-                            setObjectLimit(2147483646);
-                        else
-                            setObjectLimit(INCREASED_OBJECT_LIMIT - 1);
-                    } else
-                        setObjectLimit(OBJECT_LIMIT);
-                })));
-        modules.insert(std::pair<std::string, Module*>("rgb_color_inputs", new Module(
-                "RGB Color Inputs", 
-                "Allows you to directly input the RGB values in color selection menus.", 
-                false, ModuleCategory::Editor, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("show_object_info", new Module(
-                "Show Object Info", 
-                "Displays info about selected object(s).", 
-                false, ModuleCategory::Editor, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("unlisted_objects", new Module(
-                "Unlisted Objects", 
-                "Adds unlisted objects to the editor, allowing them to be used in levels.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+            false, ModuleCategory::Editor, [](bool _){
+                if (_) {
+                    HaxManager& hax = HaxManager::sharedState();
+                    if (hax.getModuleEnabled(ModuleID::_16K_FIX))
+                        setObjectLimit(2147483646);
+                    else
+                        setObjectLimit(INCREASED_OBJECT_LIMIT - 1);
+                } else
+                    setObjectLimit(OBJECT_LIMIT);
+            });
+        modules[ModuleID::RGB_COLOR_INPUTS] = Module(
+            "rgb_color_inputs",
+            "RGB Color Inputs", 
+            "Allows you to directly input the RGB values in color selection menus.", 
+            false, ModuleCategory::Editor, [](bool _){});
+        modules[ModuleID::SHOW_OBJECT_INFO] = Module(
+            "show_object_info",
+            "Show Object Info", 
+            "Displays info about selected object(s).", 
+            false, ModuleCategory::Editor, [](bool _){});
+        modules[ModuleID::UNLISTED_OBJECTS] = Module(
+            "unlisted_objects",
+            "Unlisted Objects", 
+            "Adds unlisted objects to the editor, allowing them to be used in levels.", 
+            false, ModuleCategory::Editor, [](bool _){});
 #ifndef FORCE_AUTO_SAFE_MODE
-        modules.insert(std::pair<std::string, Module*>("verify_bypass", new Module(
-                "Verify Bypass", 
-                "Allows you to upload any level without verifying it.", 
-                false, ModuleCategory::Editor, [](bool _){})));
+        modules[ModuleID::VERIFY_BYPASS] = Module(
+            "verify_bypass",
+            "Verify Bypass", 
+            "Allows you to upload any level without verifying it.", 
+            false, ModuleCategory::Editor, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("zoom_bypass", new Module(
-                "Zoom Bypass", 
-                "Removes editor zoom restrictions.", 
-                false, ModuleCategory::Editor, [](bool _){
-                    setZoomBypass(_);
-                })));
+        modules[ModuleID::ZOOM_BYPASS] = Module(
+            "zoom_bypass",
+            "Zoom Bypass", 
+            "Removes editor zoom restrictions.", 
+            false, ModuleCategory::Editor, [](bool _){
+                setZoomBypass(_);
+            });
 
 
 
-        modules.insert(std::pair<std::string, Module*>("char_filter_bypass", new Module(
-                "Character Filter Bypass", 
-                "Allows you to use any character in any textbox.", 
-                false, ModuleCategory::Bypass, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("swear_filter_bypass", new Module(
-                "Swear Filter Bypass", 
-                "Allows you to use profanities in textboxes.", 
-                false, ModuleCategory::Bypass, [](bool _){
+        modules[ModuleID::CHARACTER_FILTER_BYPASS] = Module(
+            "char_filter_bypass",
+            "Character Filter Bypass", 
+            "Allows you to use any character in any textbox.", 
+            false, ModuleCategory::Bypass, [](bool _){});
+        modules[ModuleID::SWEAR_FILTER_BYPASS] = Module(
+            "swear_filter_bypass",
+            "Swear Filter Bypass", 
+            "Allows you to use profanities in textboxes.", 
+            false, ModuleCategory::Bypass, [](bool _){
 #if GAME_VERSION > GV_1_4
-                    setProfanityBypass(_);
+                setProfanityBypass(_);
 #endif                       
-                })));
-        modules.insert(std::pair<std::string, Module*>("text_length_bypass", new Module(
-                "Text Length Bypass", 
-                "Allows you to write an unlimited amount of characters in any textbox.", 
-                false, ModuleCategory::Bypass, [](bool _){
+            });
+        modules[ModuleID::TEXT_LENGTH_BYPASS] = Module(
+            "text_length_bypass",
+            "Text Length Bypass", 
+            "Allows you to write an unlimited amount of characters in any textbox.", 
+            false, ModuleCategory::Bypass, [](bool _){
 #if GAME_VERSION > GV_1_4
-                   setCharLimitBypass(_);
+                setCharLimitBypass(_);
 #endif
-                })));
+            });
 #if GAME_VERSION >= GV_1_6
-        modules.insert(std::pair<std::string, Module*>("unlock_clubstep", new Module(
-                "Unlock Clubstep", 
-                "Allows you to play Clubstep without getting 20 secret coins.", 
-                false, ModuleCategory::Bypass, [](bool _){
-                    setClubstepBypass(_);
-                })));
+        modules[ModuleID::UNLOCK_CLUBSTEP] = Module(
+            "unlock_clubstep",
+            "Unlock Clubstep", 
+            "Allows you to play Clubstep without getting 20 secret coins.", 
+            false, ModuleCategory::Bypass, [](bool _){
+                setClubstepBypass(_);
+            });
 #endif
-        modules.insert(std::pair<std::string, Module*>("unlock_icons", new Module(
-                "Unlock Icons", 
-                "Unlocks all icons and colors in the Icon Kit.", 
-                false, ModuleCategory::Bypass, [](bool _){
+        modules[ModuleID::UNLOCK_ICONS] = Module(
+            "unlock_icons",
+            "Unlock Icons", 
+            "Unlocks all icons and colors in the Icon Kit.", 
+            false, ModuleCategory::Bypass, [](bool _){
 #if GAME_VERSION >= GV_1_4
-                    setIconHack(_);
+                setIconHack(_);
 #endif
-                })));
+            });
 
 
 
 #if GAME_VERSION > GV_1_0
-        modules.insert(std::pair<std::string, Module*>("comment_ids", new Module(
-                "Comment IDs", 
-                "Displays comment IDs in comment cells.", 
-                false, ModuleCategory::Informational, [](bool _){})));
+        modules[ModuleID::COMMENT_IDS] = Module(
+            "comment_ids",
+            "Comment IDs", 
+            "Displays comment IDs in comment cells.", 
+            false, ModuleCategory::Informational, [](bool _){});
 #endif
 #if GAME_VERSION > GV_1_2
-        modules.insert(std::pair<std::string, Module*>("demons_in_garage", new Module(
-                "Demons in Garage", 
-                "Displays your demon count in the icon kit (garage). (module by Hris69)", 
-                false, ModuleCategory::Informational, [](bool _){})));
+        modules[ModuleID::DEMONS_IN_GARAGE] = Module(
+            "demons_in_garage",
+            "Demons in Garage", 
+            "Displays your demon count in the icon kit (garage). (module by Hris69)", 
+            false, ModuleCategory::Informational, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("level_ids_in_list", new Module(
-                "Level IDs in Search", 
-                "Displays level IDs in level cells.", 
-                false, ModuleCategory::Informational, [](bool _){})));
+        modules[ModuleID::LEVEL_IDS_IN_SEARCH] = Module(
+            "level_ids_in_list",
+            "Level IDs in Search", 
+            "Displays level IDs in level cells.", 
+            false, ModuleCategory::Informational, [](bool _){});
 #if GAME_VERSION < GV_1_3
-        modules.insert(std::pair<std::string, Module*>("show_difficulty", new Module(
-                "Show Difficulty", 
-                "Displays the level's difficulty on its page.", 
-                false, ModuleCategory::Informational, [](bool _){})));
+        modules[ModuleID::SHOW_DIFFICULTY] = Module(
+            "show_difficulty",
+            "Show Difficulty", 
+            "Displays the level's difficulty on its page.", 
+            false, ModuleCategory::Informational, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("view_level_stats", new Module(
+        modules[ModuleID::VIEW_LEVEL_STATS] = Module(
+            "view_level_stats",
 #if GAME_VERSION < GV_1_6
-                "View Level Stats", 
-                "Adds a menu button that displays some information about the level, such as your attempt count on it.",
+            "View Level Stats", 
+            "Adds a menu button that displays some information about the level, such as your attempt count on it.",
 #else
-                "View More Stats", 
-                "Displays more stats about the level, and adds the ability to view stats for local levels.",
+            "View More Stats", 
+            "Displays more stats about online levels in the infobox, and adds the ability to view stats for local levels.",
 #endif
-                false, ModuleCategory::Informational, [](bool _){})));
+            false, ModuleCategory::Informational, [](bool _){});
 
 
-        modules.insert(std::pair<std::string, Module*>("100_kb_fix", new Module(
-                "100 KB Fix", 
-                "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload (for versions before 1.5), as well as potentially increasing performance. (module by akqanile/Adelfa)", 
-                true, ModuleCategory::Universal, [](bool _){})));
+
+        modules[ModuleID::_100_KB_FIX] = Module(
+            "100_kb_fix",
+            "100 KB Fix", 
+            "Fixes a bug in Cocos2d where CCStrings always allocate 100 KB, instead allocating a dynamic buffer size. This fixes large levels being cut off on upload (for versions before 1.5), as well as potentially increasing performance. (module by akqanile/Adelfa)", 
+            true, ModuleCategory::Universal, [](bool _){});
 #ifndef FORCE_AUTO_SAFE_MODE
-        modules.insert(std::pair<std::string, Module*>("auto_safe_mode", new Module(
-                "Auto Safe Mode",
-                "Prevents any progress on any level from being saved if you have cheats enabled.", 
-                false, ModuleCategory::Universal, [](bool _){})));
+        modules[ModuleID::AUTO_SAFE_MODE] = Module(
+            "auto_safe_mode",
+            "Auto Safe Mode",
+            "Prevents any progress on any level from being saved if you have cheats enabled.", 
+            false, ModuleCategory::Universal, [](bool _){});
 #endif
         // modules.insert(std::pair<std::string, Module*>("eeffoc", new Module(
         //         "Eeffoc",
         //         "!ynnuf si hcihW", 
         //         false, ModuleCategory::Universal, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("fast_menu", new Module(
-                "Fast Menu", 
-                "Makes fade transitions instant.", 
-                false, ModuleCategory::Universal, [](bool _){})));
+        modules[ModuleID::FAST_MENU] = Module(
+            "fast_menu",
+            "Fast Menu", 
+            "Makes fade transitions instant.", 
+            false, ModuleCategory::Universal, [](bool _){});
 #if GAME_VERSION < GV_1_5
-        modules.insert(std::pair<std::string, Module*>("font_offset_fix", new Module(
-                "Font Offset Fix", 
-                "Fixes a pre-1.5 bug where text labels get offset further downwards the higher your resolution is.", 
-                true, ModuleCategory::Universal, [](bool _){})));
+        modules[ModuleID::FONT_OFFSET_FIX] = Module(
+            "font_offset_fix",
+            "Font Offset Fix", 
+            "Fixes a pre-1.5 bug where text labels get offset further downwards the higher your resolution is.", 
+            true, ModuleCategory::Universal, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("force_visibility", new Module(
-                "Force Visibility", 
-                "Makes all existing nodes visible.", 
-                false, ModuleCategory::Universal, [](bool _){
-                    HaxManager& hax = HaxManager::sharedState();
-                    if (_) hax.setCheating(true);
-                })));
-        modules.insert(std::pair<std::string, Module*>("gdshare", new Module(
-                "GDShare", 
-                "Adds buttons to convert a level to a .gmd file and vice-versa. May not work on older Android versions.", 
-                false, ModuleCategory::Universal, [](bool _){})));
+        modules[ModuleID::FORCE_VISIBILITY] = Module(
+            "force_visibility",
+            "Force Visibility", 
+            "Makes all existing nodes visible.", 
+            false, ModuleCategory::Universal, [](bool _){
+                HaxManager& hax = HaxManager::sharedState();
+                if (_) hax.setCheating(true);
+            });
+        modules[ModuleID::GDSHARE] = Module(
+            "gdshare",
+            "GDShare", 
+            "Adds buttons to convert a level to a .gmd file and vice-versa. May not work on older Android versions.", 
+            false, ModuleCategory::Universal, [](bool _){});
 #if GAME_VERSION < GV_1_2
-        modules.insert(std::pair<std::string, Module*>("input_bug_fix", new Module(
-                "Input Bug Fix", 
-                "Fixes a pre-1.2 bug where typing more than 1 character doesn't work on certain keyboards.", 
-                true, ModuleCategory::Universal, [](bool _){})));
+        modules[ModuleID::INPUT_BUG_FIX] = Module(
+            "input_bug_fix",
+            "Input Bug Fix", 
+            "Fixes a pre-1.2 bug where typing more than 1 character doesn't work on certain keyboards.", 
+            true, ModuleCategory::Universal, [](bool _){});
 #endif
+        modules[ModuleID::PAGE_REFRESH] = Module(
+            "page_refresh",
+            "Page Refresh", 
+            "Adds a refresh button to the search page, like in the modern versions.", 
+            false, ModuleCategory::Universal, [](bool _){});
 #ifdef PING_SPOOFING
-        modules.insert(std::pair<std::string, Module*>("ping_spoofing", new Module(
-                "Pig Spoofing", 
-                "Self-explanatory.", 
-                false, ModuleCategory::Universal, [](bool _){})));
+        modules[ModuleID::PIG_SPOOFING] = Module(
+            "ping_spoofing",
+            "Pig Spoofing", 
+            "Self-explanatory.", 
+            false, ModuleCategory::Universal, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("safe_mode", new Module(
-                "Safe Mode",
+        modules[ModuleID::SAFE_MODE] = Module(
+            "safe_mode",
+            "Safe Mode",
 #ifndef FORCE_AUTO_SAFE_MODE
-                "Prevents any progress on any level from being saved.", 
+            "Prevents any progress on any level from being saved.", 
 #else
-                "Prevents any progress on any level from being saved. (Note: this build has Auto Safe Mode enabled forcibly, which means the effects of this module are automatically applied if you are using any cheats)",
+            "Prevents any progress on any level from being saved. (Note: this build has Auto Safe Mode enabled forcibly, which means the effects of this module are automatically applied if you are using any cheats)",
 #endif 
 
-                false, ModuleCategory::Universal, [](bool _){})));
+            false, ModuleCategory::Universal, [](bool _){});
 
 
 
-        modules.insert(std::pair<std::string, Module*>("cheat_indicator", new Module(
-                "Cheat Indicator", 
-                "Adds a dot that indicates whether any unfair hacks are currently enabled.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_attempts_session", new Module(
-                "Attempt Count (Session)", 
-                "Displays the current attempt count.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_attempts_total", new Module(
-                "Attempt Count (Total)", 
-                "Displays the total attempt count.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_best_run", new Module(
-                "Best Run (Session)", 
-                "Displays the best percentage achieved this session.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_clicks", new Module(
-                "Clicks", 
-                "Displays the amount of clicks this attempt.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_clock", new Module(
-                "Clock", 
-                "Displays the current time.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_fps", new Module(
-                "FPS", 
-                "Displays the current frames per second.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_frames", new Module(
-                "Frames", 
-                "Displays the amount of frames that have passed since the start of the attempt.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_jumps", new Module(
-                "Jumps", 
-                "Displays the current jump count.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_noclip_accuracy", new Module(
-                "NoClip Accuracy", 
-                "If NoClip is enabled, displays how accurately the level has been played thus far.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_noclip_deaths", new Module(
-                "NoClip Deaths", 
-                "If NoClip is enabled, displays the amount of times you would have died.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_pcommand", new Module(
-                "pCommand", 
-                "Displays the pCommand values.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_player_position", new Module(
-                "Player Position", 
-                "Displays the player's X and Y coordinates.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_player_rotation", new Module(
-                "Player Rotation", 
-                "Displays the player's rotation.", 
-                false, ModuleCategory::Label, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("label_time_spent", new Module(
-                "Time Spent", 
-                "Displays the amount of time spent this session.", 
-                false, ModuleCategory::Label, [](bool _){})));
+        modules[ModuleID::CHEAT_INDICATOR] = Module(
+            "cheat_indicator",
+            "Cheat Indicator", 
+            "Adds a dot that indicates whether any unfair hacks are currently enabled.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_ATTEMPT_COUNT_SESSION] = Module(
+            "label_attempts_session",
+            "Attempt Count (Session)", 
+            "Displays the current attempt count.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_ATTEMPT_COUNT_TOTAL] = Module(
+            "label_attempts_total",
+            "Attempt Count (Total)", 
+            "Displays the total attempt count.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_BEST_RUN] = Module(
+            "label_best_run",
+            "Best Run (Session)", 
+            "Displays the best percentage achieved this session.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_CLICKS] = Module(
+            "label_clicks",
+            "Clicks", 
+            "Displays the amount of clicks this attempt.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_CLOCK] = Module(
+            "label_clock",
+            "Clock", 
+            "Displays the current time.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_FPS] = Module(
+            "label_fps",
+            "FPS", 
+            "Displays the current frames per second.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_FRAMES] = Module(
+            "label_frames",
+            "Frames", 
+            "Displays the amount of frames that have passed since the start of the attempt.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_JUMPS] = Module(
+            "label_jumps",
+            "Jumps", 
+            "Displays the current jump count.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_NOCLIP_ACCURACY] = Module(
+            "label_noclip_accuracy",
+            "NoClip Accuracy", 
+            "If NoClip is enabled, displays how accurately the level has been played thus far.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_NOCLIP_DEATHS] = Module(
+            "label_noclip_deaths",
+            "NoClip Deaths", 
+            "If NoClip is enabled, displays the amount of times you would have died.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_PCOMMAND] = Module(
+            "label_pcommand",
+            "pCommand", 
+            "Displays the pCommand values.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_PLAYER_POSITION] = Module(
+            "label_player_position",
+            "Player Position", 
+            "Displays the player's X and Y coordinates.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_PLAYER_ROTATION] = Module(
+            "label_player_rotation",
+            "Player Rotation", 
+            "Displays the player's rotation.", 
+            false, ModuleCategory::Label, [](bool _){});
+        modules[ModuleID::LABEL_TIME_SPENT] = Module(
+            "label_time_spent",
+            "Time Spent", 
+            "Displays the amount of time spent this session.", 
+            false, ModuleCategory::Label, [](bool _){});
 
 
 
-        modules.insert(std::pair<std::string, Module*>("particle_background", new Module(
-                "Background",
-                "Toggles the visibility of the particles that appear all over the background in the ship or UFO gamemode.", 
-                true, ModuleCategory::Particles, [](bool _){})));
+        modules[ModuleID::PARTICLE_BACKGROUND] = Module(
+            "particle_background",
+            "Background",
+            "Toggles the visibility of the particles that appear all over the background in the ship or UFO gamemode.", 
+            true, ModuleCategory::Particles, [](bool _){});
 #if GAME_VERSION >= GV_1_5
-        modules.insert(std::pair<std::string, Module*>("particle_burst", new Module(
-                "Burst",
-                "Toggles the visibility of the particles that appear when the UFO jumps.", 
-                true, ModuleCategory::Particles, [](bool _){})));
+        modules[ModuleID::PARTICLE_BURST] = Module(
+            "particle_burst",
+            "Burst",
+            "Toggles the visibility of the particles that appear when the UFO jumps.", 
+            true, ModuleCategory::Particles, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("particle_death_effect", new Module(
-                "Death Effect",
-                "Toggles the visibility of the particles that appear when the player dies.", 
-                true, ModuleCategory::Particles, [](bool _){})));
+        modules[ModuleID::PARTICLE_DEATH_EFFECT] = Module(
+            "particle_death_effect",
+            "Death Effect",
+            "Toggles the visibility of the particles that appear when the player dies.", 
+            true, ModuleCategory::Particles, [](bool _){});
 #if GAME_VERSION >= GV_1_6
-        modules.insert(std::pair<std::string, Module*>("particle_destructible_blocks", new Module(
-                "Destructible Blocks",
-                "Toggles the visibility of the particles that appear when colliding with destructible blocks.", 
-                true, ModuleCategory::Particles, [](bool _){})));
+        modules[ModuleID::PARTICLE_DESTRUCTIBLE_BLOCKS] = Module(
+            "particle_death_effect",
+            "Destructible Blocks",
+            "Toggles the visibility of the particles that appear when colliding with destructible blocks.", 
+            true, ModuleCategory::Particles, [](bool _){});
 #endif
         // modules.insert(std::pair<std::string, Module*>("particle_end_wall", new Module(
         //         "End Wall",
         //         "Toggles the visibility of the particles that are emitted by the end wall.", 
         //         true, ModuleCategory::Particles, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("particle_fireworks", new Module(
-                "Fireworks",
-                "Toggles the visibility of the particles that are emitted by the fireworks during the level completion animation.", 
-                true, ModuleCategory::Particles, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("particle_level_completion", new Module(
-                "Level Completion",
-                "Toggles the visibility of the particles that are emitted during the level completion animation.", 
-                true, ModuleCategory::Particles, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("particle_ground", new Module(
-                "Ground",
-                "Toggles the visibility of the particles that appear when the cube or ball is dragging across the ground.", 
-                true, ModuleCategory::Particles, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("particle_landing", new Module(
-                "Landing",
-                "Toggles the visibility of the particles that appear when the cube or ball lands on the ground.", 
-                true, ModuleCategory::Particles, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("particle_objects", new Module(
-                "Objects",
-                "Toggles the visibility of the particles that are emitted by objects, such as portals, pads and orbs.", 
-                true, ModuleCategory::Particles, [](bool _){})));
+        modules[ModuleID::PARTICLE_FIREWORKS] = Module(
+            "particle_fireworks",
+            "Fireworks",
+            "Toggles the visibility of the particles that are emitted by the fireworks during the level completion animation.", 
+            true, ModuleCategory::Particles, [](bool _){});
+        modules[ModuleID::PARTICLE_GROUND] = Module(
+            "particle_ground",
+            "Ground",
+            "Toggles the visibility of the particles that appear when the cube or ball is dragging across the ground.", 
+            true, ModuleCategory::Particles, [](bool _){});
+        modules[ModuleID::PARTICLE_LEVEL_COMPLETION] = Module(
+            "particle_level_completion",
+            "Level Completion",
+            "Toggles the visibility of the particles that are emitted during the level completion animation.", 
+            true, ModuleCategory::Particles, [](bool _){});
+        modules[ModuleID::PARTICLE_LANDING] = Module(
+            "particle_landing",
+            "Landing",
+            "Toggles the visibility of the particles that appear when the cube or ball lands on the ground.", 
+            true, ModuleCategory::Particles, [](bool _){});
+        modules[ModuleID::PARTICLE_OBJECTS] = Module(
+            "particle_objects",
+            "Objects",
+            "Toggles the visibility of the particles that are emitted by objects, such as portals, pads and orbs.", 
+            true, ModuleCategory::Particles, [](bool _){});
 #if GAME_VERSION >= GV_1_6
-        modules.insert(std::pair<std::string, Module*>("particle_secret_coins", new Module(
-                "Secret Coins",
-                "Toggles the visibility of the particles that appear when colliding with secret coinbs.", 
-                true, ModuleCategory::Particles, [](bool _){})));
+        modules[ModuleID::PARTICLE_SECRET_COINS] = Module(
+            "particle_secret_coins",
+            "Secret Coins",
+            "Toggles the visibility of the particles that appear when colliding with secret coins.", 
+            true, ModuleCategory::Particles, [](bool _){});
 #endif
-        modules.insert(std::pair<std::string, Module*>("particle_ship_fire", new Module(
-                "Ship Fire",
-                "Toggles the visibility of the particles that appear behind the ship.", 
-                true, ModuleCategory::Particles, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("particle_ship_ground", new Module(
-                "Ship Ground",
-                "Toggles the visibility of the particles that appear when the ship is dragging across the ground.", 
-                true, ModuleCategory::Particles, [](bool _){})));
-        modules.insert(std::pair<std::string, Module*>("particle_ship_lift", new Module(
-                "Ship Lift",
-                "Toggles the visibility of the particles that appear when the ship is flying.", 
-                true, ModuleCategory::Particles, [](bool _){})));
+        modules[ModuleID::PARTICLE_SHIP_FIRE] = Module(
+            "particle_ship_fire",
+            "Ship Fire",
+            "Toggles the visibility of the particles that appear behind the ship.", 
+            true, ModuleCategory::Particles, [](bool _){});
+        modules[ModuleID::PARTICLE_SHIP_GROUND] = Module(
+            "particle_ship_ground",
+            "Ship Ground",
+            "Toggles the visibility of the particles that appear when the ship is dragging across the ground.", 
+            true, ModuleCategory::Particles, [](bool _){});
+        modules[ModuleID::PARTICLE_SHIP_LIFT] = Module(
+            "particle_ship_lift",
+            "Ship Lift",
+            "Toggles the visibility of the particles that appear when the ship is flying.", 
+            true, ModuleCategory::Particles, [](bool _){});
 
         lastCategory = ModuleCategory::Player;
 #if GAME_VERSION > GV_1_4
