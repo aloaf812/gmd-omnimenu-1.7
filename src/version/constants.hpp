@@ -8,8 +8,8 @@
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 
 // You have to replace both of these if necessary
-#define JAVA_PATH_MAIN "com/robtopx/geometry1600"
-#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometry1600
+#define JAVA_PATH_MAIN "com/robtopx/geometryjump"
+#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometryjump
 
 // #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
 #define PING_SPOOFING // Comment this out to disable Pig Spoofing (brutal)
