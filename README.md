@@ -4,6 +4,9 @@ Mod Menu for older versions of Geometry Dash (pre-1.9).
 
 Currently works for versions 1.02 - 1.6.
 
+## Downloads
+Downloads are available in the Discord server: https://discord.gg/4AC23yn4yF
+
 ## Special Thanks
 - [**akqanile (Adelfa)**](https://github.com/cierra-kb) - 100 KB fix, font size calculator, lots of help with issues. He is regarded as the god of tradmodding for a reason.
 - Eclipse Mod Menu team - many hack implementations
