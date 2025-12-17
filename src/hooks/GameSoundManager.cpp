@@ -5,6 +5,7 @@ void (*TRAM_GameSoundManager_preload)(GameSoundManager* self);
 void GameSoundManager_preload(GameSoundManager* self) {
     TRAM_GameSoundManager_preload(self);
     CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("pih.mp3");
+    CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("three.mp3");
 }
 
 void GameSoundManager_om() {

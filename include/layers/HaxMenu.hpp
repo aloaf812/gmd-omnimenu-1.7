@@ -36,6 +36,7 @@ protected:
     void setColorAtIndex(int index);
     void onPih(CCObject*);
     void onUDID();
+    void onThree(CCObject*);
 
     CCNode* leftParent;
     CCNode* rightParent;
@@ -46,4 +47,5 @@ protected:
     CCMenuItemSpriteExtra* udidBtn;
     CCSprite* leftPanel;
     CCSprite* rightPanel;
+    bool canSpoofPih;
 };

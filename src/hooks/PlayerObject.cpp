@@ -2,10 +2,24 @@
 #include "PlayerObject.hpp"
 
 void (*TRAM_PlayerObject_activateStreak)(PlayerObject* self);
+void (*TRAM_PlayerObject_deactivateStreak)(PlayerObject* self);
 void PlayerObject_activateStreak(PlayerObject* self) {
     HaxManager& hax = HaxManager::sharedState();
-    if (hax.getModuleEnabled(ModuleID::NO_TRAIL)) return;
+    if (hax.getModuleEnabled(ModuleID::NO_TRAIL)) {
+        if (!hax.getModuleEnabled(ModuleID::TRAIL_ALWAYS_ON)) return;
+        TRAM_PlayerObject_deactivateStreak(self);
+        return;
+    }
     TRAM_PlayerObject_activateStreak(self);
+}
+void PlayerObject_deactivateStreak(PlayerObject* self) {
+    HaxManager& hax = HaxManager::sharedState();
+    if (hax.getModuleEnabled(ModuleID::TRAIL_ALWAYS_ON)) {
+        if (!hax.getModuleEnabled(ModuleID::NO_TRAIL)) return;
+        TRAM_PlayerObject_activateStreak(self);
+        return;
+    }
+    TRAM_PlayerObject_deactivateStreak(self);
 }
 void (*TRAM_PlayerObject_updateShipRotation)(PlayerObject* self, float dt);
 void PlayerObject_updateShipRotation(PlayerObject* self, float dt) {
@@ -72,6 +86,9 @@ void PlayerObject_om() {
     Omni::hook("_ZN12PlayerObject14activateStreakEv",
         reinterpret_cast<void*>(PlayerObject_activateStreak),
         reinterpret_cast<void**>(&TRAM_PlayerObject_activateStreak));
+    Omni::hook("_ZN12PlayerObject16deactivateStreakEv",
+        reinterpret_cast<void*>(PlayerObject_deactivateStreak),
+        reinterpret_cast<void**>(&TRAM_PlayerObject_deactivateStreak));
     Omni::hook("_ZN12PlayerObject18updateShipRotationEf",
         reinterpret_cast<void*>(PlayerObject_updateShipRotation),
         reinterpret_cast<void**>(&TRAM_PlayerObject_updateShipRotation));

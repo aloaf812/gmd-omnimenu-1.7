@@ -8,4 +8,9 @@ public:
 
     std::string saveRootSubDictToString();
     bool loadRootSubDictFromString(std::string);
+
+#ifdef NP4
+    void setIntegerForKey(const char*, int);
+    int getIntegerForKey(const char*);
+#endif
 };

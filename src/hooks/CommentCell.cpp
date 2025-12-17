@@ -14,6 +14,18 @@ void CommentCell_loadFromComment(CCNode* self, CCNode* comment) {
         idLabel->setTag(6741);
         self->addChild(idLabel, 1000);
     }
+#if GAME_VERSION < GV_1_3
+    if (hax.getModuleEnabled(ModuleID::COMMENT_OFFSET_FIX)) {
+        auto parent = MEMBER_BY_OFFSET(CCNode*, self, CommentCell__m_parent);
+        auto textArea = static_cast<CCSprite*>(parent->getChildren()->objectAtIndex(2));
+        textArea->setAnchorPoint(ccp(0, 0.5));
+        textArea->setPositionX(10);
+    }
+// #elif GAME_VERSION == GV_1_3
+//     auto parent = MEMBER_BY_OFFSET(CCNode*, self, 0x17c);
+//     auto textArea = static_cast<CCSprite*>(parent->getChildren()->objectAtIndex(2));
+//     CCLog("%f", textArea->getPosition().x);
+#endif
 }
 // void (*TRAM_LevelCell_draw)(CCNode* self);
 // void LevelCell_draw(CCNode* self) {

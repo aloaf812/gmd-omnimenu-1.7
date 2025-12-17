@@ -3,20 +3,27 @@
 
 
 
-#define MENU_VERSION "0.89"
+#define MENU_VERSION "v1.0.0"
 #define MENU_SETTINGS "settings" READABLE_GAME_VERSION ".json"
 #define MENU_SETTINGS_PATH "/storage/emulated/0/OMNImenu/"
 
-// You have to replace both of these if necessary
-#define JAVA_PATH_MAIN "com/robtopx/geometryjump"
-#define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometryjump
-
-// #define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
+#define FORCE_AUTO_SAFE_MODE // Comment this out to disable force auto safe mode
 #define PING_SPOOFING // Comment this out to disable Pig Spoofing (brutal)
 // #define STAR_RATED_LEVELS_GRANT_COINS // Uncomment this to enable star rated levels granting secret coins even in Force Auto Safe Mode (1.6+)
+// #define NP4 // Uncomment this to target the Neopointfour GDPS, which adds a lot of custom songs and feature rings
+
+#ifndef NP4
+    // You have to replace both of these if necessary
+    #define JAVA_PATH_MAIN "com/robtopx/geometryjump"
+    #define JAVA_PATH_MAIN_JNI_HOOK com_robtopx_geometryjump
+#else
+    #define JAVA_PATH_MAIN "com/cynigdx/onepointfour"
+    #define JAVA_PATH_MAIN_JNI_HOOK com_cynigdx_onepointfour
+#endif
 
 
-
+#define FEATURED_TEXTURE "thelazycat/GJ_featuredCoin_001.png"
+#define MAGIC_TEXTURE "thelazycat/GJ_epicCoin_001.png"
 #define CLIPBOARD_HELPER_CLASS JAVA_PATH_MAIN "/ClipboardHelper"
 #define JNI_FN_EXPAND(pkg, cls, fn) Java_##pkg##_##cls##_##fn
 #define JNI_FN(pkg, cls, fn) JNI_FN_EXPAND(pkg, cls, fn)

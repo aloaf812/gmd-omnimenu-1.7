@@ -163,6 +163,14 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* level) {
         diffSpr->setPosition(ccp(winSize.width / 2 - 120, winSize.height / 2 + 30));
     }
 #endif
+#ifdef NP4
+    auto val = hax.featureTypeMap[level];
+    if (val == 0) return true;
+    CCSprite* featureFrame = CCSprite::create((val == 2) ? MAGIC_TEXTURE : FEATURED_TEXTURE);
+    featureFrame->setPosition({(winSize.width / 2) - 120, (winSize.height / 2) + 35});
+    featureFrame->_setZOrder(-1);
+    self->addChild(featureFrame);
+#endif
     return true;
 }
 

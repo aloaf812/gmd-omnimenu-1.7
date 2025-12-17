@@ -31,6 +31,7 @@ enum ModuleID {
     CHARACTER_FILTER_BYPASS,
     CHEAT_INDICATOR,
     COMMENT_IDS,
+    COMMENT_OFFSET_FIX,
     COPY_PASTE,
     DELETE_SELECTED,
     DELETE_START_POS,
@@ -74,7 +75,6 @@ enum ModuleID {
     NO_ROTATION,
     NO_SHAKE,
     NO_SHIP_TINT,
-    NO_TRAIL,
     OBJ_COLOR_FIX,
     OBJECT_COUNTER,
     OBJECT_LIMIT_BYPASS,
@@ -109,6 +109,8 @@ enum ModuleID {
     START_POS_SWITCHER,
     SWEAR_FILTER_BYPASS,
     TEXT_LENGTH_BYPASS,
+    NO_TRAIL,
+    TRAIL_ALWAYS_ON,
     UNLISTED_OBJECTS,
     UNLOCK_CLUBSTEP,
     UNLOCK_ICONS,
@@ -175,6 +177,9 @@ public:
 #if GAME_VERSION > GV_1_4
     bool blockVerify;
 #endif
+#ifdef NP4
+    std::map<GJGameLevel*, int> featureTypeMap;
+#endif
 
     bool getModuleEnabled(ModuleID id) {
         return modules[id].enabled;
@@ -192,6 +197,7 @@ public:
         getModuleEnabled(ModuleID::INSTANT_COMPLETE) || 
         checkpointsInNormalMode || 
         getModuleEnabled(ModuleID::JUMP_HACK) || 
+        getModuleEnabled(ModuleID::NO_MIRROR) || 
         pSpeedModified != 0 || pGravityModified != 0 || pYStartModified != 0) return CheatIndicatorColor::Red;
         if (hasCheated) return CheatIndicatorColor::Orange;
 #ifndef FORCE_AUTO_SAFE_MODE
@@ -467,11 +473,6 @@ private:
                 setNoShipTint(_);
             });
 #endif
-        modules[ModuleID::NO_TRAIL] = Module(
-            "no_trail",
-            "No Trail", 
-            "Disables the player's trail at all times.", 
-            false, ModuleCategory::Visual, [](bool _){});
 #if GAME_VERSION == GV_1_4
         modules[ModuleID::OBJ_COLOR_FIX] = Module(
             "obj_color_fix",
@@ -488,6 +489,16 @@ private:
             "show_percentage_decimal",
             "Decimal Percentage", 
             "Puts 3 decimal places after the percentage if you have Show Percentage enabled and in the Best Run label.", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::NO_TRAIL] = Module(
+            "no_trail",
+            "Trail Always Off", 
+            "Disables the player's trail at all times.", 
+            false, ModuleCategory::Visual, [](bool _){});
+        modules[ModuleID::TRAIL_ALWAYS_ON] = Module(
+            "trail_always_on",
+            "Trail Always On", 
+            "Makes the player's trail visible at all times.", 
             false, ModuleCategory::Visual, [](bool _){});
 
 
@@ -710,6 +721,13 @@ private:
             "Auto Safe Mode",
             "Prevents any progress on any level from being saved if you have cheats enabled.", 
             false, ModuleCategory::Universal, [](bool _){});
+#endif
+#if GAME_VERSION > GV_1_0 && GAME_VERSION < GV_1_3
+        modules[ModuleID::COMMENT_OFFSET_FIX] = Module(
+            "comment_offset_fix",
+            "Comment Offset Fix",
+            "Fixes comment text being offset to the right (or to the left if the device has a small resolution).", 
+            true, ModuleCategory::Universal, [](bool _){});
 #endif
         // modules.insert(std::pair<std::string, Module*>("eeffoc", new Module(
         //         "Eeffoc",

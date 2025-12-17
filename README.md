@@ -10,7 +10,7 @@ Currently works for versions 1.02 - 1.6.
 - Hris69 - betatested on Android 4.4. Also got me started with tradmodding in general. Without him, this mod menu wouldn't exist.
 - Nikolyas, Caster, Tabbi - betatesters
 - HJFod - BetterEdit code (particularly the RGB Color Inputs)
-- iAndy_HD - Helping out with fmtlib
+- iAndy_HD3 - Helping out with fmtlib
 
 ## Build Instructions
 Note: the minimum Android version is currently KitKat (4.4). Android 14+ devices won't work without solutions like Shizuku or Virtual Master.
@@ -19,9 +19,9 @@ Note: the minimum Android version is currently KitKat (4.4). Android 14+ devices
 1. [Download and run APK Editor Studio](<https://qwertycube.com/apk-editor-studio/download/>)
 2. Open Settings > Options or press Ctrl+P, go to Apktool and check "Decompile source code (smali)" if it isn't checked already
 3. In the bottom left corner of APK Editor Studio, click on File System, find the `lib` folder. Then, if you're building for pre-1.5, open the only folder: `armeabi`, otherwise open `armeabi-v7a` (and delete the other folders). Right-click the existing `.so` file and press "Open Resource Directory...", then copy the `libgame.so` or `libcocos2dcpp.so` file and paste it to `src/version/{GD version}`.
-4. Find the package name smali uses by locating the GeometryJump.smali file. The default directory is `com/robtopx/geometryjump/GeometryJump.smali`. If this directory is different for you, open `version/constants.hpp` in OMNImenu's source code and change the `JAVA_PATH_MAIN` and `JAVA_PATH_MAIN_JNI_HOOK` constants to use the correct path instead of `com/robtopx/geometryjump` and `com_robtopx_geometryjump` respectively.
+4. Find the package name smali uses by locating the GeometryJump.smali file. The default directory is `com/robtopx/geometryjump/GeometryJump.smali`. If this directory is different for you, open `version/constants.hpp` in OMNImenu's source code and change the `JAVA_PATH_MAIN` and `JAVA_PATH_MAIN_JNI_HOOK` constants to use the correct path instead of `com/robtopx/geometryjump` and `com_robtopx_geometryjump` respectively. Also, if you plan to compile for the Neopointfour GDPS (which adds extra features exclusive to the GDPS), uncomment the `#define NP4` line
 5. Run build script (TODO instructions for Windows). The libmenu.so file will be in the `build` folder, which you need to paste to the same location you got `libgame.so`/`libcocos2dcpp.so` from.
-6. Copy all of the resources from the `resources` folder to the APK's `assets` folder. If compiling for 1.0, copy the resources from `resources-1.0` as well.
+6. Copy all of the resources from the `resources` folder to the APK's `assets` folder. If compiling for 1.0, copy the resources from `resources-1.0` as well. If compiling for Neopointfour, copy the resources from `resources-np4`.
 7. In the `smali` folder of the APK, open the `GeometryJump.smali` file. Find where it says something like:
 
 ```

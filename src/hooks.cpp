@@ -33,6 +33,10 @@
 #include "hooks/GJGarageLayer.cpp"
 #include "hooks/EndPortalObject.cpp"
 
+#ifdef NP4
+#include "hooks/Neopointfour.cpp"
+#endif
+
 void initialize_hooks() {
     PlayLayer_om();
     MenuLayer_om();
@@ -70,4 +74,8 @@ void initialize_hooks() {
     GJGarageLayer_om();
 #endif
     EndPortalObject_om();
+
+#ifdef NP4
+    Neopointfour_om();
+#endif
 }

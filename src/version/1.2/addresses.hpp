@@ -15,6 +15,7 @@
 /**/ #define CheckpointObject__m_playerPos     0x12c /**/ // CheckpointObject::getPlayerPos
 /**/ #define ColorPickerPopup__m_colorWheel    0x1cc /**/ // ColorPickerPopup::selectColor
 /**/ #define ColorSelectPopup__m_colorWheel    0x1cc /**/ // ColorSelectPopup::selectColor
+/**/ #define CommentCell__m_parent             0x17c /**/ // CommentCell::loadFromComment (calls the 0xFC virtual on it, which is removeAllChildrenWithCleanup)
 /**/ #define EditButtonBar__m_buttons          0x12c /**/ // EditButtonBar::init
 /**/ #define EditLevelLayer__m_level           0x148 /**/ // EditLevelLayer::init
 /**/ #define EditorPauseLayer__m_editorLayer   0x1c8 /**/ // EditorPauseLayer::init

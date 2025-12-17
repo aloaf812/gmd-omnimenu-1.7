@@ -15,6 +15,16 @@ void LevelCell_loadCustomLevelCell(CCNode* self) {
         idLabel->setTag(6741);
         self->addChild(idLabel, 1000);
     }
+#ifdef NP4
+    auto lvl = getCellLevel(self);
+    auto val = hax.featureTypeMap[lvl];
+    if (val == 0) return;
+    CCSprite* featureFrame = CCSprite::create((val > 1) ? MAGIC_TEXTURE : FEATURED_TEXTURE);
+    featureFrame->setPosition({26.f, 40.f});
+    if (lvl->m_nStars < 1) featureFrame->setPosition({26.f, 35.f}); // Featured no stars
+    featureFrame->_setZOrder(-1);
+    self->addChild(featureFrame);
+#endif
 }
 // void (*TRAM_LevelCell_draw)(CCNode* self);
 // void LevelCell_draw(CCNode* self) {

@@ -50,6 +50,8 @@ bool HaxMenu::init(CCLayer* referrer) {
     if (!CCLayerColor::initWithColor(ccc4(0, 0, 0, 180)))
         return false;
 
+    canSpoofPih = true;
+
     auto& hax = HaxManager::sharedState();
 
     this->referrer = referrer;
@@ -281,14 +283,27 @@ void HaxMenu::toggler(CCObject* sender) {
     auto& hax = HaxManager::sharedState();
     hax.modules[tag].toggle();
     if (tag == ModuleID::PIG_SPOOFING) {
-        GameSoundManager::sharedManager()->playEffect("pih.mp3");
-        hax.modules[tag].toggle();
-        static_cast<CCMenuItemToggler*>(sender)->toggle(true);
-        this->runAction(CCSequence::create(
-            CCDelayTime::create(0.2f),
-            CCCallFunc::create(this, callfunc_selector(HaxMenu::onPih)),
-            nullptr
-        ));
+        if (!canSpoofPih) return;
+        float value = static_cast<float>(rand()) / RAND_MAX * 333;
+        CCLog("%f", value);
+        if (value >= 33 && value < 34) {
+            canSpoofPih = false;
+            static_cast<CCMenuItemToggler*>(sender)->toggle(false);
+            this->runAction(CCSequence::create(
+                CCDelayTime::create(2.f),
+                CCCallFunc::create(this, callfunc_selector(HaxMenu::onThree)),
+                nullptr
+            ));
+        } else {
+            GameSoundManager::sharedManager()->playEffect("pih.mp3");
+            hax.modules[tag].toggle();
+            static_cast<CCMenuItemToggler*>(sender)->toggle(true);
+            this->runAction(CCSequence::create(
+                CCDelayTime::create(0.2f),
+                CCCallFunc::create(this, callfunc_selector(HaxMenu::onPih)),
+                nullptr
+            ));
+        }
     }
 }
 void HaxMenu::modInfo(CCObject* sender) {
@@ -306,10 +321,10 @@ void HaxMenu::modInfo(CCObject* sender) {
     )->show();
 }
 void HaxMenu::onPih(CCObject* sender) {
-    CCLog("CCObject: %x", sizeof(CCObject));
-    CCLog("CCPoint: %x", sizeof(CCPoint));
-    CCLog("CCNode: %x", sizeof(CCNode));
-    CCLog("CCLayer: %x", sizeof(CCLayer));
+    // CCLog("CCObject: %x", sizeof(CCObject));
+    // CCLog("CCPoint: %x", sizeof(CCPoint));
+    // CCLog("CCNode: %x", sizeof(CCNode));
+    // CCLog("CCLayer: %x", sizeof(CCLayer));
 
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
@@ -320,6 +335,21 @@ void HaxMenu::onPih(CCObject* sender) {
     pih->runAction(CCSequence::create(
         CCFadeOut::create(1.5f),
         CCCallFunc::create(pih, callfunc_selector(CCNode::removeFromParentAndCleanup)),
+        nullptr
+    ));
+}
+void HaxMenu::onThree(CCObject* sender) {
+    GameSoundManager::sharedManager()->playEffect("three.mp3");
+    CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
+    CCSprite* three = CCSprite::create("three.png");
+    addChild(three, 1011);
+    three->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+    three->runAction(CCSequence::create(
+        CCFadeIn::create(0.2f),
+        CCDelayTime::create(1),
+        CCFadeOut::create(0.25f),
+        CCCallFunc::create(three, callfunc_selector(CCNode::removeFromParentAndCleanup)),
         nullptr
     ));
 }
